@@ -6,6 +6,8 @@
 package project.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 /**
@@ -25,6 +27,9 @@ public class UserProfile implements Serializable {
     private String email;
     private String passwordHash;
     private String passwordSalt;
+    
+    @OneToMany(mappedBy = "bidder")
+    private List<Bid> bids = new ArrayList<Bid>();
     
     
     public UserProfile()
@@ -64,43 +69,27 @@ public class UserProfile implements Serializable {
     public String getFirstName() {
         return firstName;
     }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
+ 
     public String getLastName() {
         return lastName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public void setPasswordSalt(String passwordSalt) {
-        this.passwordSalt = passwordSalt;
+    } 
+ 
+    public List<Bid> getBids() {
+        return bids;
     }
     
+    public void update(String firstName, String lastName) {
+        // TODO: Validate
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
     
-    
-    public void changePassword(String passwordHash, String passwordSalt)
-    {
+    public void changePassword(String passwordHash, String passwordSalt) {
+        // TODO: Validate
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
     }

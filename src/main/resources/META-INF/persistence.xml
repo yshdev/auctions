@@ -4,6 +4,7 @@
   <persistence-unit name="auctions_persistence_unit">
     <class>project.domain.Auction</class>
     <class>project.domain.UserProfile</class>
+    <class>project.domain.Bid</class>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
       <property name="javax.persistence.jdbc.user" value="auctionsuser"/>
@@ -13,5 +14,4 @@
       <property name="eclipselink.ddl-generation.output-mode" value="database"/>
     </properties>
   </persistence-unit>
-
 </persistence>
