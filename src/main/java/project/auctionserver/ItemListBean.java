@@ -1,8 +1,11 @@
 package project.auctionserver;
 
+import project.service.CategoryDto;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import project.dal.UnitOfWork;
+import project.domain.Category;
 
 @Named(value = "itemListBean")
 @SessionScoped
@@ -23,6 +26,14 @@ public class ItemListBean implements Serializable {
     public ItemListBean() {
         mainCategory = "all categories";
     }
+    
+    public CategoryDto[] getCategories() {
+        try (UnitOfWork unitOfWork = UnitOfWork.create()) {
+           CategoryDto[] categories = unitOfWork.getAllCategories();
+           return categories;
+        }
+    }
+    
     
     public void setMainCategory(String mainCategory) {
         this.mainCategory = mainCategory;

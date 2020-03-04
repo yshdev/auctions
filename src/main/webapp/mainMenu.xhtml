@@ -23,7 +23,7 @@
         <h1>DailyAuctions</h1>
         <h:form>
             <h:selectOneMenu value="#{itemListBean.mainCategory}">
-                <f:selectItems value="#{itemListBean.mainList}"/>
+                <f:selectItems value="#{itemListBean.getCategories()}" var="categroy" itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
             </h:selectOneMenu>
             <h:commandButton id="submitButton" value="Submit" action="createUser.xhtml"></h:commandButton>
         </h:form>

@@ -5,6 +5,7 @@
     <class>project.domain.Auction</class>
     <class>project.domain.UserProfile</class>
     <class>project.domain.Bid</class>
+    <class>project.domain.Category</class>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
       <property name="javax.persistence.jdbc.user" value="auctionsuser"/>

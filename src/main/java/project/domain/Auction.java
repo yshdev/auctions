@@ -28,16 +28,25 @@ public class Auction implements Serializable {
     private BigDecimal startingAmount;
     private BigDecimal reservedPrice;
     private BigDecimal winningAmount;
+    
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startingTime;
+    
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endingTime;
+    
     private boolean isClosed;
+    
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
     
     @OneToOne
     private Bid highestBid;
     
     
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "owner_id")
     private UserProfile owner;
     
     @OneToMany(mappedBy = "auction")
@@ -47,7 +56,7 @@ public class Auction implements Serializable {
     public Auction() {
     }
 
-    public Auction(UserProfile owner, String title, String description, Date startingTime, int numOfDays, BigDecimal startingAmount,
+    public Auction(UserProfile owner, String title, String description, Category category, Date startingTime, int numOfDays, BigDecimal startingAmount,
             BigDecimal winningAmount, BigDecimal reservedPrice) {
         
         if (owner == null) {
@@ -58,6 +67,7 @@ public class Auction implements Serializable {
         this.setTimes(startingTime, numOfDays);
         this.setAmounts(startingAmount, winningAmount, reservedPrice);
         this.setDescription(description);
+        this.setCategory(category);
         this.isClosed = false;
     }
    
@@ -69,26 +79,12 @@ public class Auction implements Serializable {
         return title;
     }
     
-    public void setTitle(String title) {
-        
-        if (title == null) {
-            throw new IllegalArgumentException("Auction title must be set");
-        }
-            
-        title = title.trim();
-        if (title.length() == 0) {
-            throw new IllegalArgumentException("Auction title cannot be empty.");
-        }
-        this.title = title;
-    }
-
+    
     public String getDescription() {
         return description;
     }
     
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    
 
     public List<Bid> getBids() {
         return bids;
@@ -112,6 +108,47 @@ public class Auction implements Serializable {
 
     public Bid getHighestBid() {
         return highestBid;
+    }
+
+    public Date getStartingTime() {
+        return startingTime;
+    }
+
+    public Date getEndingTime() {
+        return endingTime;
+    }
+
+    public boolean isIsClosed() {
+        return isClosed;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+    
+    public void setCategory(Category category) {
+        if (category == null) {
+            throw new IllegalArgumentException("Auction category cannot be empty.");
+        }
+        this.category = category;
+    }
+    
+    public void setTitle(String title) {
+        
+        if (title == null) {
+            throw new IllegalArgumentException("Auction title must be set");
+        }
+            
+        title = title.trim();
+        if (title.length() == 0) {
+            throw new IllegalArgumentException("Auction title cannot be empty.");
+        }
+        this.title = title;
+    }
+
+    
+    public void setDescription(String description) {
+        this.description = description;
     }
     
     public void setTimes(Date startingTime, int numOfDays) {
