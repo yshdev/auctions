@@ -10,7 +10,7 @@ import project.domain.UserProfile;
 @SessionScoped
 public class LoggedUserBean implements Serializable {
 
-    private boolean isLoggedIn;
+    private boolean isLogin;
     private String userName;
     private String password;
     private String confirmPassword;
@@ -22,11 +22,11 @@ public class LoggedUserBean implements Serializable {
     private String errRegisterMessage;
     
     public LoggedUserBean() {
-        isLoggedIn = false;
+        isLogin = false;
     }
     
     public boolean getIsLogin() {
-        return isLoggedIn;
+        return isLogin;
     }
     
     public String getUserName() {
@@ -53,7 +53,9 @@ public class LoggedUserBean implements Serializable {
         return email;
     }
     
-     
+    public String getPhone() {
+        return phone;
+    }
     
     public String getErrLoginMessage() {
         return errLoginMessage;
@@ -87,19 +89,22 @@ public class LoggedUserBean implements Serializable {
         this.email = email;
     }
     
-     
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
     
     public void logout() {
-        this.isLoggedIn = false;
-        this.userName = null;
-        this.password = null;
-        this.errLoginMessage = null;
+        isLogin = false;
+        userName = null;
+        password = null;
+        errLoginMessage = null;
+        errRegisterMessage = null;
     }
     
     public String login() {
-        if (true) {     //(isRegistered(userName, password))
-            this.isLoggedIn = true;
-            this.errLoginMessage = null;
+        if (userName.equals("aharon")) {     //if (isRegistered(userName, password))
+            isLogin = true;
+            errLoginMessage = null;
             return "mainMenu.xhtml";
         }
         else {
@@ -108,28 +113,24 @@ public class LoggedUserBean implements Serializable {
             return "login.xhtml";
         }
     }
-    
+   
     public String register() {
         
-        UserProfile user = new UserProfile("yaniv", "Yaniv", "Shalom", "111", "3335");
-        UnitOfWork unitOfWork = UnitOfWork.create();
-        unitOfWork.persist(user);
-        unitOfWork.saveChanges();
-        unitOfWork.close();
-        
-        
-        if (true) 
-        
-        
-            errRegisterMessage= "my error";
-        
-        return "register.xhtml";
-        
-        
-           
-        
-        //return "mainMenu.xhtml";
+        if (userName.equals("yaniv")) { // if not registered yet
+            
+            UserProfile user = new UserProfile("yaniv", "Yaniv", "Shalom", "111", "3335");
+            UnitOfWork unitOfWork = UnitOfWork.create();
+            unitOfWork.persist(user);
+            unitOfWork.saveChanges();
+            unitOfWork.close();
+            
+            isLogin = true;
+            return "mainMenu.xhtml";
+        }
+        else {
+            
+            errRegisterMessage= "you are registered already";
+            return "register.xhtml";
+        }
     }
-    
-    
 }
