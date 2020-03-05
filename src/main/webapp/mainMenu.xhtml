@@ -8,22 +8,25 @@
         <title>Welcome to DailyAuctions</title>
     </h:head>
     <h:body>
-        <h:form rendered="#{loggedUserBean.isLogin}" style="float:right">
+        <h:form rendered="#{loggedUserBean.isLogin}"
+                style="float:right; font-size:120%">
             hi #{loggedUserBean.userName}!  
             <h:outputLink value="private.xhtml">private area</h:outputLink>
             #{" "}
             <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>
         </h:form>
-        <h:form rendered="#{not loggedUserBean.isLogin}" style="float:right">
+        <h:form rendered="#{not loggedUserBean.isLogin}"
+                style="float:right; font-size:120%">
             hello visitor!
             <h:outputLink value="login.xhtml">Login</h:outputLink>
             #{" "}
             <h:outputLink value="register.xhtml">Register</h:outputLink>
         </h:form>
-        <h1>DailyAuctions</h1>
+        <h:outputText value="DailyAuctions" style="font-size:200%"></h:outputText>
+        <hr />
         <h:form>
             <h:selectOneMenu value="#{itemListBean.mainCategory}">
-                <f:selectItems value="#{itemListBean.getCategories()}" var="categroy" itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
+                <f:selectItems value="#{itemListBean.mainList}"/>
             </h:selectOneMenu>
             <h:commandButton id="submitButton" value="Submit" action="createUser.xhtml"></h:commandButton>
         </h:form>
