@@ -1,3 +1,9 @@
+/************************************************************
+ * ConfirmValidator.java
+ * 
+ * Validator class for JSF page "register.xhtml" to compare
+ * fields of "password" and "confirm password".
+ ************************************************************/
 package project.auctionserver;
 
 import javax.faces.validator.FacesValidator;
@@ -15,7 +21,7 @@ public class ConfirmValidator implements Validator {
         Object otherValue = component.getAttributes().get("otherValue");
 
         if (value == null || otherValue == null) {
-            return;
+            return; // if one of fields is empty let requiredMessage appear
         }
 
         if (!value.equals(otherValue)) {

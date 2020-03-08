@@ -1,3 +1,8 @@
+/************************************************************
+ * LoggedUserBean.java
+ * 
+ * Java bean to manage the logged user, Login and Registration
+ ************************************************************/
 package project.auctionserver;
 
 import javax.inject.Named;
@@ -93,6 +98,8 @@ public class LoggedUserBean implements Serializable {
         this.phone = phone;
     }
     
+    /* when user logged out, change system status by changing
+       isLogin to false. nullify error messages.*/
     public void logout() {
         isLogin = false;
         userName = null;
@@ -101,10 +108,18 @@ public class LoggedUserBean implements Serializable {
         errRegisterMessage = null;
     }
     
+    /* when user wants to login, compare input name and password
+       with database and accordingly change system status or print
+       an error message.*/
     public String login() {
-        if (userName.equals("aharon")) {     //if (isRegistered(userName, password))
+        if (userName.equals("aharon")) {
+        /*******************************************************************
+         * temporary condition. need to be changed to compare input to DB:
+         *      if (isRegistered(userName, password))
+         *******************************************************************/
             isLogin = true;
             errLoginMessage = null;
+            errRegisterMessage = null;
             return "mainMenu.xhtml";
         }
         else {
@@ -114,10 +129,14 @@ public class LoggedUserBean implements Serializable {
         }
     }
    
+    /* when new user wants to register, ensure he is not registered
+       yet.*/
     public String register() {
-        
         if (userName.equals("yaniv")) { // if not registered yet
-            
+        /*******************************************************************
+         * temporary condition. need to be changed to compare input to DB:
+         *      if (notRegistered(key: email / phone))
+         *******************************************************************/
             UserProfile user = new UserProfile("yaniv", "Yaniv", "Shalom", "111", "3335");
             UnitOfWork unitOfWork = UnitOfWork.create();
             unitOfWork.persist(user);
@@ -128,7 +147,6 @@ public class LoggedUserBean implements Serializable {
             return "mainMenu.xhtml";
         }
         else {
-            
             errRegisterMessage= "you are registered already";
             return "register.xhtml";
         }
