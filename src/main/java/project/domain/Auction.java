@@ -225,7 +225,7 @@ public class Auction implements Serializable {
             throw new IllegalStateException("Auction is closed. Cannot modify.");
         }
         
-        if (this.startingTime.compareTo(new Date()) < 0) {
+        if (this.startingTime != null && this.startingTime.compareTo(new Date()) < 0) {
             throw new IllegalStateException("Auction has already started. Cannot modify.");
         }
     }

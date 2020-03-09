@@ -5,17 +5,19 @@
  */
 package project.dal;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import project.domain.Auction;
 import project.domain.Category;
+import project.domain.PasswordHasher;
+import project.domain.UserProfile;
 import project.service.CategoryDto;
-
 
 /**
  *
@@ -26,6 +28,8 @@ public class UnitOfWork implements AutoCloseable {
     private final EntityManagerFactory emf;
     private final EntityManager em;
     private final EntityTransaction transaction;
+    private static boolean _isInitialized = false;
+    
     
     private UnitOfWork(EntityManagerFactory emf, EntityManager em, EntityTransaction transaction)
     {
@@ -36,6 +40,7 @@ public class UnitOfWork implements AutoCloseable {
     
     public static UnitOfWork create() {
         
+        seed();
         EntityManagerFactory emf = Persistence.createEntityManagerFactory( "auctions_persistence_unit" );
         EntityManager em = emf.createEntityManager( );
         EntityTransaction tr = em.getTransaction( );
@@ -72,5 +77,50 @@ public class UnitOfWork implements AutoCloseable {
 
     public void persist(Object obj) {
         this.em.persist(obj);
+    }
+    
+    private static synchronized void seed() {
+
+        if (!_isInitialized) {
+            
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory( "auctions_persistence_unit" );
+            EntityManager em = emf.createEntityManager( );
+            
+            
+
+            if (em.createQuery("Select count(c) from Category c", Integer.class).getFirstResult() == 0) {
+
+                em.getTransaction().begin();
+                
+                PasswordHasher hasher = new PasswordHasher();
+
+                hasher.hash("shalom");
+                UserProfile yaniv = new UserProfile("yaniv", "Yaniv", "Shalom", hasher.getHash(), hasher.getSalt());
+                em.persist(yaniv);
+
+                hasher.hash("gross");
+                UserProfile aharon = new UserProfile("aharon", "Aharon", "Gross", hasher.getHash(), hasher.getSalt());
+                em.persist(aharon);
+
+                Category israeliCoins = new Category("Israeli Coins");
+                em.persist(israeliCoins);
+
+                Auction israeliCoinsAuction = new Auction(yaniv, "100 Israeli ancient coins", "100 Israeli ancient coins from 100 BC", 
+                        israeliCoins,  new Date(), 12, new BigDecimal(10000.0), new BigDecimal(20000.0), new BigDecimal(15000.0));
+                em.persist(israeliCoinsAuction);
+
+                Auction israeliCoinsAuction2 = new Auction(aharon, "200 Israeli coins from 1985", "200 Israeli coins from 1985", 
+                        israeliCoins,  new Date(), 10, new BigDecimal(1000.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
+                em.persist(israeliCoinsAuction2);
+
+                em.getTransaction().commit();
+                
+            }
+            
+            em.close();
+            emf.close();
+    
+            _isInitialized = true;
+        }
     }
 }
