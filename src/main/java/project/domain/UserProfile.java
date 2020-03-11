@@ -15,6 +15,12 @@ import javax.persistence.*;
  * @author Shalom
  */
 @Entity
+@NamedQueries({
+    @NamedQuery (
+        name = "findUserByEmailParam",
+        query = "SELECT user FROM UserProfile user WHERE user.email = :inputEmail"
+    )
+})
 public class UserProfile implements Serializable {
     
     @Id

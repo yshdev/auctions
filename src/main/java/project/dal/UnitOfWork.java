@@ -58,6 +58,16 @@ public class UnitOfWork implements AutoCloseable {
         return dtos;
     }
     
+    public boolean isRegistered (String email) {
+        UserProfile userByEmail =
+                (UserProfile) em.createNamedQuery("findUserByEmailParam")
+                .setParameter("inputEmail", email)
+                .getSingleResult();
+        if (userByEmail == null)
+            return false;
+        else return true;
+    }
+    
     public boolean isEmpty() {
         TypedQuery<Integer> query = this.em.createQuery("Select count(c) from Category c", Integer.class);
         return query.getFirstResult() == 0;

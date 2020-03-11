@@ -132,13 +132,15 @@ public class LoggedUserBean implements Serializable {
     /* when new user wants to register, ensure he is not registered
        yet.*/
     public String register() {
-        if (userName.equals("yaniv")) { // if not registered yet
-        /*******************************************************************
-         * temporary condition. need to be changed to compare input to DB:
-         *      if (notRegistered(key: email / phone))
-         *******************************************************************/
+        
+        UnitOfWork unitOfWork = UnitOfWork.create();
+        boolean isRegistered = unitOfWork.isRegistered(email);
+        unitOfWork.close();
+        
+        if (!isRegistered) { // not registered yet
+        
             UserProfile user = new UserProfile("yaniv", "Yaniv", "Shalom", "111", "3335");
-            UnitOfWork unitOfWork = UnitOfWork.create();
+            unitOfWork = UnitOfWork.create();
             unitOfWork.persist(user);
             unitOfWork.saveChanges();
             unitOfWork.close();
