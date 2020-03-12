@@ -7,12 +7,16 @@ package project.dal;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
+import javax.persistence.NoResultException;
 import project.domain.Auction;
 import project.domain.Category;
 import project.domain.PasswordHasher;
@@ -58,14 +62,52 @@ public class UnitOfWork implements AutoCloseable {
         return dtos;
     }
     
+    public List<Auction> getSortedList(Category category, String sortOption) {
+        TypedQuery<Auction> query;
+        
+        switch(sortOption) {
+            case "current price - ascending order":
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory ORDER BY a.highestBid",
+                Auction.class);
+                break;
+            case "current price - descending order":
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory ORDER BY a.highestBid DESC",
+                Auction.class);
+                break;
+            case "ending time - ascending order":
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory ORDER BY a.endingTime",
+                Auction.class);
+                break;
+            case "ending time - descending order":
+            default:
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory ORDER BY a.endingTime DESC",
+                Auction.class);
+                break;
+        }
+        
+        List<Auction> resList = query
+                .setParameter("inputCategory", category)
+                .getResultList();
+        
+        return resList;
+        
+    }
+    
     public boolean isRegistered (String email) {
-        UserProfile userByEmail =
-                (UserProfile) em.createNamedQuery("findUserByEmailParam")
+        try{
+            UserProfile userByEmail =
+                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.email = :inputEmail")
                 .setParameter("inputEmail", email)
                 .getSingleResult();
-        if (userByEmail == null)
+        }
+        catch (NoResultException e) {
             return false;
-        else return true;
+        }
+        return true;
     }
     
     public boolean isEmpty() {

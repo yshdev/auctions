@@ -1,30 +1,51 @@
 package project.auctionserver;
 
 import project.service.CategoryDto;
+import java.util.List;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import project.dal.UnitOfWork;
 import project.domain.Category;
+import project.domain.Auction;
 
 @Named(value = "itemListBean")
 @SessionScoped
 public class ItemListBean implements Serializable {
     
-    private final String[] mainList = {
-        "all categories", "mainCategory 1", "mainCategory 2",
-        "mainCategory 3", "mainCategory 4", "mainCategory 5"};
-    private final String[] subList1 = {"11", "12", "13"};
-    private final String[] subList2 = {"21", "22", "23", "24"};
-    private final String[] subList3 = {"31", "32"};
-    private final String[] subList4 = {"41", "42", "43", "44", "45"};
-    private final String[] subList5 = {"51"};
+    private final String[] sortOptions = {
+        "current price - ascending order", "current price - descending order",
+        "ending time - ascending order", "ending time - descending order"};
     
-    private String mainCategory;
-    private String subCategory;
+    private Category category;
+    private String sortOption;
+    private List<Auction> chosenList;
 
     public ItemListBean() {
-        mainCategory = "all categories";
+    }
+    
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
+    public void setSortOption(String sortOption) {
+        this.sortOption = sortOption;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
+    
+    public String getSortOption() {
+        return sortOption;
+    }
+    
+    public String[] getSortOptions() {
+        return sortOptions;
+    }
+    
+    public List<Auction> getChosenList() {
+        return chosenList;
     }
     
     public CategoryDto[] getCategories() {
@@ -34,35 +55,9 @@ public class ItemListBean implements Serializable {
         }
     }
     
-    
-    public void setMainCategory(String mainCategory) {
-        this.mainCategory = mainCategory;
-    }
-    
-    public void setSubCategory(String subCategory) {
-        this.subCategory = subCategory;
-    }
-    
-    public String getMainCategory() {
-        return mainCategory;
-    }
-    
-    public String getSubCategory() {
-        return subCategory;
-    }
-    
-    public String[] getMainList() {
-        return mainList;
-    }
-    
-    public String[] getSubList() {
-        switch (mainCategory) {
-            case "mainCategory 1": return subList1;
-            case "mainCategory 2": return subList2;
-            case "mainCategory 3": return subList3;
-            case "mainCategory 4": return subList4;
-            case "mainCategory 5": return subList5;
-            default: return subList5;
-        }
+    public void createList() {
+        UnitOfWork unitOfWork = UnitOfWork.create();
+        chosenList = unitOfWork.getSortedList(category, sortOption);
+        unitOfWork.close();
     }
 }
