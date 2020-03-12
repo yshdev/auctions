@@ -15,7 +15,7 @@ import project.domain.UserProfile;
 @SessionScoped
 public class LoggedUserBean implements Serializable {
 
-    private boolean isLogin;
+    private UserProfile connectedUser;
     private String userName;
     private String password;
     private String confirmPassword;
@@ -27,11 +27,11 @@ public class LoggedUserBean implements Serializable {
     private String errRegisterMessage;
     
     public LoggedUserBean() {
-        isLogin = false;
+        connectedUser = null;
     }
     
-    public boolean getIsLogin() {
-        return isLogin;
+    public UserProfile getConnectedUser() {
+        return connectedUser;
     }
     
     public String getUserName() {
@@ -101,7 +101,7 @@ public class LoggedUserBean implements Serializable {
     /* when user logged out, change system status by changing
        isLogin to false. nullify error messages.*/
     public void logout() {
-        isLogin = false;
+        connectedUser = null;
         userName = null;
         password = null;
         errLoginMessage = null;
@@ -117,7 +117,7 @@ public class LoggedUserBean implements Serializable {
          * temporary condition. need to be changed to compare input to DB:
          *      if (isRegistered(userName, password))
          *******************************************************************/
-            isLogin = true;
+            connectedUser = null; // !!! get from DB currect UserProfile !!!!
             errLoginMessage = null;
             errRegisterMessage = null;
             return "mainMenu.xhtml";
@@ -145,7 +145,7 @@ public class LoggedUserBean implements Serializable {
             unitOfWork.saveChanges();
             unitOfWork.close();
             
-            isLogin = true;
+            connectedUser = user;
             return "mainMenu.xhtml";
         }
         else {
