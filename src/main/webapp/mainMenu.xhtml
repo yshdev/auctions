@@ -11,7 +11,7 @@
     <h:body>
         <h:form rendered="#{loggedUserBean.connectedUser != null}"
                 style="float:right; font-size:120%">
-            hi #{loggedUserBean.userName}!  
+            hi #{loggedUserBean.connectedUser.username}!
             <h:outputLink value="private.xhtml">private area</h:outputLink>
             #{" "}
             <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>

@@ -15,7 +15,10 @@ import project.domain.UserProfile;
 @SessionScoped
 public class LoggedUserBean implements Serializable {
 
+    // user connected
     private UserProfile connectedUser;
+    
+    // JSF input fields
     private String userName;
     private String password;
     private String confirmPassword;
@@ -23,6 +26,8 @@ public class LoggedUserBean implements Serializable {
     private String lastName;
     private String email;
     private String phone;
+    
+    // error messages
     private String errLoginMessage;
     private String errRegisterMessage;
     
@@ -32,34 +37,6 @@ public class LoggedUserBean implements Serializable {
     
     public UserProfile getConnectedUser() {
         return connectedUser;
-    }
-    
-    public String getUserName() {
-        return userName;
-    }
-    
-    public String getPassword() {
-        return password;
-    }
-    
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-    
-    public String getFirstName() {
-        return firstName;
-    }
-    
-    public String getLastName() {
-        return lastName;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public String getPhone() {
-        return phone;
     }
     
     public String getErrLoginMessage() {
@@ -100,12 +77,12 @@ public class LoggedUserBean implements Serializable {
     
     /* when user logged out, change system status by changing
        isLogin to false. nullify error messages.*/
-    public void logout() {
+    public String logout() {
         connectedUser = null;
-        userName = null;
-        password = null;
         errLoginMessage = null;
         errRegisterMessage = null;
+        
+        return "mainMenu.xhtml";
     }
     
     /* when user wants to login, compare input name and password
