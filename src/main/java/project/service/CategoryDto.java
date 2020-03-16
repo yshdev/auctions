@@ -13,8 +13,11 @@ import java.io.Serializable;
  */
 public class CategoryDto implements Serializable {
     
-    private final String title;
-    private final int id;
+    private String title;
+    private int id;
+
+    public CategoryDto() {
+    }
 
     public CategoryDto(int id, String title) {
         this.title = title;
@@ -28,4 +31,14 @@ public class CategoryDto implements Serializable {
     public int getId() {
         return id;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
 }
