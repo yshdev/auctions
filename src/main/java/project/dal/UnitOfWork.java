@@ -112,10 +112,10 @@ public class UnitOfWork implements AutoCloseable {
         try {
             UserProfile loginUser =
                 (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE "
-                        + "u.username = :inputName")
+                        + "u.username = :inputName AND u.passwordHash = :inputHash AND u.passwordSalt = :inputSalt")
                 .setParameter("inputName", userName)
                 .setParameter("inputHash", hasher.getHash())
-                .setParameter("inputsalt", hasher.getSalt())
+                .setParameter("inputSalt", hasher.getSalt())
                 .getSingleResult();
             return loginUser;
         }
