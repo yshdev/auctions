@@ -126,6 +126,19 @@ public class Auction implements Serializable {
         return category;
     }
     
+    public boolean canCancel(int userId) {
+        return !this.isClosed && 
+                this.startingTime.compareTo(new Date()) > 0 &&
+                this.owner.getId() == userId;
+    }
+    
+    public boolean canEdit(int userId) {
+        return !this.isClosed && 
+                this.startingTime.compareTo(new Date()) > 0 &&
+                this.owner.getId() == userId;
+    }
+    
+    
     public void setCategory(Category category) {
         if (category == null) {
             throw new IllegalArgumentException("Auction category cannot be empty.");

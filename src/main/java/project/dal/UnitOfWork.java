@@ -12,16 +12,11 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.NoResultException;
-import project.domain.Auction;
-import project.domain.Category;
-import project.domain.PasswordHasher;
-import project.domain.UserProfile;
-import project.service.CategoryDto;
+import project.domain.*;
+import project.service.*;
 
 /**
  *
@@ -110,6 +105,62 @@ public class UnitOfWork implements AutoCloseable {
         return true;
     }
     
+    public AuctionListItemDto[] getActiveAuctions(int categoryId, SortOption sortOption, int userId) {
+        
+        TypedQuery<Auction> query;
+        
+        switch(sortOption) {
+            case Current_Price__Ascending :
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.highestBid",
+                Auction.class);
+                break;
+            case Current_Price__Descending:
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.highestBid DESC",
+                Auction.class);
+                break;
+            case Ending_Time__Asecnding:
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.endingTime",
+                Auction.class);
+                break;
+            case Ending_Time__Descending:
+            default:
+                query = this.em.createQuery(
+                "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.endingTime DESC",
+                Auction.class);
+                break;
+        }
+       
+        Stream<Auction> auctions = query.getResultStream();
+        AuctionListItemDto[] dtos = auctions
+                .map(a -> this.mapAuctionToListItemDto(a, userId))
+                .toArray(AuctionListItemDto[]::new);
+        
+        return dtos;
+    }
+    
+    private AuctionListItemDto mapAuctionToListItemDto(Auction auction, int userId) {
+        AuctionListItemDto dto = new AuctionListItemDto();
+        dto.setId(auction.getId());
+        dto.setCategory(this.mapCategoryToDto(auction.getCategory()));
+        dto.setTitle(auction.getTitle());
+        dto.setIsClosed(auction.isIsClosed());
+        if (auction.getHighestBid() != null) {
+            dto.setLatestBidAmmount(auction.getHighestBid().getAmmount());
+        }
+        dto.setCanCancel(auction.canCancel(userId));
+        dto.setCanEdit(auction.canEdit(userId));
+        
+        return dto;
+    }
+    
+    private CategoryDto mapCategoryToDto(Category category) {
+        CategoryDto dto = new CategoryDto(category.getId(), category.getTitle());
+        return dto;
+    }
+    
     public boolean isEmpty() {
         TypedQuery<Integer> query = this.em.createQuery("Select count(c) from Category c", Integer.class);
         return query.getFirstResult() == 0;
@@ -136,40 +187,45 @@ public class UnitOfWork implements AutoCloseable {
         if (!_isInitialized) {
             
             EntityManagerFactory emf = Persistence.createEntityManagerFactory( "auctions_persistence_unit" );
-            EntityManager em = emf.createEntityManager( );
+            EntityManager emanager = emf.createEntityManager( );
             
             
 
-            if (em.createQuery("Select count(c) from Category c", Integer.class).getFirstResult() == 0) {
+            if (emanager.createQuery("Select count(c) from Category c", Integer.class).getFirstResult() == 0) {
 
-                em.getTransaction().begin();
+                emanager.getTransaction().begin();
                 
                 PasswordHasher hasher = new PasswordHasher();
 
                 hasher.hash("shalom");
                 UserProfile yaniv = new UserProfile("yaniv", "Yaniv", "Shalom", hasher.getHash(), hasher.getSalt());
-                em.persist(yaniv);
+                emanager.persist(yaniv);
+                emanager.flush();
 
                 hasher.hash("gross");
                 UserProfile aharon = new UserProfile("aharon", "Aharon", "Gross", hasher.getHash(), hasher.getSalt());
-                em.persist(aharon);
+                emanager.persist(aharon);
+                emanager.flush();
 
                 Category israeliCoins = new Category("Israeli Coins");
-                em.persist(israeliCoins);
+                emanager.persist(israeliCoins);
+                emanager.flush();
 
                 Auction israeliCoinsAuction = new Auction(yaniv, "100 Israeli ancient coins", "100 Israeli ancient coins from 100 BC", 
                         israeliCoins,  new Date(), 12, new BigDecimal(10000.0), new BigDecimal(20000.0), new BigDecimal(15000.0));
-                em.persist(israeliCoinsAuction);
+                emanager.persist(israeliCoinsAuction);
+                emanager.flush();
 
                 Auction israeliCoinsAuction2 = new Auction(aharon, "200 Israeli coins from 1985", "200 Israeli coins from 1985", 
                         israeliCoins,  new Date(), 10, new BigDecimal(1000.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
-                em.persist(israeliCoinsAuction2);
+                emanager.persist(israeliCoinsAuction2);
+                emanager.flush();
 
-                em.getTransaction().commit();
+                emanager.getTransaction().commit();
                 
             }
             
-            em.close();
+            emanager.close();
             emf.close();
     
             _isInitialized = true;
