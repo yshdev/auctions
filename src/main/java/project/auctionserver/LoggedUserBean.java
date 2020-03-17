@@ -39,6 +39,34 @@ public class LoggedUserBean implements Serializable {
         return connectedUser;
     }
     
+    public String getUserName () {
+        return userName;
+    }
+    
+    public String getPassword () {
+        return password;
+    }
+    
+    public String getConfirmPassword () {
+        return confirmPassword;
+    }
+    
+    public String getFirstName () {
+        return firstName;
+    }
+    
+    public String getLastName () {
+        return lastName;
+    }
+    
+    public String getEmail () {
+        return email;
+    }
+    
+    public String getPhone () {
+        return phone;
+    }
+    
     public String getErrLoginMessage() {
         return errLoginMessage;
     }
