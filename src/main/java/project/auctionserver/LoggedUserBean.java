@@ -10,6 +10,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import project.dal.UnitOfWork;
 import project.domain.UserProfile;
+import project.domain.PasswordHasher;
 
 @Named(value = "loggedUserBean")
 @SessionScoped
@@ -117,12 +118,14 @@ public class LoggedUserBean implements Serializable {
        with database and accordingly change system status or print
        an error message.*/
     public String login() {
-        if (userName.equals("aharon")) {
-        /*******************************************************************
-         * temporary condition. need to be changed to compare input to DB:
-         *      if (isRegistered(userName, password))
-         *******************************************************************/
-            connectedUser = null; // !!! get from DB currect UserProfile !!!!
+        
+        UnitOfWork unitOfWork = UnitOfWork.create();
+        UserProfile loginUser = unitOfWork.getLoginUser(userName, password);
+        unitOfWork.close();
+        
+        if (loginUser != null) {
+        
+            connectedUser = loginUser;
             errLoginMessage = null;
             errRegisterMessage = null;
             return "mainMenu.xhtml";
@@ -144,7 +147,10 @@ public class LoggedUserBean implements Serializable {
         
         if (!isRegistered) { // not registered yet
         
-            UserProfile user = new UserProfile("yaniv", "Yaniv", "Shalom", "111", "3335");
+            PasswordHasher hasher = new PasswordHasher();
+            hasher.hash(password);
+            
+            UserProfile user = new UserProfile(userName, firstName, lastName, hasher.getHash(), hasher.getSalt());
             unitOfWork = UnitOfWork.create();
             unitOfWork.persist(user);
             unitOfWork.saveChanges();

@@ -105,6 +105,25 @@ public class UnitOfWork implements AutoCloseable {
         return true;
     }
     
+    public UserProfile getLoginUser (String userName, String password) {
+        PasswordHasher hasher = new PasswordHasher();
+        hasher.hash(password);
+        
+        try {
+            UserProfile loginUser =
+                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE "
+                        + "u.username = :inputName")
+                .setParameter("inputName", userName)
+                .setParameter("inputHash", hasher.getHash())
+                .setParameter("inputsalt", hasher.getSalt())
+                .getSingleResult();
+            return loginUser;
+        }
+        catch (NoResultException e) {
+            return null;
+        }
+    }
+    
     public AuctionListItemDto[] getActiveAuctions(int categoryId, SortOption sortOption, int userId) {
         
         TypedQuery<Auction> query;
