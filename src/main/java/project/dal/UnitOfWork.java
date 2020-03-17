@@ -189,21 +189,21 @@ public class UnitOfWork implements AutoCloseable {
             EntityManagerFactory emf = Persistence.createEntityManagerFactory( "auctions_persistence_unit" );
             EntityManager emanager = emf.createEntityManager( );
             
-            
+            long categoriesCount = emanager.createQuery("Select count(c) from Category c", Long.class).getSingleResult();
 
-            if (emanager.createQuery("Select count(c) from Category c", Integer.class).getFirstResult() == 0) {
+            if (categoriesCount == 0) {
 
                 emanager.getTransaction().begin();
                 
                 PasswordHasher hasher = new PasswordHasher();
 
                 hasher.hash("shalom");
-                UserProfile yaniv = new UserProfile("yaniv", "Yaniv", "Shalom", hasher.getHash(), hasher.getSalt());
+                UserProfile yaniv = new UserProfile("yaniv", "Yaniv", "Shalom", "yaniv@gmail.com", hasher.getHash(), hasher.getSalt());
                 emanager.persist(yaniv);
                 emanager.flush();
 
                 hasher.hash("gross");
-                UserProfile aharon = new UserProfile("aharon", "Aharon", "Gross", hasher.getHash(), hasher.getSalt());
+                UserProfile aharon = new UserProfile("aharon", "Aharon", "Gross", "aharon@gmail.com", hasher.getHash(), hasher.getSalt());
                 emanager.persist(aharon);
                 emanager.flush();
 

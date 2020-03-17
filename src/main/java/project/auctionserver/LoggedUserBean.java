@@ -9,6 +9,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import project.dal.UnitOfWork;
+import project.domain.PasswordHasher;
 import project.domain.UserProfile;
 
 @Named(value = "loggedUserBean")
@@ -46,6 +47,36 @@ public class LoggedUserBean implements Serializable {
     public String getErrRegisterMessage() {
         return errRegisterMessage;
     }
+    
+    public String getUserName() {
+        return this.userName;
+    }
+    
+    public String getPassword() {
+        return this.password;
+    }
+    
+    public String getConfirmPassword() {
+        return this.confirmPassword;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+    
+    
     
     public void setUserName(String userName) {
         this.userName = userName;
@@ -110,24 +141,26 @@ public class LoggedUserBean implements Serializable {
        yet.*/
     public String register() {
         
-        UnitOfWork unitOfWork = UnitOfWork.create();
-        boolean isRegistered = unitOfWork.isRegistered(email);
-        unitOfWork.close();
+        try (UnitOfWork unitOfWork = UnitOfWork.create()) {
         
-        if (!isRegistered) { // not registered yet
+            boolean isRegistered = unitOfWork.isRegistered(email);
+            if (!isRegistered) { // not registered yet
         
-            UserProfile user = new UserProfile("yaniv", "Yaniv", "Shalom", "111", "3335");
-            unitOfWork = UnitOfWork.create();
-            unitOfWork.persist(user);
-            unitOfWork.saveChanges();
-            unitOfWork.close();
+                PasswordHasher h = new PasswordHasher();
+                h.hash(this.password);
+                
+                UserProfile user = new UserProfile(this.userName, this.firstName, this.lastName, this.email, h.getHash(), h.getSalt());
+                
+                unitOfWork.persist(user);
+                unitOfWork.saveChanges();
             
-            connectedUser = user;
-            return "mainMenu.xhtml";
-        }
-        else {
-            errRegisterMessage= "you are registered already";
-            return "register.xhtml";
+                connectedUser = user;
+                return "mainMenu.xhtml";
+            }
+            else {
+                errRegisterMessage= "you are registered already";
+                return "register.xhtml";
+            }
         }
     }
 }

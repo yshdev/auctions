@@ -36,13 +36,14 @@ public class UserProfile implements Serializable {
     {
     }
     
-    public UserProfile(String username, String firstName, String lastName, String passwordHash, String passwordSalt)
+    public UserProfile(String username, String firstName, String lastName, String email, String passwordHash, String passwordSalt)
     {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
+        this.email = email;
     }
     
 
@@ -77,6 +78,8 @@ public class UserProfile implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     } 
+    
+    
  
     public List<Bid> getBids() {
         return bids;
