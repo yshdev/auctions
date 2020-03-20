@@ -11,6 +11,7 @@ import java.io.Serializable;
 import project.dal.UnitOfWork;
 import project.domain.PasswordHasher;
 import project.domain.UserProfile;
+import project.domain.PasswordHasher;
 
 @Named(value = "loggedUserBean")
 @SessionScoped
@@ -38,6 +39,34 @@ public class LoggedUserBean implements Serializable {
     
     public UserProfile getConnectedUser() {
         return connectedUser;
+    }
+    
+    public String getUserName () {
+        return userName;
+    }
+    
+    public String getPassword () {
+        return password;
+    }
+    
+    public String getConfirmPassword () {
+        return confirmPassword;
+    }
+    
+    public String getFirstName () {
+        return firstName;
+    }
+    
+    public String getLastName () {
+        return lastName;
+    }
+    
+    public String getEmail () {
+        return email;
+    }
+    
+    public String getPhone () {
+        return phone;
     }
     
     public String getErrLoginMessage() {
@@ -120,12 +149,14 @@ public class LoggedUserBean implements Serializable {
        with database and accordingly change system status or print
        an error message.*/
     public String login() {
-        if (userName.equals("aharon")) {
-        /*******************************************************************
-         * temporary condition. need to be changed to compare input to DB:
-         *      if (isRegistered(userName, password))
-         *******************************************************************/
-            connectedUser = null; // !!! get from DB currect UserProfile !!!!
+        
+        UnitOfWork unitOfWork = UnitOfWork.create();
+        UserProfile loginUser = unitOfWork.getLoginUser(userName, password);
+        unitOfWork.close();
+        
+        if (loginUser != null) {
+        
+            connectedUser = loginUser;
             errLoginMessage = null;
             errRegisterMessage = null;
             return "mainMenu.xhtml";
