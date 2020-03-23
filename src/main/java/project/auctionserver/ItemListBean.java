@@ -3,9 +3,11 @@ package project.auctionserver;
 import project.service.CategoryDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Timestamp;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import project.dal.UnitOfWork;
 import project.domain.*;
 
@@ -110,5 +112,39 @@ public class ItemListBean implements Serializable {
     public String displayItem(Auction auction) {
         this.chosenAuction = auction;
         return "itemDisplay.xhtml";
+    }
+    
+    public String cancelAuction() {
+        UnitOfWork unitOfWork = UnitOfWork.create();
+        unitOfWork.delete(chosenAuction);
+        unitOfWork.saveChanges();
+        unitOfWork.close();
+        
+        return "mainMenu.xhtml";
+    }
+    
+    public BigDecimal minBid() {
+        BigDecimal bid = new BigDecimal(chosenAuction.getHighestBid().getAmmount().toString());
+        
+        long num = chosenAuction.getHighestBid().getAmmount().longValue();
+        int digits = (int)(Math.log10(num)+1);
+        int diff = 1;
+        if (digits > 1)
+            diff = 5*(digits-1);
+        BigDecimal res = bid.add(new BigDecimal(diff));
+        
+        return res;
+    }
+    
+    public void newBid(String inputBid, UserProfile connectedUser) {
+        
+        Bid bid = new Bid(chosenAuction, connectedUser, new BigDecimal(inputBid), new Timestamp(System.currentTimeMillis()));
+        UnitOfWork unitOfWork = UnitOfWork.create();
+        unitOfWork.persist(bid);
+        
+        chosenAuction.addBid(connectedUser, new BigDecimal(inputBid));
+        
+        unitOfWork.saveChanges();
+        unitOfWork.close();
     }
 }
