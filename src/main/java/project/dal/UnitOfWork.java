@@ -107,8 +107,18 @@ public class UnitOfWork implements AutoCloseable {
                             .getSingleResult();
         } catch (NoResultException e) {
             return false;
+    
+    public boolean isUniqueName (String userName) {
+        try{
+            UserProfile userByUserName =
+                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.userName = :inputUserName")
+                .setParameter("inputUserName", userName)
+                .getSingleResult();
         }
-        return true;
+        catch (NoResultException e) {
+            return true;
+        }
+        return false;
     }
 
     public UserProfile getLoginUser(String userName, String password) {
@@ -127,6 +137,14 @@ public class UnitOfWork implements AutoCloseable {
         } catch (NoResultException e) {
             return null;
         }
+        
+        PasswordHasher hasher = new PasswordHasher();
+        
+        /*******************************
+         * compare input "password" with data of loginUser.
+         * return loginUser if equal, else return null
+         *******************************/
+        return loginUser;
     }
 
     public AuctionListItemDto[] getActiveAuctions(int categoryId, SortOption sortOption, int userId) {

@@ -144,8 +144,8 @@ public class LoggedUserBean implements Serializable {
         
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
         
-            boolean isRegistered = unitOfWork.isRegistered(email);
-            if (!isRegistered) { // not registered yet
+            boolean isUnique = unitOfWork.isUniqueName(userName);
+            if (isUnique) { // not registered yet
         
                 PasswordHasher h = new PasswordHasher();
                 h.hash(this.password);
@@ -159,7 +159,7 @@ public class LoggedUserBean implements Serializable {
                 return "mainMenu.xhtml";
             }
             else {
-                errRegisterMessage= "you are registered already";
+                errRegisterMessage= "sory, this User Name is already taken";
                 return "register.xhtml";
             }
         }
