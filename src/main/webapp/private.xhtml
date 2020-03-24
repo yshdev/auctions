@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>DailyAuctions - Private Area</title>
     </h:head>
@@ -17,10 +19,65 @@
         <hr/>
         <h2>private area</h2>
         
+        <h:outputLink value="sellItem.xhtml">add new item</h:outputLink>
+        
+        <h:form>
+            <h:selectOneMenu value="#{itemListBean.category}">
+                <f:selectItems value="#{itemListBean.getCategories()}" var="categroy"
+                               itemLabel="#{categroy.title}" itemValue="#{categroy}"/>
+            </h:selectOneMenu>
+            <h:selectOneMenu value="#{itemListBean.sortOption}">
+                <f:selectItems value="#{itemListBean.sortOptions}"/>
+            </h:selectOneMenu>
+            <h:commandButton id="submitButton" value="Submit"
+                             action="#{itemListBean.createLists(loggedUserBean.connectedUser)}">
+            </h:commandButton>
+        </h:form>
+        
         <h:form>
             <h:panelGrid columns="2" border="1">
                 <h:outputText value="My Items" style="font-size:110%"/>
                 <h:outputText value="My Bids" style="font-size:110%"/>
+                <h:outputText value="Active"/>
+                <h:outputText value="Active"/>
+                <ui:repeat value="#{itemListBean.itemsActiveList}" var="item">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                        <h:commandLink action="#{itemListBean.displayItem(item)}" value="details"/>
+                        <h:outputText value="#{item.category.title}"></h:outputText>
+                        <h:panelGroup/>
+                        <h:outputText value="latest bid: #{item.highestBid.ammount}"></h:outputText>
+                    </h:panelGrid>
+                </ui:repeat>
+                <ui:repeat value="#{itemListBean.bidsActiveList}" var="item">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                        <h:commandLink action="#{itemListBean.displayItem(item)}" value="bid again"/>
+                        <h:outputText value="#{item.category.title}"></h:outputText>
+                        <h:panelGroup/>
+                        <h:outputText value="latest bid: #{item.highestBid.ammount}"></h:outputText>
+                    </h:panelGrid>
+                </ui:repeat>
+                <h:outputText value="Closed"/>
+                <h:outputText value="Closed"/>
+                <ui:repeat value="#{itemListBean.itemsClosedList}" var="item">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                        <h:commandLink action="#{itemListBean.displayItem(item)}" value="details"/>
+                        <h:outputText value="#{item.category.title}"></h:outputText>
+                        <h:panelGroup/>
+                        <h:outputText value="latest bid: #{item.highestBid.ammount}"></h:outputText>
+                    </h:panelGrid>
+                </ui:repeat>
+                <ui:repeat value="#{itemListBean.bidsClosedList}" var="item">
+                    <h:panelGrid columns="2">
+                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                        <h:commandLink action="#{itemListBean.displayItem(item)}" value="details"/>
+                        <h:outputText value="#{item.category.title}"></h:outputText>
+                        <h:panelGroup/>
+                        <h:outputText value="latest bid: #{item.highestBid.ammount}"></h:outputText>
+                    </h:panelGrid>
+                </ui:repeat>
             </h:panelGrid>
         </h:form>
     </h:body>

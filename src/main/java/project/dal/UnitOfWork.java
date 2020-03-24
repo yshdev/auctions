@@ -92,6 +92,10 @@ public class UnitOfWork implements AutoCloseable {
         
     }
     
+    public void delete(Auction chosenAuction) {
+        em.remove(chosenAuction);
+    }
+    
     public boolean isRegistered (String email) {
         try{
             UserProfile userByEmail =
