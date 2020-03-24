@@ -96,36 +96,39 @@ public class UnitOfWork implements AutoCloseable {
         em.remove(chosenAuction);
     }
     
-    public boolean isRegistered (String email) {
+    public boolean isUniqueName (String userName) {
         try{
-            UserProfile userByEmail =
-                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.email = :inputEmail")
-                .setParameter("inputEmail", email)
+            UserProfile userByUserName =
+                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.userName = :inputUserName")
+                .setParameter("inputUserName", userName)
                 .getSingleResult();
         }
         catch (NoResultException e) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
     
     public UserProfile getLoginUser (String userName, String password) {
-        PasswordHasher hasher = new PasswordHasher();
-        hasher.hash(password);
         
+        UserProfile loginUser = null;
         try {
-            UserProfile loginUser =
-                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE "
-                        + "u.username = :inputName AND u.passwordHash = :inputHash AND u.passwordSalt = :inputSalt")
+            loginUser =
+                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.username = :inputName")
                 .setParameter("inputName", userName)
-                .setParameter("inputHash", hasher.getHash())
-                .setParameter("inputSalt", hasher.getSalt())
                 .getSingleResult();
-            return loginUser;
         }
-        catch (NoResultException e) {
+        catch (NoResultException e) { // no such UserName in DB
             return null;
         }
+        
+        PasswordHasher hasher = new PasswordHasher();
+        
+        /*******************************
+         * compare input "password" with data of loginUser.
+         * return loginUser if equal, else return null
+         *******************************/
+        return loginUser;
     }
     
     public AuctionListItemDto[] getActiveAuctions(int categoryId, SortOption sortOption, int userId) {

@@ -77,33 +77,6 @@ public class LoggedUserBean implements Serializable {
         return errRegisterMessage;
     }
     
-    public String getUserName() {
-        return this.userName;
-    }
-    
-    public String getPassword() {
-        return this.password;
-    }
-    
-    public String getConfirmPassword() {
-        return this.confirmPassword;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
     
     
     
@@ -174,8 +147,8 @@ public class LoggedUserBean implements Serializable {
         
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
         
-            boolean isRegistered = unitOfWork.isRegistered(email);
-            if (!isRegistered) { // not registered yet
+            boolean isUnique = unitOfWork.isUniqueName(userName);
+            if (isUnique) { // not registered yet
         
                 PasswordHasher h = new PasswordHasher();
                 h.hash(this.password);
@@ -189,7 +162,7 @@ public class LoggedUserBean implements Serializable {
                 return "mainMenu.xhtml";
             }
             else {
-                errRegisterMessage= "you are registered already";
+                errRegisterMessage= "sory, this User Name is already taken";
                 return "register.xhtml";
             }
         }
