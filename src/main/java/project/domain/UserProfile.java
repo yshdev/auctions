@@ -27,6 +27,7 @@ public class UserProfile implements Serializable {
     private String email;
     private String passwordHash;
     private String passwordSalt;
+    private String phoneNumber;
     
     @OneToMany(mappedBy = "bidder")
     private List<Bid> bids = new ArrayList<Bid>();
@@ -36,7 +37,7 @@ public class UserProfile implements Serializable {
     {
     }
     
-    public UserProfile(String username, String firstName, String lastName, String email, String passwordHash, String passwordSalt)
+    public UserProfile(String username, String firstName, String lastName, String email, String phoneNumber, String passwordHash, String passwordSalt)
     {
         this.username = username;
         this.firstName = firstName;
@@ -44,6 +45,7 @@ public class UserProfile implements Serializable {
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
         this.email = email;
+        this.phoneNumber = phoneNumber;
     }
     
 
@@ -75,11 +77,13 @@ public class UserProfile implements Serializable {
         return lastName;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     } 
-    
-    
  
     public List<Bid> getBids() {
         return bids;

@@ -77,36 +77,6 @@ public class LoggedUserBean implements Serializable {
         return errRegisterMessage;
     }
     
-    public String getUserName() {
-        return this.userName;
-    }
-    
-    public String getPassword() {
-        return this.password;
-    }
-    
-    public String getConfirmPassword() {
-        return this.confirmPassword;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-    
-    
-    
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -180,7 +150,7 @@ public class LoggedUserBean implements Serializable {
                 PasswordHasher h = new PasswordHasher();
                 h.hash(this.password);
                 
-                UserProfile user = new UserProfile(this.userName, this.firstName, this.lastName, this.email, h.getHash(), h.getSalt());
+                UserProfile user = new UserProfile(this.userName, this.firstName, this.lastName, this.email, this.phone, h.getHash(), h.getSalt());
                 
                 unitOfWork.persist(user);
                 unitOfWork.saveChanges();

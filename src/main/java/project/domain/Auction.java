@@ -5,12 +5,17 @@
  */
 package project.domain;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import project.dal.ImageUtils;
 
 /**
  *
@@ -51,24 +56,27 @@ public class Auction implements Serializable {
     
     @OneToMany(mappedBy = "auction")
     private List<Bid> bids = new ArrayList<Bid>();
+    
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] picture;
 
     // For
     public Auction() {
     }
 
-    public Auction(UserProfile owner, String title, String description, Category category, Date startingTime, int numOfDays, BigDecimal startingAmount,
-            BigDecimal winningAmount, BigDecimal reservedPrice) {
+    public Auction(UserProfile owner, Category category) {
         
         if (owner == null) {
             throw new IllegalArgumentException("Auction owner must be set.");
         }
+        
+        if (category == null) {
+            throw new IllegalArgumentException("Auction category cannot be null.");
+        }
+                
         this.owner = owner;
-        this.setTitle(title);
-        this.setTimes(startingTime, numOfDays);
-        this.setAmounts(startingAmount, winningAmount, reservedPrice);
-        this.setDescription(description);
-        this.setCategory(category);
-        this.isClosed = false;
+        this.category = category;
     }
    
     public int getId() {
@@ -84,8 +92,6 @@ public class Auction implements Serializable {
         return description;
     }
     
-    
-
     public List<Bid> getBids() {
         return bids;
     }
@@ -126,6 +132,13 @@ public class Auction implements Serializable {
         return category;
     }
     
+    public Image getPicture() throws IOException {
+        if (this.picture == null) { 
+            return null;
+        }
+        return ImageUtils.convertBytesToImage(this.picture);
+    }
+    
     public boolean canCancel(int userId) {
         return !this.isClosed && 
                 this.startingTime.compareTo(new Date()) > 0 &&
@@ -148,7 +161,7 @@ public class Auction implements Serializable {
     
     public void setTitle(String title) {
         
-        if (title == null) {
+        if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Auction title must be set");
         }
             
@@ -164,12 +177,23 @@ public class Auction implements Serializable {
         this.description = description;
     }
     
+    public void setPicture(BufferedImage picture, String imageType) throws IOException {
+        if (picture == null) { 
+            this.picture = null;
+        }
+        this.picture = ImageUtils.convertImageToBytes(picture, imageType);
+    }
+    
     public void setTimes(Date startingTime, int numOfDays) {
         this.assertCanModify();
         
          if (startingTime == null) {
             throw new IllegalArgumentException("Auction starting time must be set.");
         }
+         
+         if (startingTime.compareTo(new Date()) < 0) {
+             throw new IllegalArgumentException("Auction starting time must be greater than now.");
+         }
         
         if (numOfDays <= 0) {
             throw new IllegalArgumentException("Auction number of days must be positive.");
@@ -242,5 +266,6 @@ public class Auction implements Serializable {
             throw new IllegalStateException("Auction has already started. Cannot modify.");
         }
     }
-            
+    
+    
 }
