@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -161,12 +160,13 @@ public class Auction implements Serializable {
     
     public void setTitle(String title) {
         
-        if (title == null || title.isBlank()) {
+        if (title == null) {
             throw new IllegalArgumentException("Auction title must be set");
         }
             
         title = title.trim();
-        if (title.length() == 0) {
+        
+        if (title.isEmpty()) {
             throw new IllegalArgumentException("Auction title cannot be empty.");
         }
         this.title = title;
