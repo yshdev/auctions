@@ -99,22 +99,10 @@ public class UnitOfWork implements AutoCloseable {
         em.remove(chosenAuction);
     }
 
-    public boolean isRegistered(String email) {
-        try {
-            UserProfile userByEmail
-                    = (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.email = :inputEmail")
-                            .setParameter("inputEmail", email)
-                            .getSingleResult();
-            return true;
-        } catch (NoResultException e) {
-            return false;
-        }
-    }
-    
     public boolean isUniqueName (String userName) {
         try{
             UserProfile userByUserName =
-                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.userName = :inputUserName")
+                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.username = :inputUserName")
                 .setParameter("inputUserName", userName)
                 .getSingleResult();
         }
@@ -125,21 +113,25 @@ public class UnitOfWork implements AutoCloseable {
     }
 
     public UserProfile getLoginUser(String userName, String password) {
-        PasswordHasher hasher = new PasswordHasher();
-        hasher.hash(password);
-
+        
+        UserProfile loginUser = null;
         try {
-            UserProfile loginUser
-                    = (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE "
-                            + "u.username = :inputName AND u.passwordHash = :inputHash AND u.passwordSalt = :inputSalt")
-                            .setParameter("inputName", userName)
-                            .setParameter("inputHash", hasher.getHash())
-                            .setParameter("inputSalt", hasher.getSalt())
-                            .getSingleResult();
-            return loginUser;
-        } catch (NoResultException e) {
+            loginUser =
+                (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.username = :inputName")
+                .setParameter("inputName", userName)
+                .getSingleResult();
+        }
+        catch (NoResultException e) { // no such UserName in DB
             return null;
         }
+        
+        PasswordHasher hasher = new PasswordHasher();
+        boolean isAuthenticate = hasher.authenticate(password, loginUser.getPasswordHash(), loginUser.getPasswordSalt());
+        
+        if (isAuthenticate)
+            return loginUser;
+        else
+            return null;
     }
 
     public AuctionListItemDto[] getActiveAuctions(int categoryId, SortOption sortOption, int userId) {

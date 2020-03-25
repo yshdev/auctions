@@ -53,5 +53,24 @@ public class PasswordHasher {
     public String getHash() {
         return hash;
     }
+    
+    public boolean authenticate(String inputPassword, String DBHash, String DBSalt) {
+         
+        try {
+            
+            KeySpec spec = new PBEKeySpec(inputPassword.toCharArray(), DBSalt.getBytes(), 100, 128);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hashBytes = factory.generateSecret(spec).getEncoded();
+            
+            String expectedHash = new String(hashBytes, StandardCharsets.UTF_8);
+            if (DBHash.equals(expectedHash))
+                return true;
+            
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {
+            throw new SecurityException("Failed creating an hash", ex);
+        }
+        
+        return false;
+    }
      
 }
