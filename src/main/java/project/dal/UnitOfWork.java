@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -244,7 +245,12 @@ public class UnitOfWork implements AutoCloseable {
                     a1.setDescription("Israeli 100 Pruta from 1954 (Not magnetic)");
                     a1.setTimes(new Date(), 12);
                     a1.setAmounts(new BigDecimal(150.0), new BigDecimal(300.0), new BigDecimal(250.0));
-                    a1.setPicture(ImageUtils.loadImage("Israeli100Prutacoin.jpg"), "jpg");
+                    try{
+                        a1.setPicture(ImageUtils.loadImage("Israeli100Prutacoin.jpg"), "jpg");
+                    }
+                    catch (URISyntaxException e) {
+                        return;
+                    }
                     emanager.persist(a1);
                     emanager.flush();
 
@@ -253,7 +259,12 @@ public class UnitOfWork implements AutoCloseable {
                     a2.setDescription("Israeli Govenment silver coins");
                     a2.setTimes(new Date(), 10);
                     a2.setAmounts(new BigDecimal(1000.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
-                    a2.setPicture(ImageUtils.loadImage("IsraeliSilverCoins.jpg"), "jpg");
+                    try{
+                        a2.setPicture(ImageUtils.loadImage("IsraeliSilverCoins.jpg"), "jpg");
+                    }
+                    catch (URISyntaxException e) {
+                        return;
+                    }
                     emanager.persist(a2);
                     emanager.flush();
 
@@ -262,7 +273,12 @@ public class UnitOfWork implements AutoCloseable {
                     a3.setDescription("Sheep head 60x50 - Acrylic on canvas - h:60 w:50 cm - signed lower center and again on the reverse");
                     a3.setTimes(new Date(), 20);
                     a3.setAmounts(new BigDecimal(800.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
-                    a3.setPicture(ImageUtils.loadImage("SheepHead-MenasheKadishman.jpg"), "jpg");
+                    try{
+                        a3.setPicture(ImageUtils.loadImage("SheepHead-MenasheKadishman.jpg"), "jpg");
+                    }
+                    catch (URISyntaxException e) {
+                        return;
+                    }
                     emanager.persist(a3);
                     emanager.flush();
 
