@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import project.dal.UnitOfWork;
 import project.domain.*;
+import project.service.AuctionListItemDto;
+import project.service.SortOption;
 
 @Named(value = "itemListBean")
 @SessionScoped
@@ -19,9 +21,9 @@ public class ItemListBean implements Serializable {
         "current price - ascending order", "current price - descending order",
         "ending time - ascending order", "ending time - descending order"};
     
-    private Category category;
+    private Integer categoryId;
     private String sortOption;
-    private List<Auction> chosenList;
+    private AuctionListItemDto[] activeAuctions;
     private List<Auction> itemsActiveList = new ArrayList<>();
     private List<Auction> bidsActiveList = new ArrayList<>();
     private List<Auction> itemsClosedList = new ArrayList<>();
@@ -31,8 +33,12 @@ public class ItemListBean implements Serializable {
     public ItemListBean() {
     }
     
-    public void setCategory(Category category) {
-        this.category = category;
+    public Integer getCategoryId() {
+        return this.categoryId;
+    }
+    
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
     
     public void setSortOption(String sortOption) {
@@ -43,9 +49,7 @@ public class ItemListBean implements Serializable {
         this.chosenAuction = chosenAuction;
     }
     
-   public Category getCategory() {
-        return category;
-    }
+   
     
     public String getSortOption() {
         return sortOption;
@@ -55,8 +59,8 @@ public class ItemListBean implements Serializable {
         return sortOptions;
     }
     
-    public List<Auction> getChosenList() {
-        return chosenList;
+    public AuctionListItemDto[] getActiveAuctions() {
+        return this.activeAuctions;
     }
     
     public List<Auction> getItemsActiveList() {
@@ -75,6 +79,20 @@ public class ItemListBean implements Serializable {
         return bidsClosedList;
     }
     
+    public String updateActiveAuctions(Integer userId) {
+        try (UnitOfWork unitOfWork = UnitOfWork.create()) {
+
+            if (this.getCategoryId() != null) {
+                this.activeAuctions = unitOfWork.getActiveAuctions(this.getCategoryId(), SortOption.Current_Price__Ascending, userId);
+            }
+            else {
+                this.activeAuctions = new AuctionListItemDto[0];
+            }
+        }
+        
+        return "mainMenu.xhtml";
+    }
+    
     public Auction getChosenAuction() {
         return chosenAuction;
     }
@@ -86,28 +104,28 @@ public class ItemListBean implements Serializable {
         }
     }
     
-    public void createLists(UserProfile connectedUser) {
-        UnitOfWork unitOfWork = UnitOfWork.create();
-        chosenList = unitOfWork.getSortedList(category, sortOption);
-        unitOfWork.close();
-        
-        for (Auction auction : chosenList) {
-            if (auction.getOwner() == connectedUser) {
-                if (auction.isIsClosed())
-                    itemsClosedList.add(auction);
-                else
-                    itemsActiveList.add(auction);
-            }
-            for (Bid bid : auction.getBids()) {
-                if (bid.getBidder() == connectedUser) {
-                    if (auction.isIsClosed())
-                        itemsClosedList.add(auction);
-                    else
-                        itemsActiveList.add(auction);
-                }
-            }
-        }
-    }
+//    public void createLists(UserProfile connectedUser) {
+//        UnitOfWork unitOfWork = UnitOfWork.create();
+//        chosenList = unitOfWork.getSortedList(category, sortOption);
+//        unitOfWork.close();
+//        
+//        for (Auction auction : chosenList) {
+//            if (auction.getOwner() == connectedUser) {
+//                if (auction.isClosed())
+//                    itemsClosedList.add(auction);
+//                else
+//                    itemsActiveList.add(auction);
+//            }
+//            for (Bid bid : auction.getBids()) {
+//                if (bid.getBidder() == connectedUser) {
+//                    if (auction.isClosed())
+//                        itemsClosedList.add(auction);
+//                    else
+//                        itemsActiveList.add(auction);
+//                }
+//            }
+//        }
+//    }
     
     public String displayItem(Auction auction) {
         this.chosenAuction = auction;

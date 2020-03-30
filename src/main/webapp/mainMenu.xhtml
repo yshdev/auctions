@@ -8,6 +8,7 @@
     <h:head>
         <title>Welcome to DailyAuctions</title>
     </h:head>
+    <h:outputStylesheet library="css" name="style.css"></h:outputStylesheet>
     <h:body>
         <h:form rendered="#{loggedUserBean.connectedUser != null}"
                 style="float:right; font-size:120%">
@@ -27,20 +28,25 @@
         <h:outputText value="DailyAuctions" style="font-size:200%"></h:outputText>
         <hr />
         
+        <div class="center">
         <h:form>
-            <h:selectOneMenu value="#{itemListBean.category}">
+            <label class="">Categories:</label> 
+            <h:selectOneMenu value="#{itemListBean.categoryId}">
                 <f:selectItems value="#{itemListBean.getCategories()}" var="categroy"
-                               itemLabel="#{categroy.title}" itemValue="#{categroy}"/>
+                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
             </h:selectOneMenu>
+            <label>Sort by:</label>
             <h:selectOneMenu value="#{itemListBean.sortOption}">
                 <f:selectItems value="#{itemListBean.sortOptions}"/>
             </h:selectOneMenu>
             <h:commandButton id="submitButton" value="Submit"
-                             action="#{itemListBean.createList()}"></h:commandButton>
+                             action="#{itemListBean.updateActiveAuctions(loggedUserBean.connectedUser == null ? null : loggedUserBean.connectedUser.id)}"></h:commandButton>
+                             
         </h:form>
+        </div>
         
         <h:form>
-            <ui:repeat value="#{itemListBean.chosenList}" var="item">
+            <ui:repeat value="#{itemListBean.activeAuctions}" var="item">
                 <h:panelGrid columns="2">
                     <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
                     <h:commandLink rendered="#{(loggedUserBean.connectedUser != null) and
@@ -53,7 +59,8 @@
                                   value="register.xhtml">register for details</h:outputLink>
                     <h:outputText value="#{item.category.title}"></h:outputText>
                     <h:panelGroup/>
-                    <h:outputText value="latest bid: #{item.highestBid.ammount}"></h:outputText>
+                    <h:outputText value="latest bid: #{item.latestBidAmount}"></h:outputText>
+                    <h:outputText value="starting amount: #{item.startingAmount}"></h:outputText>
                 </h:panelGrid>
             </ui:repeat>
         </h:form>

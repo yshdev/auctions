@@ -116,53 +116,55 @@ public class UnitOfWork implements AutoCloseable {
 
     public UserProfile getLoginUser(String userName, String password) {
 
-        UserProfile loginUser = null;
+        UserProfile user = null;
         try {
-            loginUser
-                    = (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.username = :inputName")
-                            .setParameter("inputName", userName)
-                            .getSingleResult();
+            user  = (UserProfile) this.em.createQuery("SELECT u FROM UserProfile u WHERE u.username = :inputName")
+                .setParameter("inputName", userName)
+                .getSingleResult();
         } catch (NoResultException e) { // no such UserName in DB
             return null;
         }
 
         PasswordHasher hasher = new PasswordHasher();
-        boolean isAuthenticate = hasher.authenticate(password, loginUser.getPasswordHash(), loginUser.getPasswordSalt());
+        
+        boolean isAuthenticated = hasher.authenticate(password, new HashAndSaltPair(user.getPasswordHash(), user.getPasswordSalt()));
 
-        if (isAuthenticate) {
-            return loginUser;
+        if (isAuthenticated) {
+            return user;
         } else {
             return null;
         }
     }
 
-    public AuctionListItemDto[] getActiveAuctions(int categoryId, SortOption sortOption, int userId) {
+    public AuctionListItemDto[] getActiveAuctions(int categoryId, SortOption sortOption, Integer userId) {
 
         TypedQuery<Auction> query;
 
         switch (sortOption) {
             case Current_Price__Ascending:
                 query = this.em.createQuery(
-                        "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.highestBid",
+                        "SELECT a FROM Auction a WHERE a.category.id = :inputCategory AND NOT a.isClosed = 1 ORDER BY a.highestBid",
                         Auction.class);
                 break;
             case Current_Price__Descending:
                 query = this.em.createQuery(
-                        "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.highestBid DESC",
+                        "SELECT a FROM Auction a WHERE a.category.id = :inputCategory AND NOT a.isClosed = 1 ORDER BY a.highestBid DESC",
                         Auction.class);
                 break;
             case Ending_Time__Asecnding:
                 query = this.em.createQuery(
-                        "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.endingTime",
+                        "SELECT a FROM Auction a WHERE a.category.id = :inputCategory AND NOT a.isClosed = 1 ORDER BY a.endingTime",
                         Auction.class);
                 break;
             case Ending_Time__Descending:
             default:
                 query = this.em.createQuery(
-                        "SELECT a FROM Auction a WHERE a.category = :inputCategory AND NOT a.isClosed ORDER BY a.endingTime DESC",
+                        "SELECT a FROM Auction a WHERE a.category.id = :inputCategory AND NOT a.isClosed = 1 ORDER BY a.endingTime DESC",
                         Auction.class);
                 break;
         }
+        
+        query = query.setParameter("inputCategory", categoryId);
 
         Stream<Auction> auctions = query.getResultStream();
         AuctionListItemDto[] dtos = auctions
@@ -172,18 +174,24 @@ public class UnitOfWork implements AutoCloseable {
         return dtos;
     }
 
-    private AuctionListItemDto mapAuctionToListItemDto(Auction auction, int userId) {
+    private AuctionListItemDto mapAuctionToListItemDto(Auction auction, Integer userId) {
         AuctionListItemDto dto = new AuctionListItemDto();
         dto.setId(auction.getId());
         dto.setCategory(this.mapCategoryToDto(auction.getCategory()));
         dto.setTitle(auction.getTitle());
-        dto.setIsClosed(auction.isIsClosed());
+        dto.setIsClosed(auction.isClosed());
+        dto.setStartingAmount(auction.getStartingAmount());
         if (auction.getHighestBid() != null) {
-            dto.setLatestBidAmmount(auction.getHighestBid().getAmmount());
+            dto.setLatestBidAmount(auction.getHighestBid().getAmmount());
         }
-        dto.setCanCancel(auction.canCancel(userId));
-        dto.setCanEdit(auction.canEdit(userId));
-
+        if (userId == null) {
+            dto.setCanCancel(false);
+            dto.setCanEdit(false);
+        }
+        else {
+            dto.setCanCancel(auction.canCancel(userId));
+            dto.setCanEdit(auction.canEdit(userId));
+        }
         return dto;
     }
 
@@ -226,17 +234,17 @@ public class UnitOfWork implements AutoCloseable {
 
                     PasswordHasher hasher = new PasswordHasher();
 
-                    hasher.hash("shalom");
-                    UserProfile yaniv = new UserProfile("yaniv", "Yaniv", "Shalom", "yaniv@gmail.com", "054-56534432", hasher.getHash(), hasher.getSalt());
+                    HashAndSaltPair hashAndSalt = hasher.hash("shalom");
+                    UserProfile yaniv = new UserProfile("yaniv", "Yaniv", "Shalom", "yaniv@gmail.com", "054-56534432", hashAndSalt.getHash(), hashAndSalt.getSalt());
                     emanager.persist(yaniv);
 
-                    hasher.hash("gross");
-                    UserProfile aharon = new UserProfile("aharon", "Aharon", "Gross", "aharon@gmail.com", "054-56534434", hasher.getHash(), hasher.getSalt());
+                    hashAndSalt = hasher.hash("gross");
+                    UserProfile aharon = new UserProfile("aharon", "Aharon", "Gross", "aharon@gmail.com", "054-56534434", hashAndSalt.getHash(), hashAndSalt.getSalt());
                     emanager.persist(aharon);
 
                     Category israeliCoins = new Category("Israeli Coins");
                     emanager.persist(israeliCoins);
-                    
+
                     Category israeliArt = new Category("Israeli Art");
                     emanager.persist(israeliArt);
 
@@ -245,12 +253,7 @@ public class UnitOfWork implements AutoCloseable {
                     a1.setDescription("Israeli 100 Pruta from 1954 (Not magnetic)");
                     a1.setTimes(new Date(), 12);
                     a1.setAmounts(new BigDecimal(150.0), new BigDecimal(300.0), new BigDecimal(250.0));
-                    try{
-                        a1.setPicture(ImageUtils.loadImage("Israeli100Prutacoin.jpg"), "jpg");
-                    }
-                    catch (URISyntaxException e) {
-                        return;
-                    }
+                    a1.setPicture(ImageUtils.loadImage("Israeli100Prutacoin.jpg"), "jpg");
                     emanager.persist(a1);
                     emanager.flush();
 
@@ -259,12 +262,7 @@ public class UnitOfWork implements AutoCloseable {
                     a2.setDescription("Israeli Govenment silver coins");
                     a2.setTimes(new Date(), 10);
                     a2.setAmounts(new BigDecimal(1000.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
-                    try{
-                        a2.setPicture(ImageUtils.loadImage("IsraeliSilverCoins.jpg"), "jpg");
-                    }
-                    catch (URISyntaxException e) {
-                        return;
-                    }
+                    a2.setPicture(ImageUtils.loadImage("IsraeliSilverCoins.jpg"), "jpg");
                     emanager.persist(a2);
                     emanager.flush();
 
@@ -273,21 +271,16 @@ public class UnitOfWork implements AutoCloseable {
                     a3.setDescription("Sheep head 60x50 - Acrylic on canvas - h:60 w:50 cm - signed lower center and again on the reverse");
                     a3.setTimes(new Date(), 20);
                     a3.setAmounts(new BigDecimal(800.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
-                    try{
-                        a3.setPicture(ImageUtils.loadImage("SheepHead-MenasheKadishman.jpg"), "jpg");
-                    }
-                    catch (URISyntaxException e) {
-                        return;
-                    }
+                    a3.setPicture(ImageUtils.loadImage("SheepHead-MenasheKadishman.jpg"), "jpg");
                     emanager.persist(a3);
                     emanager.flush();
 
                     emanager.getTransaction().commit();
 
-                } catch (IOException ex) {
+                } catch (IOException | URISyntaxException ex) {
                     Logger.getLogger(UnitOfWork.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+
                 emanager.close();
                 emf.close();
 
@@ -296,5 +289,4 @@ public class UnitOfWork implements AutoCloseable {
         }
     }
 
-    
 }

@@ -31,26 +31,26 @@
             <h:outputText value="Starting bid: #{itemListBean.getChosenAuction().getStartingAmount()}
                           Last bid: #{itemListBean.getChosenAuction().getHighestBid().getAmmount()}"/>
             <hr/>
-            <h:outputText rendered="#{itemListBean.getChosenAuction().isClosed}"
+            <h:outputText rendered="#{itemListBean.getChosenAuction().closed}"
                           style="font-weight: bold" value="Auction is Closed!"/>
-            <h:outputText rendered="#{itemListBean.getChosenAuction().isClosed and 
+            <h:outputText rendered="#{itemListBean.getChosenAuction().closed and 
                                       itemListBean.getChosenAuction().getOwner() =
                                       loggedUserBean.connectedUser}"
                           value="Winner: #{itemListBean.getChosenAuction().getHighestBid().getBidder().getFirstName()}
                                 #{itemListBean.getChosenAuction().getHighestBid().getBidder().getLastName()}
                                 , #{itemListBean.getChosenAuction().getHighestBid().getBidder().getEmail()}"/>
-            <h:outputText rendered="#{itemListBean.getChosenAuction().isClosed and 
+            <h:outputText rendered="#{itemListBean.getChosenAuction().closed and 
                                       itemListBean.getChosenAuction().getOwner() =
                                       loggedUserBean.connectedUser}"
                           value="Winning bid: #{itemListBean.getChosenAuction().getHighestBid().getAmmount()}"/>
-            <h:commandLink rendered="#{not itemListBean.getChosenAuction().isClosed and 
+            <h:commandLink rendered="#{not itemListBean.getChosenAuction().closed and 
                                       itemListBean.getChosenAuction().getOwner() =
                                       loggedUserBean.connectedUser}"
                            value="Cancel Auction" action="#{itemListBean.cancelAuction()}"/>
         </h:panelGrid>
         not closed and not owner, bid
         <h:panelGrid columns="4"
-                     rendered="#{not itemListBean.getChosenAuction().isClosed and 
+                     rendered="#{not itemListBean.getChosenAuction().closed and 
                                  not (itemListBean.getChosenAuction().getOwner() =
                                  loggedUserBean.connectedUser)}">
             <h:outputText value="Minimal Bid: #{itemListBean.minBid()}$"/>

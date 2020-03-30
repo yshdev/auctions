@@ -16,20 +16,22 @@ public class AuctionListItemDto {
     private int id;
     private String title;
     private CategoryDto category;
-    private BigDecimal latestBidAmmount;
+    private BigDecimal latestBidAmount;
     private boolean canCancel;
     private boolean canEdit;
     private boolean isClosed;
-    
+    private BigDecimal startingAmount;
 
     public AuctionListItemDto() {
     }
 
-    public AuctionListItemDto(int id, String title, CategoryDto category, BigDecimal latestBidAmmount) {
+    public AuctionListItemDto(int id, String title, CategoryDto category, BigDecimal startingAmmount, BigDecimal latestBidAmount) {
         this.id  = id;
         this.title = title;
         this.category = category;
-        this.latestBidAmmount = latestBidAmmount;
+        this.latestBidAmount = latestBidAmount;
+        this.startingAmount = startingAmmount;
+        
     }
 
     public int getId() {
@@ -56,12 +58,12 @@ public class AuctionListItemDto {
         this.category = category;
     }
 
-    public BigDecimal getLatestBidAmmount() {
-        return latestBidAmmount;
+    public BigDecimal getLatestBidAmount() {
+        return latestBidAmount;
     }
 
-    public void setLatestBidAmmount(BigDecimal latestBidAmmount) {
-        this.latestBidAmmount = latestBidAmmount;
+    public void setLatestBidAmount(BigDecimal latestBidAmount) {
+        this.latestBidAmount = latestBidAmount;
     }
 
     public boolean canCancel() {
@@ -87,4 +89,14 @@ public class AuctionListItemDto {
     public void setIsClosed(boolean isClosed) {
         this.isClosed = isClosed;
     }
+
+    public BigDecimal getStartingAmount() {
+        return startingAmount;
+    }
+
+    public void setStartingAmount(BigDecimal startingBid) {
+        this.startingAmount = startingBid;
+    }
+    
+    
 }

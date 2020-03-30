@@ -123,7 +123,7 @@ public class Auction implements Serializable {
         return endingTime;
     }
 
-    public boolean isIsClosed() {
+    public boolean isClosed() {
         return isClosed;
     }
 

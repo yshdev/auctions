@@ -9,6 +9,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import project.dal.UnitOfWork;
+import project.domain.HashAndSaltPair;
 import project.domain.PasswordHasher;
 import project.domain.UserProfile;
 import project.domain.PasswordHasher;
@@ -148,9 +149,9 @@ public class LoggedUserBean implements Serializable {
             if (isUnique) { // not registered yet
         
                 PasswordHasher h = new PasswordHasher();
-                h.hash(this.password);
+                HashAndSaltPair hashAndSalt = h.hash(this.password);
                 
-                UserProfile user = new UserProfile(this.userName, this.firstName, this.lastName, this.email, this.phone, h.getHash(), h.getSalt());
+                UserProfile user = new UserProfile(this.userName, this.firstName, this.lastName, this.email, this.phone, hashAndSalt.getHash(), hashAndSalt.getSalt());
                 
                 unitOfWork.persist(user);
                 unitOfWork.saveChanges();
