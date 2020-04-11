@@ -16,25 +16,29 @@
                       font-size:200%">DailyAuctions</h:outputLink>
         <hr/>
         <h2>Register</h2>
-        <h:form>
+        
+        <h:outputText rendered="#{loggedUserBean.userId != null}">You are already logged in. Logout if you want to register as another user</h:outputText>
+        
+        
+        <h:form rendered="#{loggedUserBean.userId == null}">
             <h:panelGrid columns="4">
                 <h:outputText value="User Name:"/>
                 <h:inputText id="regName" required="true"
                              requiredMessage="reqired"
-                             value="#{loggedUserBean.userName}"></h:inputText>
+                             value="#{userRegistrationBean.userName}"></h:inputText>
                 <h:panelGroup/> <h:panelGroup/> <h:panelGroup/>
                 <h:message for="regName" style="color:red"/>
                 <h:panelGroup/> <h:panelGroup/>
                 <h:outputText value="Password:"/>
                 <h:inputSecret id="regPassword" binding="#{passwordComponent}" required="true"
                                requiredMessage="reqired" validatorMessage="enter at least 4 characters"
-                               value="#{loggedUserBean.password}">
+                               value="#{userRegistrationBean.password}">
                     <f:validateLength minimum="4" />
                 </h:inputSecret>
                 <h:outputText value="Confirm:"/>
                 <h:inputSecret id="regConfirm" required="#{not empty passwordComponent.value}"
                                requiredMessage="reqired" validatorMessage="confirm failed. try again"
-                               value="#{loggedUserBean.confirmPassword}">
+                               value="#{userRegistrationBean.confirmPassword}">
                     <f:validator validatorId="confirmValidator" />
                     <f:attribute name="otherValue" value="#{passwordComponent.value}" />
                 </h:inputSecret>
@@ -45,11 +49,11 @@
                 <h:outputText value="First Name:"/>
                 <h:inputText id="regFirst" required="true"
                              requiredMessage="reqired"
-                             value="#{loggedUserBean.firstName}"></h:inputText>
+                             value="#{userRegistrationBean.firstName}"></h:inputText>
                 <h:outputText value="Last Name:"/>
                 <h:inputText id="regLast" required="true"
                              requiredMessage="reqired"
-                             value="#{loggedUserBean.lastName}"></h:inputText>
+                             value="#{userRegistrationBean.lastName}"></h:inputText>
                 <h:panelGroup/>
                 <h:message for="regFirst" style="color:red"/>
                 <h:panelGroup/>
@@ -57,7 +61,7 @@
                 <h:outputText value="Email:"/>
                 <h:inputText id="regEmail" required="true"
                              requiredMessage="reqired"
-                             value="#{loggedUserBean.email}"
+                             value="#{userRegistrationBean.email}"
                              validatorMessage="invalid Email address">
                     <f:validateRegex pattern=
                                      "\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" />
@@ -65,7 +69,7 @@
                 <h:outputText value="Phone:"/>
                 <h:inputText id="regPhone" required="true"
                              requiredMessage="reqired"
-                             value="#{loggedUserBean.phone}"
+                             value="#{userRegistrationBean.phone}"
                              validatorMessage="format 02-3456789 or 050-1234567">
                     <f:validateRegex pattern=
                                      "((\d{2})|(\d{3}))-\d{7}" />
@@ -76,10 +80,10 @@
                 <h:message for="regPhone" style="color:red"/>
             </h:panelGrid>
             <h:commandButton value="Register"
-                             action="#{loggedUserBean.register()}">
+                             action="#{userRegistrationBean.register()}">
             </h:commandButton>
             <br/>
-            <h:outputText value="#{loggedUserBean.errRegisterMessage}"
+            <h:outputText value="#{userRegistrationBean.errRegisterMessage}"
                           style="color:red"/>
             <br/>
             Already Registered?

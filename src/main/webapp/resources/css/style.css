@@ -8,5 +8,28 @@ and open the template in the editor.
     Author     : Shalom
 */
 .center {
-    margin:auto;width:50%;text-align: center
+    margin:auto;
+    width:80%;
+    text-align: center
+}
+
+label {
+    margin: 3px; font-family: "Arial";
+}
+
+.header-1 {
+    font-weight: 600;
+    font-size: x-large;
+    font-family: "Arial";
+}
+
+.header-2 {
+    font-weight: 400;
+    font-size: large;
+    font-family: "Arial";
+}
+
+td {
+    padding-left: 10px;
+    text-align: left;
 }

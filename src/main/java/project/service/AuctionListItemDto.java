@@ -19,6 +19,7 @@ public class AuctionListItemDto {
     private BigDecimal latestBidAmount;
     private boolean canCancel;
     private boolean canEdit;
+    private boolean canBid;
     private boolean isClosed;
     private BigDecimal startingAmount;
 
@@ -96,6 +97,14 @@ public class AuctionListItemDto {
 
     public void setStartingAmount(BigDecimal startingBid) {
         this.startingAmount = startingBid;
+    }
+
+    public boolean canBid() {
+        return canBid;
+    }
+
+    public void setCanBid(boolean canBid) {
+        this.canBid = canBid;
     }
     
     

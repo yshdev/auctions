@@ -4,68 +4,69 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:metadata>
+        <f:viewParam name="auctionId" value="#{auctionDetailsBean.auctionId}"></f:viewParam>
+    </f:metadata>
+
     <h:head>
-        <title>DailyAuctions - Item Display</title>
+        <title>DailyAuctions - Auction Display</title>
     </h:head>
+    <h:outputStylesheet library="css" name="style.css"></h:outputStylesheet>
     <h:body>
         <h:form style="float:right; font-size:120%">
-            hi #{loggedUserBean.connectedUser.username}!
+            Hi #{loggedUserBean.user.username}!
             <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>
         </h:form>
         <h:outputLink value="mainMenu.xhtml"
                       style="text-decoration: none; color:black;
                       font-size:200%">DailyAuctions</h:outputLink>
         <hr/>
-        <h2>Item Display</h2>
         
-        <h:panelGrid columns="1">
-            <h:outputText style="font-size: 105%"
-                          value="#{itemListBean.getChosenAuction().getTitle()}"/>
-            <h:outputText style="font-size: 95%"
-                          value="#{itemListBean.getChosenAuction().getCategory().getTitle()}"/>
-            <h:outputText value="#{itemListBean.getChosenAuction().getDescription()}"/>
-            <h:outputText value="Started at: #{itemListBean.getChosenAuction().getStartingTime()}
-                          Will end at: #{itemListBean.getChosenAuction().getEndingTime()}"/>
+        <h:outputText class="header-1" rendered="#{auctionDetailsBean.auctionId != null}" value="#{auctionDetailsBean.auction.title}" />
+        
+        <h:form>
+        
+            <h:panelGrid columns="1" rendered="#{auctionDetailsBean.auctionId != null}" >
+            <h:outputText class="header-2"
+                          value="#{auctionDetailsBean.auction.category.title}"/>
+            <h:outputText value="#{auctionDetailsBean.auction.description}"/>
+            <h:outputText value="Started at: #{auctionDetailsBean.auction.startingTime}
+                          Will end at: #{auctionDetailsBean.auction.closingTime}"/>
             <h:outputText value="Number of bids so far: 
-                          #{itemListBean.getChosenAuction().getBids().countItems()}"/>
-            <h:outputText value="Starting bid: #{itemListBean.getChosenAuction().getStartingAmount()}
-                          Last bid: #{itemListBean.getChosenAuction().getHighestBid().getAmmount()}"/>
+                          #{auctionDetailsBean.auction.numberOfBids}"/>
+            <h:outputText value="Starting bid: #{auctionDetailsBean.auction.startingAmount}
+                          Last bid: #{auctionDetailsBean.auction.highestBid.amount}"/>
             <hr/>
-            <h:outputText rendered="#{itemListBean.getChosenAuction().closed}"
+            <h:outputText rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled}"
                           style="font-weight: bold" value="Auction is Closed!"/>
-            <h:outputText rendered="#{itemListBean.getChosenAuction().closed and 
-                                      itemListBean.getChosenAuction().getOwner() =
-                                      loggedUserBean.connectedUser}"
-                          value="Winner: #{itemListBean.getChosenAuction().getHighestBid().getBidder().getFirstName()}
-                                #{itemListBean.getChosenAuction().getHighestBid().getBidder().getLastName()}
-                                , #{itemListBean.getChosenAuction().getHighestBid().getBidder().getEmail()}"/>
-            <h:outputText rendered="#{itemListBean.getChosenAuction().closed and 
-                                      itemListBean.getChosenAuction().getOwner() =
-                                      loggedUserBean.connectedUser}"
-                          value="Winning bid: #{itemListBean.getChosenAuction().getHighestBid().getAmmount()}"/>
-            <h:commandLink rendered="#{not itemListBean.getChosenAuction().closed and 
-                                      itemListBean.getChosenAuction().getOwner() =
-                                      loggedUserBean.connectedUser}"
-                           value="Cancel Auction" action="#{itemListBean.cancelAuction()}"/>
+            <h:outputText rendered="#{auctionDetailsBean.auction.isCanceled}"
+                          style="font-weight: bold" value="Auction is Canceled!"/>
+            <h:outputText rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsOwner}"
+                          value="Winner: #{auctionDetailsBean.auction.highestBid.bidder.firstName} 
+                          #{auctionDetailsBean.auction.highestBid.bidder.lastName}
+                          , #{auctionDetailsBean.auction.highestBid.bidder.email}"/>
+            <h:outputText rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}"
+                          value="Winning bid: #{auctionDetailsBean.auction.highestBid.amount}"/>
+            <h:commandLink rendered="#{auction.canCancel}"
+                           value="Cancel Auction" action="#{auctionDetailsBean.cancelAuction()}"/>
         </h:panelGrid>
-        not closed and not owner, bid
-        <h:panelGrid columns="4"
-                     rendered="#{not itemListBean.getChosenAuction().closed and 
-                                 not (itemListBean.getChosenAuction().getOwner() =
-                                 loggedUserBean.connectedUser)}">
-            <h:outputText value="Minimal Bid: #{itemListBean.minBid()}$"/>
-            <h:panelGroup/><h:panelGroup/><h:panelGroup/>
-            <h:outputText value="Bid amount:"/>
-            <h:inputText id="inputBid" required="true" requiredMessage="reqired"
-                         binding="#{input}" validatorMessage="minimal bid is #{itemListBean.minBid()}">
-                <f:validateDoubleRange minimum="#{itemListBean.minBid()}" />
-            </h:inputText>
-            <h:outputText value="$"/>
-            <h:commandButton value="Make a Bid!"
-                             action="#{itemListBean.newBid(input.value, loggedUserBean.connectedUser)}">
-            </h:commandButton>
-            <h:panelGroup/>
-            <h:message for="inputBid" style="color:red"/>
-        </h:panelGrid>
+
+        
+            <h:panelGrid columns="4" rendered="#{auction.canBid}" >
+                <h:outputText value="Minimal Bid: #{auctionDetailsBean.auction.minimalBidAmount}$"/>
+                <h:panelGroup/><h:panelGroup/><h:panelGroup/>
+                <h:outputText value="Bid amount:"/>
+                <h:inputText id="inputBid" required="true" requiredMessage="reqired"
+                             binding="#{input}" validatorMessage="minimal bid is #{auctionDetailsBean.auction.minimalBidAmount}">
+                    <f:validateDoubleRange minimum="#{auctionDetailsBean.auction.minimalBidAmount}" />
+                </h:inputText>
+                <h:outputText value="$"/>
+                <h:commandButton value="Make a Bid!"
+                                 action="#{auctionDetailsBean.bid(input.value)}">
+                </h:commandButton>
+                <h:panelGroup/>
+                <h:message for="inputBid" style="color:red"/>
+            </h:panelGrid>
+        </h:form>
     </h:body>
 </html>

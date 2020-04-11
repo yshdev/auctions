@@ -3,6 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
     <h:head>
         <title>DailyAuctions - Login</title>
     </h:head>
@@ -18,11 +19,11 @@
         <h:form>
             <h:panelGrid columns="3">
                 <h:outputText value="Name:"/>
-                <h:inputText id="logName" value="#{loggedUserBean.userName}"
+                <h:inputText id="logName" value="#{loggedUserBean.inputUsername}"
                              required="true" requiredMessage="required"></h:inputText>
                 <h:message for="logName" style="color:red"/>
                 <h:outputText value="Password:"/>
-                <h:inputSecret id="logPassword" value="#{loggedUserBean.password}"
+                <h:inputSecret id="logPassword" value="#{loggedUserBean.inputPassword}"
                                required="true" requiredMessage="required"></h:inputSecret>
                 <h:message for="logPassword" style="color:red"/>
             </h:panelGrid>
@@ -30,7 +31,7 @@
                              action="#{loggedUserBean.login()}">
             </h:commandButton>
             <br/>
-            <h:outputText value="#{loggedUserBean.errLoginMessage}"
+            <h:outputText value="#{loggedUserBean.error}"
                           style="color:red"/>
             <br/>
             Not registered yet?

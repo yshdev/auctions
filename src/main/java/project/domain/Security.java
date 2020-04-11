@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.SecretKeyFactory;
@@ -19,14 +20,11 @@ import javax.crypto.spec.PBEKeySpec;
  *
  * @author Shalom
  */
-public class PasswordHasher {
+public class Security {
 
-    private static SecureRandom _random = new SecureRandom();
+    private static final SecureRandom _random = new SecureRandom();
 
-    public PasswordHasher() {
-    }
-
-    public HashAndSaltPair hash(String password) {
+    public static HashAndSaltPair hash(String password) {
 
         try {
             byte[] saltBytes = new byte[16];
@@ -36,8 +34,8 @@ public class PasswordHasher {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] hashBytes = factory.generateSecret(spec).getEncoded();
 
-            String salt = new String(saltBytes, StandardCharsets.UTF_8);
-            String hash = new String(hashBytes, StandardCharsets.UTF_8);
+            String salt = Base64.getEncoder().encodeToString(saltBytes);
+            String hash = Base64.getEncoder().encodeToString(hashBytes);
 
             return new HashAndSaltPair(hash, salt);
 
@@ -46,14 +44,15 @@ public class PasswordHasher {
         }
     }
 
-    public boolean authenticate(String inputPassword, HashAndSaltPair hashAndSalt) {
+    public static boolean authenticate(String inputPassword, HashAndSaltPair hashAndSalt) {
 
         try {
-            KeySpec spec = new PBEKeySpec(inputPassword.toCharArray(), hashAndSalt.getSalt().getBytes(), 100, 128);
+            byte[] saltBytes = Base64.getDecoder().decode(hashAndSalt.getSalt());
+            KeySpec spec = new PBEKeySpec(inputPassword.toCharArray(), saltBytes, 100, 128);
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] hashBytes = factory.generateSecret(spec).getEncoded();
 
-            String inputHash = new String(hashBytes, StandardCharsets.UTF_8);
+            String inputHash = Base64.getEncoder().encodeToString(hashBytes);
             return hashAndSalt.getHash().equals(inputHash);
 
         } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {

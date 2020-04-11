@@ -17,16 +17,16 @@ public class BidDto {
     private int id;
     private UserDto bidder;
     private Date timestamp;
-    private BigDecimal ammount;
+    private BigDecimal amount;
     
     public BidDto(){
     }
     
-    public BidDto(int id, UserDto bidder, Date timestamp, BigDecimal ammount) {
+    public BidDto(int id, UserDto bidder, Date timestamp, BigDecimal amount) {
         this.id = id;
         this.bidder = bidder;
         this.timestamp = timestamp;
-        this.ammount = ammount;
+        this.amount = amount;
     }
     
 
@@ -54,12 +54,12 @@ public class BidDto {
         this.timestamp = timestamp;
     }
 
-    public BigDecimal getAmmount() {
-        return ammount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setAmmount(BigDecimal ammount) {
-        this.ammount = ammount;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
     
     

@@ -66,7 +66,7 @@ public class Bid implements Serializable {
         return bidder;
     }
 
-    public BigDecimal getAmmount() {
+    public BigDecimal getAmount() {
         return this.ammount;
     }
 

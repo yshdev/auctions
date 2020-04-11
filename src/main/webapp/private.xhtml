@@ -10,7 +10,7 @@
     </h:head>
     <h:body>
         <h:form style="float:right; font-size:120%">
-            hi #{loggedUserBean.connectedUser.username}!
+            hi #{loggedUserBean.user.username}!
             <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>
         </h:form>
         <h:outputLink value="mainMenu.xhtml"

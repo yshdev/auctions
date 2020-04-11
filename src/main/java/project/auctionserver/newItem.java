@@ -10,6 +10,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
 import project.dal.UnitOfWork;
 
 @Named(value = "newItem")
@@ -20,8 +21,9 @@ public class newItem {
     private String subCategory;
     private String title;
     private String description;
-    private BigDecimal startingBid;
-    private Date startTime;
+    private BigDecimal startingAmount;
+    private LocalDate startDate;
+    private int startingHour;
     private int days;
     private BigDecimal winningBid;
     private String errMessage;
@@ -46,17 +48,13 @@ public class newItem {
     }
     
     public void setStartingBid(int startingBid) {
-        this.startingBid = new BigDecimal(startingBid);
+        this.startingAmount = new BigDecimal(startingBid);
     }
     
     public void setStartTime(String startTime) {
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        try{
-            this.startTime = format.parse(startTime);
-        }
-        catch (ParseException e) {
-            
-        }
+         
+        this.startDate = LocalDate.parse(startTime);
+         
     }
     
     public void setDays(int days) {
@@ -84,11 +82,11 @@ public class newItem {
     }
     
     public BigDecimal getStartingBid() {
-        return startingBid;
+        return startingAmount;
     }
     
-    public Date getStartTime() {
-        return startTime;
+    public LocalDate getStartTime() {
+        return startDate;
     }
     
     public int getDays() {
@@ -104,7 +102,7 @@ public class newItem {
     }
     
     public String addItem(UserProfile currentUser) {
-        Auction auction = new Auction(currentUser, category);
+        Auction auction = new Auction(currentUser, category, this.title, this.startDate, this.startingHour, this.days, this.startingAmount, null, null);
         
         
         UnitOfWork unitOfWork = UnitOfWork.create();

@@ -6,26 +6,32 @@
 package project.service;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *
  * @author Shalom
  */
-public class AuctionDtoForNonOwner  {
+public class AuctionDetailsDto {
     private int id;
     private String title;
     private String description;
     private BigDecimal startingAmount;
-    private Date startingTime;
-    private Date endingTime;
+    private LocalDateTime startingTime;
+    private LocalDateTime closingTime;
+    private LocalDateTime actualClosingTime;
     private int numberOfBids;
     private boolean isClosed;
+    private boolean isCanceled;
     private CategoryDto category;
-    private BigDecimal highestBidAmount;
+    private BidDto highestBid;
     private UserDto owner;
     private BigDecimal winningBidAmount;
     private BigDecimal minimalBidAmount;
+    private boolean canEdit;
+    private boolean canCancel;
+    private boolean canBid;
+    private boolean userIsOwner;
     
 
     public int getId() {
@@ -60,23 +66,33 @@ public class AuctionDtoForNonOwner  {
         this.startingAmount = startingAmount;
     }
 
-    public Date getStartingTime() {
+    public LocalDateTime getStartingTime() {
         return startingTime;
     }
 
-    public void setStartingTime(Date startingTime) {
+    public void setStartingTime(LocalDateTime startingTime) {
         this.startingTime = startingTime;
     }
 
-    public Date getEndingTime() {
-        return endingTime;
+    public LocalDateTime getClosingTime() {
+        return closingTime;
     }
 
-    public void setEndingTime(Date endingTime) {
-        this.endingTime = endingTime;
+    public void setClosingTime(LocalDateTime closingTime) {
+        this.closingTime = closingTime;
     }
 
-    public boolean isClosed() {
+    public LocalDateTime getActualClosingTime() {
+        return actualClosingTime;
+    }
+
+    public void setActualClosingTime(LocalDateTime actualClosingTime) {
+        this.actualClosingTime = actualClosingTime;
+    }
+
+    
+
+    public boolean getIsClosed() {
         return isClosed;
     }
 
@@ -92,13 +108,23 @@ public class AuctionDtoForNonOwner  {
         this.category = category;
     }
 
-    public BigDecimal getHighestBidAmount() {
-        return highestBidAmount;
+    public boolean getIsCanceled() {
+        return isCanceled;
     }
 
-    public void setHighestBidAmount(BigDecimal highestBid) {
-        this.highestBidAmount = highestBid;
+    public void setIsCanceled(boolean isCanceled) {
+        this.isCanceled = isCanceled;
     }
+
+    public BidDto getHighestBid() {
+        return highestBid;
+    }
+
+    public void setHighestBid(BidDto highestBid) {
+        this.highestBid = highestBid;
+    }
+
+    
 
     public UserDto getOwner() {
         return owner;
@@ -132,4 +158,37 @@ public class AuctionDtoForNonOwner  {
         this.minimalBidAmount = minimalBidAmount;
     }
      
+    public boolean getCanEdit() {
+        return canEdit;
+    }
+
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
+    }
+
+    public boolean getCanCancel() {
+        return canCancel;
+    }
+
+    public void setCanCancel(boolean canCancel) {
+        this.canCancel = canCancel;
+    }
+
+    public boolean getCanBid() {
+        return canBid;
+    }
+
+    public void setCanBid(boolean canBid) {
+        this.canBid = canBid;
+    }
+
+    public boolean getUserIsOwner() {
+        return userIsOwner;
+    }
+
+    public void setUserIsOwner(boolean userIsOwner) {
+        this.userIsOwner = userIsOwner;
+    }
+    
+    
 }

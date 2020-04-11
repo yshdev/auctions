@@ -4,66 +4,93 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      >
     <h:head>
         <title>Welcome to DailyAuctions</title>
     </h:head>
     <h:outputStylesheet library="css" name="style.css"></h:outputStylesheet>
     <h:body>
-        <h:form rendered="#{loggedUserBean.connectedUser != null}"
+        <h:form rendered="#{loggedUserBean.user != null}"
                 style="float:right; font-size:120%">
-            hi #{loggedUserBean.connectedUser.username}!
+            Hi #{loggedUserBean.user.username}!
             <h:outputLink value="private.xhtml">private area</h:outputLink>
-            #{" "}
+                #{" "}
             <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>
         </h:form>
-        <h:form rendered="#{loggedUserBean.connectedUser == null}"
-                style="float:right; font-size:120%">
-            hello visitor!
-            <h:outputLink value="login.xhtml">Login</h:outputLink>
-            #{" "}
+        <h:form rendered="#{loggedUserBean.user == null}" style="float:right; font-size:120%">
+            Hello guest!
+            <h:commandLink  action="#{loggedUserBean.redirectToLogin('mainMenu.xhtml')}">Login</h:commandLink>
             <h:outputLink value="register.xhtml">Register</h:outputLink>
         </h:form>
-        
+
         <h:outputText value="DailyAuctions" style="font-size:200%"></h:outputText>
         <hr />
-        
+
         <div class="center">
-        <h:form>
-            <label class="">Categories:</label> 
-            <h:selectOneMenu value="#{itemListBean.categoryId}">
-                <f:selectItems value="#{itemListBean.getCategories()}" var="categroy"
-                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
-            </h:selectOneMenu>
-            <label>Sort by:</label>
-            <h:selectOneMenu value="#{itemListBean.sortOption}">
-                <f:selectItems value="#{itemListBean.sortOptions}"/>
-            </h:selectOneMenu>
-            <h:commandButton id="submitButton" value="Submit"
-                             action="#{itemListBean.updateActiveAuctions(loggedUserBean.connectedUser == null ? null : loggedUserBean.connectedUser.id)}"></h:commandButton>
-                             
-        </h:form>
+            <h:form onsubmit="#{auctionListBean.updateActiveAuctions()}">
+                <label class="">Categories:</label> 
+                <h:selectOneMenu value="#{auctionListBean.categoryId}" onchange="submit()" >
+                    <f:selectItems value="#{auctionListBean.getCategories()}" var="categroy"
+                                   itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
+                </h:selectOneMenu>
+                <label>Sort by:</label>
+                <h:selectOneMenu value="#{auctionListBean.sortOption}" 
+                                 onchange="submit()" 
+                                 >
+                    <f:selectItems value="#{auctionListBean.sortOptions}" />
+                </h:selectOneMenu>
+            </h:form>
         </div>
-        
-        <h:form>
-            <ui:repeat value="#{itemListBean.activeAuctions}" var="item">
-                <h:panelGrid columns="2">
-                    <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                    <h:commandLink rendered="#{(loggedUserBean.connectedUser != null) and
-                                              (item.owner != loggedUserBean.connectedUser)}"
-                                   action="#{itemListBean.displayItem(item)}" value="bid now"/>
-                    <h:commandLink rendered="#{(loggedUserBean.connectedUser != null) and
-                                              (item.owner == loggedUserBean.connectedUser)}"
-                                  action="#{itemListBean.displayItem(item)}" value="details"/>
-                    <h:outputLink rendered="#{loggedUserBean.connectedUser == null}"
-                                  value="register.xhtml">register for details</h:outputLink>
-                    <h:outputText value="#{item.category.title}"></h:outputText>
-                    <h:panelGroup/>
-                    <h:outputText value="latest bid: #{item.latestBidAmount}"></h:outputText>
-                    <h:outputText value="starting amount: #{item.startingAmount}"></h:outputText>
-                </h:panelGrid>
-            </ui:repeat>
-        </h:form>
+
+        <div  align="center">
+            <h:form>
+                <ui:repeat value="#{auctionListBean.activeAuctions}" var="item">
+
+                    <table>
+                        <tr>
+                            <td rowspan="4"><img width="80" height="80"></img></td>
+                            <td width="600px" ><h:outputText value="#{item.title}" class="header-1"></h:outputText></td> 
+                            <td>
+                                <h:outputLink rendered="#{(loggedUserBean.user != null) and item.canBid()}" value="itemDisplay.xhtml" >
+                                    <h:outputText value="Bid now!" />
+                                    <f:param name="auctionId" value="#{item.id}"></f:param>
+                                </h:outputLink>
+
+                                <h:outputLink  rendered="#{(loggedUserBean.user == null) or !item.canBid()}" value="itemDisplay.xhtml" >
+                                    <h:outputText value="View Details" />
+                                    <f:param name="auctionId" value="#{item.id}"></f:param>
+                                </h:outputLink>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <h:outputText value="#{item.category.title}" class="header-2"></h:outputText>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <h:outputText value="Starting amount: #{item.startingAmount}$"></h:outputText>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <h:outputText rendered="#{item.latestBidAmount != null}" value="Latest bid: #{item.latestBidAmount}$"></h:outputText>
+                                <h:outputText rendered="#{item.latestBidAmount == null}" value="No bids yet"></h:outputText>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        
+                    </table>
+
+                </ui:repeat>
+            </h:form>
+        </div>
+
     </h:body>
 </html>
 

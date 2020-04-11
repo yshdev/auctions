@@ -11,7 +11,8 @@
       <property name="javax.persistence.jdbc.user" value="auctionsuser"/>
       <property name="javax.persistence.jdbc.password" value="auctionspassword"/>
       <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/auctions;create=true"/>
-      <property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
+      <property name="eclipselink.ddl-generation" value="create-or-extend-tables" /> 
+      <!-- <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />  -->
       <property name="eclipselink.ddl-generation.output-mode" value="database"/>
     </properties>
   </persistence-unit>
