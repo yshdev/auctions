@@ -47,8 +47,14 @@
                           , #{auctionDetailsBean.auction.highestBid.bidder.email}"/>
             <h:outputText rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}"
                           value="Winning bid: #{auctionDetailsBean.auction.highestBid.amount}"/>
-            <h:commandLink rendered="#{auction.canCancel}"
+            <h:commandLink rendered="#{auctionDetailsBean.auction.canCancel}"
                            value="Cancel Auction" action="#{auctionDetailsBean.cancelAuction()}"/>
+            
+            <h:outputLink rendered="#{auctionDetailsBean.auction.canEdit}" value="auctionEdit.xhtml" >
+                                    <h:outputText value="Edit" />
+                                    <f:param name="auctionId" value="#{auctionDetailsBean.auctionId}"></f:param>
+                                </h:outputLink>
+            
         </h:panelGrid>
 
         
