@@ -15,12 +15,13 @@
                 style="float:right; font-size:120%">
             Hi #{loggedUserBean.user.username}!
             <h:outputLink value="private.xhtml">private area</h:outputLink>
-                #{" "}
+            <h:outputText value="&#160;" />
             <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>
         </h:form>
         <h:form rendered="#{loggedUserBean.user == null}" style="float:right; font-size:120%">
             Hello guest!
             <h:commandLink  action="#{loggedUserBean.redirectToLogin('mainMenu.xhtml')}">Login</h:commandLink>
+            <h:outputText value="&#160;" />
             <h:outputLink value="register.xhtml">Register</h:outputLink>
         </h:form>
 
@@ -35,10 +36,9 @@
                                    itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
                 </h:selectOneMenu>
                 <label>Sort by:</label>
-                <h:selectOneMenu value="#{auctionListBean.sortOption}" 
-                                 onchange="submit()" 
-                                 >
-                    <f:selectItems value="#{auctionListBean.sortOptions}" />
+                <h:selectOneMenu value="#{auctionListBean.sortOption}" onchange="submit()">
+                    <f:selectItems value="#{auctionListBean.sortOptions}" var="option"
+                                   itemValue="#{option}" itemLabel="#{option.label}" />
                 </h:selectOneMenu>
             </h:form>
         </div>

@@ -1,12 +1,11 @@
 package project.auctionserver;
 
 import project.service.CategoryDto;
-import java.util.ArrayList;
 import java.util.List;
-import java.sql.Timestamp;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,6 +14,9 @@ import project.domain.*;
 import project.service.AuctionListItemDto;
 import project.service.Mapper;
 import project.service.SortOption;
+import project.service.AuctionDetailsDto;
+import project.service.BidDto;
+import project.service.UserDto;
 
 @Named
 @SessionScoped
@@ -24,20 +26,16 @@ public class AuctionListBean implements Serializable {
     private LoggedUserBean loggedUserBean;
     private Mapper mapper = new Mapper();
     
-    private final String[] sortOptions = {
-        "current price - ascending order", "current price - descending order",
-        "ending time - ascending order", "ending time - descending order"};
-    
     private Integer categoryId;
-    private String sortOption;
+    private SortOption sortOption= SortOption.Current_Price__Ascending;
     private AuctionListItemDto[] activeAuctions;
     private CategoryDto[] categories;
-    private List<Auction> itemsActiveList = new ArrayList<>();
-    private List<Auction> bidsActiveList = new ArrayList<>();
-    private List<Auction> itemsClosedList = new ArrayList<>();
-    private List<Auction> bidsClosedList = new ArrayList<>();
-    private Auction chosenAuction;
-
+    private AuctionListItemDto[] itemsActiveList;
+    private AuctionListItemDto[] bidsActiveList;
+    private AuctionListItemDto[] itemsClosedList;
+    private AuctionListItemDto[] bidsClosedList;
+    private AuctionDetailsDto chosenAuction;
+    
     public AuctionListBean() {
     }
     
@@ -64,61 +62,67 @@ public class AuctionListBean implements Serializable {
         this.categoryId = categoryId;
     }
     
-    public void setSortOption(String sortOption) {
+    public void setSortOption(SortOption sortOption) {
         this.sortOption = sortOption;
     }
     
-    public void setChosenAuction(Auction chosenAuction) {
-        this.chosenAuction = chosenAuction;
-    }
-    
-    public String getSortOption() {
+    public SortOption getSortOption() {
         return sortOption;
     }
     
-    public String[] getSortOptions() {
-        return sortOptions;
+    public SortOption[] getSortOptions() {
+        return SortOption.values();
     }
     
     public AuctionListItemDto[] getActiveAuctions() {
         return this.activeAuctions;
     }
     
-    public List<Auction> getItemsActiveList() {
+    public AuctionListItemDto[] getItemsActiveList() {
         return itemsActiveList;
     }
     
-    public List<Auction> getBidsActiveList() {
+    public AuctionListItemDto[] getBidsActiveList() {
         return bidsActiveList;
     }
     
-    public List<Auction> getItemsClosedList() {
+    public AuctionListItemDto[] getItemsClosedList() {
         return itemsClosedList;
     }
     
-    public List<Auction> getBidsClosedList() {
+    public AuctionListItemDto[] getBidsClosedList() {
         return bidsClosedList;
     }
     
-    public String updateActiveAuctions() {
+    public void updateActiveAuctions() {
         
         Integer userId = this.loggedUserBean == null ? null : this.loggedUserBean.getUserId();
         
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
 
             if (this.getCategoryId() != null) {
-                List<Auction> auctions =  unitOfWork.getActiveAuctions(this.getCategoryId(), SortOption.Current_Price__Ascending, userId);
+                List<Auction> auctions = unitOfWork.getActiveAuctions(this.getCategoryId(), this.sortOption, userId);
                 this.activeAuctions = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
+                
+                auctions = unitOfWork.getActiveItems(this.getCategoryId(), this.sortOption, userId);
+                this.itemsActiveList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
+                
+                auctions = unitOfWork.getActiveBids(this.getCategoryId(), this.sortOption, userId);
+                this.bidsActiveList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
+                
+                auctions = unitOfWork.getClosedItems(this.getCategoryId(), this.sortOption, userId);
+                this.itemsClosedList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
+                
+                auctions = unitOfWork.getClosedBids(this.getCategoryId(), this.sortOption, userId);
+                this.bidsClosedList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
             }
             else {
                 this.activeAuctions = new AuctionListItemDto[0];
             }
         }
-        
-        return "mainMenu.xhtml";
     }
     
-    public Auction getChosenAuction() {
+    public AuctionDetailsDto getChosenAuction() {
         return chosenAuction;
     }
     
@@ -132,5 +136,12 @@ public class AuctionListBean implements Serializable {
         }
     }
     
-    
+    public String displayItem(Integer auctionId) {
+        
+        // find auction by auctionId and map to AuctionDetailsDto chosenAuction
+        
+        
+        return "itemDisplay.xhtml";
+    }
+        
 }
