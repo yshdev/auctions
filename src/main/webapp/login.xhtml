@@ -2,41 +2,52 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
-    
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
     <h:head>
         <title>DailyAuctions - Login</title>
     </h:head>
     <h:body>
-        <h:form style="float:right; font-size:120%">
-            hello visitor!
-        </h:form>
-        <h:outputLink value="mainMenu.xhtml"
-                      style="text-decoration: none; color:black;
-                      font-size:200%">DailyAuctions</h:outputLink>
-        <hr/>
-        <h2>login</h2>
-        <h:form>
-            <h:panelGrid columns="3">
-                <h:outputText value="Name:"/>
-                <h:inputText id="logName" value="#{loggedUserBean.inputUsername}"
-                             required="true" requiredMessage="required"></h:inputText>
-                <h:message for="logName" style="color:red"/>
-                <h:outputText value="Password:"/>
-                <h:inputSecret id="logPassword" value="#{loggedUserBean.inputPassword}"
-                               required="true" requiredMessage="required"></h:inputSecret>
-                <h:message for="logPassword" style="color:red"/>
-            </h:panelGrid>
-            <h:commandButton value="Login"
-                             action="#{loggedUserBean.login()}">
-            </h:commandButton>
-            <br/>
-            <h:outputText value="#{loggedUserBean.error}"
-                          style="color:red"/>
-            <br/>
-            Not registered yet?
-            <h:outputLink value="register.xhtml">Register</h:outputLink>
-        </h:form>
+
+        <ui:composition template = "templates/common.xhtml">	
+
+            <ui:define name = "content">
+                
+                
+                
+                <h:form id='form' >
+                    
+                    <p:staticMessage severity="ERROR" summary="Error" detail="#{loggedUserBean.error}" rendered="#{loggedUserBean.error != null}" />
+                    
+                    <p:panel id="panel" header="Login" style="margin-bottom:10px;">
+                       
+                    
+                    <h:panelGrid columns="3">
+                        
+                        <p:outputLabel for="@next" value="Name:" />
+                        <p:inputText id="logName" value="#{loggedUserBean.inputUsername}" required="true"  />
+                        <p:message for="logName" display="text" />
+                        
+                        <p:outputLabel for="@next" value="Password:"/>
+                        <p:password id="logPassword" value="#{loggedUserBean.inputPassword}" required="true" />
+                        <p:message for="logPassword" display="text" />
+                    </h:panelGrid>
+                    
+                    <p:commandButton value="Login" action="#{loggedUserBean.login()}" update='form' />
+                    
+                    </p:panel>
+                    
+                    
+                    <p:outputPanel> Not registered yet?
+                        <p:link href="register.xhtml" value="Register" />
+                    </p:outputPanel>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
     </h:body>
 </html>
 

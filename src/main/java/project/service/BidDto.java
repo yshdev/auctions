@@ -6,6 +6,7 @@
 package project.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -16,13 +17,13 @@ public class BidDto {
         
     private int id;
     private UserDto bidder;
-    private Date timestamp;
+    private LocalDateTime timestamp;
     private BigDecimal amount;
     
     public BidDto(){
     }
     
-    public BidDto(int id, UserDto bidder, Date timestamp, BigDecimal amount) {
+    public BidDto(int id, UserDto bidder, LocalDateTime timestamp, BigDecimal amount) {
         this.id = id;
         this.bidder = bidder;
         this.timestamp = timestamp;
@@ -46,11 +47,11 @@ public class BidDto {
         this.bidder = bidder;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

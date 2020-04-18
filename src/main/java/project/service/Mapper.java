@@ -38,7 +38,6 @@ public class Mapper {
             details.setDescription(auction.getDescription());
             details.setHighestBid(this.mapBidToDto(auction.getHighestBid()));
             details.setId(auction.getId());
-            details.setIsClosed(auction.isClosed());
             details.setNumberOfBids(auction.getBids().size());
             details.setOwner(this.mapUserToDto(auction.getOwner()));
             details.setStartingAmount(auction.getStartingAmount());
@@ -47,6 +46,7 @@ public class Mapper {
             details.setUserIsOwner(userId != null && auction.getOwner().getId() == userId);
             details.setActualClosingTime(auction.getActualClosingTime());
             details.setMinimalBidAmount(auction.getMinimalBidAmount());
+            details.setStatus(auction.getStatus());
             
             return details;
     }

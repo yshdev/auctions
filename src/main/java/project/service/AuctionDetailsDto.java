@@ -7,6 +7,8 @@ package project.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import project.domain.AuctionStatus;
 
 /**
  *
@@ -21,8 +23,7 @@ public class AuctionDetailsDto {
     private LocalDateTime closingTime;
     private LocalDateTime actualClosingTime;
     private int numberOfBids;
-    private boolean isClosed;
-    private boolean isCanceled;
+    
     private CategoryDto category;
     private BidDto highestBid;
     private UserDto owner;
@@ -32,6 +33,9 @@ public class AuctionDetailsDto {
     private boolean canCancel;
     private boolean canBid;
     private boolean userIsOwner;
+    private AuctionStatus status;
+
+    
     
 
     public int getId() {
@@ -69,6 +73,10 @@ public class AuctionDetailsDto {
     public LocalDateTime getStartingTime() {
         return startingTime;
     }
+    
+    public String getStartingTimeText() {
+        return this.startingTime.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
+    }
 
     public void setStartingTime(LocalDateTime startingTime) {
         this.startingTime = startingTime;
@@ -77,7 +85,11 @@ public class AuctionDetailsDto {
     public LocalDateTime getClosingTime() {
         return closingTime;
     }
-
+    
+    public String getClosingTimeText() {
+        return this.closingTime.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
+    }
+    
     public void setClosingTime(LocalDateTime closingTime) {
         this.closingTime = closingTime;
     }
@@ -85,19 +97,13 @@ public class AuctionDetailsDto {
     public LocalDateTime getActualClosingTime() {
         return actualClosingTime;
     }
+    
+    public String getActualClosingTimeText() {
+        return this.actualClosingTime.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
+    }
 
     public void setActualClosingTime(LocalDateTime actualClosingTime) {
         this.actualClosingTime = actualClosingTime;
-    }
-
-    
-
-    public boolean getIsClosed() {
-        return isClosed;
-    }
-
-    public void setIsClosed(boolean isClosed) {
-        this.isClosed = isClosed;
     }
 
     public CategoryDto getCategory() {
@@ -108,13 +114,7 @@ public class AuctionDetailsDto {
         this.category = category;
     }
 
-    public boolean getIsCanceled() {
-        return isCanceled;
-    }
-
-    public void setIsCanceled(boolean isCanceled) {
-        this.isCanceled = isCanceled;
-    }
+      
 
     public BidDto getHighestBid() {
         return highestBid;
@@ -189,6 +189,29 @@ public class AuctionDetailsDto {
     public void setUserIsOwner(boolean userIsOwner) {
         this.userIsOwner = userIsOwner;
     }
+
+    public AuctionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AuctionStatus status) {
+        this.status = status;
+    }
+
+    public boolean getIsClosed() {
+        return this.status.compareTo(AuctionStatus.CLOSING) >= 0;
+    }
     
+    public boolean getIsNotOpennedYet() {
+        return this.status == AuctionStatus.NOT_OPENNED_YET;
+    }
+    
+    public boolean getIsOpen() {
+        return this.status == AuctionStatus.OPEN;
+    }
+    
+    public boolean getIsCanceled() {
+        return this.status == AuctionStatus.CANCELED;
+    }
     
 }

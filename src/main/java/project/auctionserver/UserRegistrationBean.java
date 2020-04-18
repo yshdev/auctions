@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import project.dal.UnitOfWork;
@@ -23,7 +24,7 @@ import project.service.Mapper;
  */
 
 @Named
-@SessionScoped
+@ViewScoped
 public class UserRegistrationBean implements Serializable {
     
     @Inject

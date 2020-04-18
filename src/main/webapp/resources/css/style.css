@@ -33,3 +33,13 @@ td {
     padding-left: 10px;
     text-align: left;
 }
+
+
+
+th {
+    text-align: left;
+}
+
+.output-field {
+    font-weight: 600;
+}

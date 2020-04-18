@@ -68,7 +68,7 @@ public class Auction implements Serializable {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] picture;
-
+    
     // For
     public Auction() {
     }
@@ -159,7 +159,7 @@ public class Auction implements Serializable {
     }
 
     public boolean isClosed() {
-        return this.getState().compareTo(AuctionState.CLOSING) >= 0;
+        return this.getStatus().compareTo(AuctionStatus.CLOSING) >= 0;
     }
 
     public Image getPicture() throws IOException {
@@ -170,15 +170,36 @@ public class Auction implements Serializable {
     }
 
     public boolean canCancel(Integer userId) {
-        return userId != null && this.getState() == AuctionState.NOT_OPENNED_YET && this.owner.getId() == userId;
+        return userId != null && this.getStatus() == AuctionStatus.NOT_OPENNED_YET && this.owner.getId() == userId;
     }
 
     public boolean canEdit(Integer userId) {
-        return userId != null && this.getState() == AuctionState.NOT_OPENNED_YET && this.owner.getId() == userId;
+        return userId != null && this.getStatus() == AuctionStatus.NOT_OPENNED_YET && this.owner.getId() == userId;
     }
 
     public boolean canBid(Integer userId) {
-        return userId != null && this.getState() == AuctionState.OPEN && this.owner.getId() != userId;
+        return userId != null && this.getStatus() == AuctionStatus.OPEN && this.owner.getId() != userId;
+    }
+    
+     public AuctionStatus getStatus() {
+         
+        if (this.isCanceled) {
+            return AuctionStatus.CANCELED;
+        }
+
+        if (this.actualClosingTime != null) {
+            return AuctionStatus.CLOSED;
+        }
+
+        if (this.closingTime.compareTo(LocalDateTime.now()) < 0) {
+            return AuctionStatus.CLOSING;
+        }
+
+        if (this.startingTime.compareTo(LocalDateTime.now()) < 0) {
+            return AuctionStatus.OPEN;
+        }
+
+        return AuctionStatus.NOT_OPENNED_YET;
     }
     
     public BigDecimal getMinimalBidAmount() {
@@ -187,10 +208,12 @@ public class Auction implements Serializable {
             return this.getStartingAmount();
         }
         
-        double minBid = this.getHighestBid().getAmount().doubleValue();
-        minBid += (Math.log10(minBid) - 1.0) * 5.0;
+        double sa = this.startingAmount.doubleValue();
+        int jump = Math.max(1, (int)Math.log10(sa)) * 5;
         
-        return new BigDecimal(minBid);
+        BigDecimal minBid = this.getHighestBid().getAmount().add(new BigDecimal(jump));
+                
+        return minBid;
     }
     
     public void setCategory(Category category) {
@@ -231,7 +254,7 @@ public class Auction implements Serializable {
 
         this.assertCanModify();
 
-        this.setAmounts(startingAmount, winningAmount, reservedPrice);
+        this.validateAmounts(startingAmount, winningAmount, reservedPrice);
 
         this.startingAmount = startingAmount;
         this.reservedPrice = reservedPrice;
@@ -240,12 +263,12 @@ public class Auction implements Serializable {
 
     public Bid addBid(UserProfile bidder, BigDecimal amount) {
 
-        AuctionState state = this.getState();
-        if (state == AuctionState.NOT_OPENNED_YET) {
+        AuctionStatus state = this.getStatus();
+        if (state == AuctionStatus.NOT_OPENNED_YET) {
             throw new IllegalStateException("Auction is not open yet. Cannot add bids.");
         }
 
-        if (state.compareTo(AuctionState.CLOSING) >= 0) {
+        if (state.compareTo(AuctionStatus.CLOSING) >= 0) {
             throw new IllegalStateException("Auction is closed. Cannot add bids.");
         }
 
@@ -263,7 +286,7 @@ public class Auction implements Serializable {
             throw new IllegalArgumentException("Bid amount must not be lower than minimal amount.");
         }
 
-        Bid bid = new Bid(this, bidder, amount, new Date());
+        Bid bid = new Bid(this, bidder, amount, LocalDateTime.now(ZoneOffset.UTC));
 
         if (this.highestBid != null) {
             if (bid.getAmount().compareTo(this.highestBid.getAmount()) < 0) {
@@ -286,14 +309,14 @@ public class Auction implements Serializable {
     }
 
     public void cancel() {
-        if (this.getState().compareTo(AuctionState.CLOSING) >= 0) {
+        if (this.getStatus().compareTo(AuctionStatus.CLOSING) >= 0) {
             throw new IllegalStateException("Auction has already closed. Cannot cancel.");
         }
         this.setResult(null, true);
     }
 
     public boolean canClose() {
-        return this.getState() == AuctionState.CLOSING;
+        return this.getStatus() == AuctionStatus.CLOSING;
     }
 
     public void close() {
@@ -310,32 +333,17 @@ public class Auction implements Serializable {
         this.setResult(winningBid, false);
     }
 
-    private AuctionState getState() {
-
-        if (this.actualClosingTime != null) {
-            return AuctionState.CLOSED;
-        }
-
-        if (this.closingTime.compareTo(LocalDateTime.now()) < 0) {
-            return AuctionState.CLOSING;
-        }
-
-        if (this.startingTime.compareTo(LocalDateTime.now()) < 0) {
-            return AuctionState.OPEN;
-        }
-
-        return AuctionState.NOT_OPENNED_YET;
-    }
+   
 
     private void assertCanModify() {
 
-        AuctionState state = this.getState();
+        AuctionStatus state = this.getStatus();
 
-        if (state.compareTo(AuctionState.CLOSING) >= 0) {
+        if (state.compareTo(AuctionStatus.CLOSING) >= 0) {
             throw new IllegalStateException("Auction is closed. Cannot modify.");
         }
 
-        if (state == AuctionState.OPEN) {
+        if (state == AuctionStatus.OPEN) {
             throw new IllegalStateException("Auction has already started. Cannot modify.");
         }
     }
@@ -380,7 +388,7 @@ public class Auction implements Serializable {
             throw new IllegalArgumentException("Auction starting amount must be set.");
         }
 
-        if (startingAmount.compareTo(new BigDecimal(0)) < 0) {
+        if (startingAmount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Auction starting amount must not be negative.");
         }
 

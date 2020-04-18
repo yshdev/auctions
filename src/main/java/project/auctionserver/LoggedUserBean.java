@@ -108,7 +108,7 @@ public class LoggedUserBean implements Serializable {
                     url = this.referrer;
                 }
                 else {
-                    url = "mainMenu.xhtml";
+                    url = "home.xhtml";
                 }
             } else {
                 this.inputPassword = null;

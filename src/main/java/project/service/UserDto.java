@@ -66,4 +66,8 @@ public class UserDto {
         this.phoneNumber = phone;
     }
     
+    public String getName() {
+        return this.firstName + " " + this.lastName;
+    }
+    
 }

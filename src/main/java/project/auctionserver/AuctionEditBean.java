@@ -6,16 +6,13 @@
 package project.auctionserver;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import project.dal.UnitOfWork;
 import project.domain.Auction;
-import project.domain.Bid;
-import project.domain.UserProfile;
-import project.service.AuctionDetailsDto;
 import project.service.CategoryDto;
 import project.service.Mapper;
 
@@ -24,7 +21,7 @@ import project.service.Mapper;
  * @author Shalom
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class AuctionEditBean implements Serializable {
     
     @Inject

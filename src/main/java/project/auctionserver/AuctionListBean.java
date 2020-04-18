@@ -6,8 +6,8 @@ import java.util.List;
 import java.sql.Timestamp;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.annotation.PostConstruct;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import project.dal.UnitOfWork;
@@ -17,7 +17,7 @@ import project.service.Mapper;
 import project.service.SortOption;
 
 @Named
-@SessionScoped
+@ViewScoped
 public class AuctionListBean implements Serializable {
     
     @Inject

@@ -9,9 +9,7 @@ package project.domain;
  *
  * @author Shalom
  */
-public enum AuctionState {
-    NOT_OPENNED_YET,
-    OPEN,
-    CLOSING,
-    CLOSED,
+public class Settings {
+    
+    public static final int OPENING_HOUR = 10;
 }

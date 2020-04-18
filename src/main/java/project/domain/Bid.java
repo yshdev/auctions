@@ -7,7 +7,8 @@ package project.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,22 +35,35 @@ public class Bid implements Serializable {
     @JoinColumn(name = "fk_userprofile")
     private UserProfile bidder;
     
-    private Date timestamp;
-    private BigDecimal ammount;
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime timestamp;
+    
+    private BigDecimal amount;
 
     // For JPA only
     public Bid(){
     }
     
-    public Bid(Auction auction, UserProfile user, BigDecimal ammount, Date timestamp){
+    public Bid(Auction auction, UserProfile user, BigDecimal amount, LocalDateTime timestamp){
+        
+        if (auction == null) {
+            throw new IllegalArgumentException("Bid auction cannot be null.");
+        }
+        
+        if (user == null) {
+            throw new IllegalArgumentException("Bidder cannot be null.");
+        }
+        
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Bid amount cannot be negative.");
+        }
+        
         this.auction = auction;
         this.bidder = user;
-        this.ammount = ammount;
+        this.amount = amount;
         this.timestamp = timestamp;
     }
     
-    
-
     public int getId() {
         return id;
     }
@@ -67,10 +81,10 @@ public class Bid implements Serializable {
     }
 
     public BigDecimal getAmount() {
-        return this.ammount;
+        return this.amount;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
     

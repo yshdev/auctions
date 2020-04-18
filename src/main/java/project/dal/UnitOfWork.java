@@ -9,12 +9,10 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -193,6 +191,19 @@ public class UnitOfWork implements AutoCloseable {
         }
         return null;
     }
+    
+    public Category findCategroyById(int categoryId) {
+        
+        TypedQuery<Category> query = this.em.createQuery("SELECT c FROM Category c WHERE c.id = :categoryId", Category.class)
+                .setMaxResults(1)
+                .setParameter("categoryId", categoryId);
+        
+        List<Category> categories = query.getResultList();
+        if (categories.size() == 1) {
+            return categories.get(0);
+        }
+        return null;
+    }
      
 
     public boolean isEmpty() {
@@ -272,5 +283,7 @@ public class UnitOfWork implements AutoCloseable {
             }
         }
     }
+
+    
 
 }

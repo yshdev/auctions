@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+   
+    <h:body>
+        <ui:composition template = "templates/common.xhtml">	
+            <ui:define name = "content">
+                <h:form id='form'> 
+                    <p:staticMessage severity="error" summary="ERROR" detail="#{auctionCreateBean.error}" rendered="#{auctionCreateBean.error != null}" />
+
+                    <p:panel id="panel" header="New Auction" style="margin-bottom:10px;">
+                        <h:panelGrid  columns="3" cellpadding="5">
+
+                            <f:facet name="header" >
+                                <span style="text-align: left">Details</span>
+                            </f:facet>
+
+                            <p:outputLabel for="@next" value="Category:" />
+                            <p:selectOneMenu id="category" label="Category" required="true" value="#{auctionCreateBean.categoryId}" style="min-width: 500px">
+                                <f:selectItems value="#{auctionCreateBean.categories}" var="categroy" 
+                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"  />
+                            </p:selectOneMenu>
+                            <p:message for="category" display="text" />
+
+                            <p:outputLabel for="@next" >Title:</p:outputLabel>
+                            <p:inputText value="#{auctionCreateBean.title}" required="true" id="title" label="Title" validator="project.auctionserver.BlankFieldValidator" 
+                                         style="min-width: 500px">
+                                <f:validateLength minimum="5" />
+                            </p:inputText>
+                            <p:message for="title" display="text" />
+
+                            <p:outputLabel for="@next">Description:</p:outputLabel>
+                            <p:inputTextarea value="#{auctionCreateBean.description}" required="true" id="description" label="Description" 
+                                             validator="project.auctionserver.BlankFieldValidator" style="min-width: 500px">
+                                <f:validateLength minimum="5" />
+                            </p:inputTextarea>
+                            <p:message for="description" display="text" />
+
+                        </h:panelGrid>
+
+                        <hr />
+
+                        <h:panelGrid  columns="3" cellpadding="5">
+                            <f:facet name="header" >
+                                <span style="text-align: left">Time and Duration</span>
+                            </f:facet>
+
+                            <p:outputLabel for="@next">Opening Date:</p:outputLabel>
+                            <p:calendar value="#{auctionCreateBean.openingDate}" required="true" id="openingDate" label="Opening Date" 
+                                        mindate="#{auctionCreateBean.minOpeningDate}" pattern="dd/MM/uuuu"  showOn="button"  >
+                                <p:ajax event="dateSelect" update="@this openingTimeOut closingTimeOut" />
+                            </p:calendar>
+                            <p:message for="openingDate" display="text" />
+
+                            <p:outputLabel for="@next">Number of Days:</p:outputLabel>
+                            <p:spinner value="#{auctionCreateBean.numOfDays}" min="1" max="60" required="true" id="numOfDays" label="Number of Days" >
+                                <p:ajax update="@this closingTimeOut" />
+                            </p:spinner>
+
+                            <p:message for="numOfDays" display="text" />
+
+
+                            <f:facet name="footer" >
+                                <h:outputText value="Auction will be openned at" ></h:outputText>
+                                <h:outputText id="openingTimeOut" value=" #{auctionCreateBean.openingTime}" style="font-weight: 800" />
+                                <h:outputText value=" and closed at" ></h:outputText>
+                                <h:outputText id="closingTimeOut" value=" #{auctionCreateBean.closingTime}" style="font-weight: 800" />
+                            </f:facet>
+
+                        </h:panelGrid>
+
+                        <hr />
+
+                        <h:panelGrid  columns="3" cellpadding="5">    
+
+                            <f:facet name="header">
+                                <span style="text-align: left">Amounts</span>
+                            </f:facet>
+
+                            <p:outputLabel for="@next">Starting Amount:</p:outputLabel>
+                            <p:spinner value="#{auctionCreateBean.startingAmount}" required="true" id="startingAmount" label="Starting Amount"  min="0" suffix="$" 
+                                       stepFactor="100">
+                                <p:ajax update="@this reservedPrice winningAmount" />
+                            </p:spinner>
+                            <p:message for="startingAmount" display="text" />
+
+                            <p:outputLabel for="@next">Winning Amount:</p:outputLabel>
+                            <p:spinner value="#{auctionCreateBean.winningAmount}"  id="winningAmount" label="Winning Amount"
+                                       min="#{auctionCreateBean.minWinningAmount}" stepFactor="100" suffix="$">
+                                <p:ajax />
+                            </p:spinner>
+                            <p:message for="winningAmount" display="text" />
+
+                            <p:outputLabel for="@next">Reserved Price:</p:outputLabel>
+                            <p:spinner value="#{auctionCreateBean.reservedPrice}"  id="reservedPrice" label="Reserved Price"
+                                       min="#{auctionCreateBean.minReservedPrice}" stepFactor="100"  suffix="$"> 
+                                <p:ajax update="@this winningAmount" />
+                            </p:spinner>
+                            <p:message for="reservedPrice" display="text" />
+
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <h:outputText value="#{auctionCreateBean.error}" />
+
+                    <p:linkButton value="Cancel" outcome="home.xhtml"  />
+                    <p:commandButton value="Save" action="#{auctionCreateBean.saveAuction()}" update="form"   />
+
+
+                </h:form>
+
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
