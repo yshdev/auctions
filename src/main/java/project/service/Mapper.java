@@ -5,6 +5,7 @@
  */
 package project.service;
 
+import java.util.Comparator;
 import project.domain.Auction;
 import project.domain.Bid;
 import project.domain.Category;
@@ -15,7 +16,7 @@ import project.domain.UserProfile;
  * @author Shalom
  */
 public class Mapper {
-    
+
     public UserDto mapUserToDto(UserProfile user) {
         UserDto dto = new UserDto();
         dto.setFirstName(user.getFirstName());
@@ -26,31 +27,36 @@ public class Mapper {
         dto.setPhoneNumber(user.getPhoneNumber());
         return dto;
     }
-    
-    public AuctionDetailsDto mapAuctionToDetailsDto(Auction auction, Integer userId) {
-         
-            AuctionDetailsDto details = new AuctionDetailsDto();
-            details.setCanCancel(auction.canCancel(userId));
-            details.setCanBid(auction.canBid(userId));
-            details.setCanEdit(auction.canEdit(userId));
-            details.setCategory(this.mapCategoryToDto(auction.getCategory()));
-            details.setClosingTime(auction.getClosingTime());
-            details.setDescription(auction.getDescription());
-            details.setHighestBid(this.mapBidToDto(auction.getHighestBid()));
-            details.setId(auction.getId());
-            details.setNumberOfBids(auction.getBids().size());
-            details.setOwner(this.mapUserToDto(auction.getOwner()));
-            details.setStartingAmount(auction.getStartingAmount());
-            details.setStartingTime(auction.getStartingTime());
-            details.setTitle(auction.getTitle());
-            details.setUserIsOwner(userId != null && auction.getOwner().getId() == userId);
-            details.setActualClosingTime(auction.getActualClosingTime());
-            details.setMinimalBidAmount(auction.getMinimalBidAmount());
-            details.setStatus(auction.getStatus());
-            
-            return details;
+
+    public AuctionDetailsDto mapAuctionToDetailsDto(Auction auction, Integer userId, Bid userBid) {
+
+        AuctionDetailsDto details = new AuctionDetailsDto();
+        details.setCanCancel(auction.canCancel(userId));
+        details.setCanBid(auction.canBid(userId));
+        details.setCanEdit(auction.canEdit(userId));
+        details.setCategory(this.mapCategoryToDto(auction.getCategory()));
+        details.setClosingTime(auction.getClosingTime());
+        details.setDescription(auction.getDescription());
+        details.setHighestBid(this.mapBidToDto(auction.getHighestBid()));
+        details.setId(auction.getId());
+        details.setNumberOfBids(auction.getBids().size());
+        details.setOwner(this.mapUserToDto(auction.getOwner()));
+        details.setStartingAmount(auction.getStartingAmount());
+        details.setStartingTime(auction.getStartingTime());
+        details.setTitle(auction.getTitle());
+        details.setUserIsOwner(userId != null && auction.getOwner().getId() == userId);
+        details.setActualClosingTime(auction.getActualClosingTime());
+        details.setMinimalBidAmount(auction.getMinimalBidAmount());
+        details.setStatus(auction.getStatus());
+
+        if (userBid != null) {
+            details.setUserBidAmount(userBid.getAmount());
+            details.setUserBidTimestamp(userBid.getTimestamp());
+        }
+
+        return details;
     }
-    
+
     public AuctionListItemDto mapAuctionToListItemDto(Auction auction, Integer userId) {
         AuctionListItemDto dto = new AuctionListItemDto();
         dto.setId(auction.getId());
@@ -65,32 +71,31 @@ public class Mapper {
             dto.setCanCancel(false);
             dto.setCanEdit(false);
             dto.setCanBid(false);
-        }
-        else {
+        } else {
             dto.setCanCancel(auction.canCancel(userId));
             dto.setCanEdit(auction.canEdit(userId));
             dto.setCanBid(auction.canBid(userId));
         }
         return dto;
     }
-    
+
     public CategoryDto mapCategoryToDto(Category category) {
         CategoryDto dto = new CategoryDto(category.getId(), category.getTitle());
         return dto;
     }
-    
+
     public BidDto mapBidToDto(Bid bid) {
-        
+
         if (bid == null) {
             return null;
         }
-        
+
         BidDto dto = new BidDto();
         dto.setId(bid.getId());
         dto.setBidder(this.mapUserToDto(bid.getBidder()));
         dto.setTimestamp(bid.getTimestamp());
         dto.setAmount(bid.getAmount());
-        
+
         return dto;
     }
 }

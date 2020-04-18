@@ -34,8 +34,9 @@ public class AuctionDetailsDto {
     private boolean canBid;
     private boolean userIsOwner;
     private AuctionStatus status;
-
     
+    private BigDecimal userBidAmount;
+    private LocalDateTime userBidTimestamp;
     
 
     public int getId() {
@@ -212,6 +213,30 @@ public class AuctionDetailsDto {
     
     public boolean getIsCanceled() {
         return this.status == AuctionStatus.CANCELED;
+    }
+
+    public BigDecimal getUserBidAmount() {
+        return userBidAmount;
+    }
+
+    public void setUserBidAmount(BigDecimal userBidAmount) {
+        this.userBidAmount = userBidAmount;
+    }
+
+    public LocalDateTime getUserBidTimestamp() {
+        return userBidTimestamp;
+    }
+
+    public void setUserBidTimestamp(LocalDateTime userBidTimestamp) {
+        this.userBidTimestamp = userBidTimestamp;
+    }
+    
+    public boolean getHasUserBid() {
+        return this.userBidAmount != null;
+    }
+    
+    public String getUserBidTimestampText() {
+        return this.userBidTimestamp.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
     }
     
 }

@@ -286,7 +286,7 @@ public class Auction implements Serializable {
             throw new IllegalArgumentException("Bid amount must not be lower than minimal amount.");
         }
 
-        Bid bid = new Bid(this, bidder, amount, LocalDateTime.now(ZoneOffset.UTC));
+        Bid bid = new Bid(this, bidder, amount, LocalDateTime.now());
 
         if (this.highestBid != null) {
             if (bid.getAmount().compareTo(this.highestBid.getAmount()) < 0) {
@@ -351,7 +351,7 @@ public class Auction implements Serializable {
     private void setResult(Bid winningBid, boolean isCanceled) {
         this.isCanceled = isCanceled;
         this.winningBid = winningBid;
-        this.actualClosingTime = LocalDateTime.now(ZoneOffset.UTC);
+        this.actualClosingTime = LocalDateTime.now();
     }
 
     private void validateTimes(LocalDate startingDate, int hour, int numOfDays) {
@@ -361,7 +361,7 @@ public class Auction implements Serializable {
 
         LocalDateTime startingTimestamp = startingDate.atTime(hour, 0);
 
-        if (startingTimestamp.compareTo(LocalDateTime.now(ZoneOffset.UTC)) < 0) {
+        if (startingTimestamp.compareTo(LocalDateTime.now()) < 0) {
             throw new IllegalArgumentException("Auction starting time must be greater than now.");
         }
 

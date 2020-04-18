@@ -60,7 +60,7 @@ public class AuctionCreateBean implements Serializable {
     public void init() {
         this.updateCategories();
         
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        LocalDateTime now = LocalDateTime.now();
         if (now.getHour() > Settings.OPENING_HOUR - 1) {
             this.minOpeningDate = now.plusDays(1).toLocalDate();
         }

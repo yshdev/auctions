@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import project.dal.UnitOfWork;
 import project.domain.Auction;
+import project.domain.Bid;
 import project.domain.UserProfile;
 import project.service.AuctionDetailsDto;
 import project.service.Mapper;
@@ -87,12 +88,16 @@ public class AuctionDetailsBean implements Serializable {
                 if (auction.canCancel(this.loggedUserBean.getUserId())) {
                     auction.cancel();
                     unitOfWork.saveChanges();
-                    this.auction = this.mapper.mapAuctionToDetailsDto(auction, this.loggedUserBean.getUserId());
                 } else {
                     this.error = "Cannot cancel auction!";
                 }
             }
         }
+        
+        if (this.error == null) {
+            this.refresh();
+        }
+        
     }
 
     /**
@@ -107,10 +112,13 @@ public class AuctionDetailsBean implements Serializable {
                 Auction auction = unitOfWork.findAuction(this.auctionId);
                 auction.addBid(user, this.bidAmount);
                 unitOfWork.saveChanges();
-                this.auction = this.mapper.mapAuctionToDetailsDto(auction, this.loggedUserBean.getUserId());
             }
         } catch (IllegalArgumentException ax) {
             this.error = ax.getMessage();
+        }
+        
+        if (this.error == null) {
+            this.refresh();
         }
     }
 
@@ -123,7 +131,14 @@ public class AuctionDetailsBean implements Serializable {
                 this.auction = null;
             } else {
                 this.error = null;
-                this.auction = this.mapper.mapAuctionToDetailsDto(auction, this.loggedUserBean.getUserId());
+                
+                Bid userBid = null;
+                Integer userId = this.loggedUserBean.getUserId();
+                if (userId != null) {
+                    userBid = unitOfWork.findLastUserBid(this.auctionId, userId);
+                }
+                
+                this.auction = this.mapper.mapAuctionToDetailsDto(auction, this.loggedUserBean.getUserId(), userBid);
                 this.bidAmount = this.auction.getMinimalBidAmount();
             }
 

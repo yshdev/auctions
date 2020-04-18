@@ -4,87 +4,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>DailyAuctions - Private Area</title>
     </h:head>
     <h:body>
-        <h:form style="float:right; font-size:120%">
-            hi #{loggedUserBean.user.username}!
-            <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>
-        </h:form>
-        <h:outputLink value="mainMenu.xhtml"
-                      style="text-decoration: none; color:black;
-                      font-size:200%">DailyAuctions</h:outputLink>
-        <hr/>
-        <h2>private area</h2>
-        
-        <h3>
-            <h:outputLink style="align-self: center" value="sellItem.xhtml">add new item</h:outputLink>
-        </h3>
-        
-        <div align="center">
-            <h:form onsubmit="#{auctionListBean.updateActiveAuctions()}">
-                <label class="">Categories:</label> 
-                <h:selectOneMenu value="#{auctionListBean.categoryId}" onchange="submit()" >
-                    <f:selectItems value="#{auctionListBean.getCategories()}" var="categroy"
-                                   itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
-                </h:selectOneMenu>
-                <label>Sort by:</label>
-                <h:selectOneMenu value="#{auctionListBean.sortOption}" onchange="submit()">
-                    <f:selectItems value="#{auctionListBean.sortOptions}" var="option"
-                                   itemValue="#{option}" itemLabel="#{option.label}" />
-                </h:selectOneMenu>
-            </h:form>
-        </div>
-        <br/>
-        <div align="center">
-            <h:form>
-                <h:panelGrid columns="2" border="1" style="width: 90%">
-                    <h:outputText value="My Items" style="font-size:110%; text-align:center"/>
-                    <h:outputText value="My Bids" style="font-size:110%; text-align:center"/>
-                    <h:outputText value="Active"/>
-                    <h:outputText value="Active"/>
-                    <ui:repeat value="#{itemListBean.itemsActiveList}" var="item">
-                        <h:panelGrid columns="2">
-                            <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                            <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
-                            <h:outputText value="#{item.category.title}"></h:outputText>
-                            <h:panelGroup/>
-                            <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                        </h:panelGrid>
-                    </ui:repeat>
-                    <ui:repeat value="#{itemListBean.bidsActiveList}" var="item">
-                        <h:panelGrid columns="2">
-                            <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                            <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="bid again"/>
-                            <h:outputText value="#{item.category.title}"></h:outputText>
-                            <h:panelGroup/>
-                            <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                        </h:panelGrid>
-                    </ui:repeat>
-                    <h:outputText value="Closed"/>
-                    <h:outputText value="Closed"/>
-                    <ui:repeat value="#{itemListBean.itemsClosedList}" var="item">
-                        <h:panelGrid columns="2">
-                            <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                            <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
-                            <h:outputText value="#{item.category.title}"></h:outputText>
-                            <h:panelGroup/>
-                            <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                        </h:panelGrid>
-                    </ui:repeat>
-                    <ui:repeat value="#{itemListBean.bidsClosedList}" var="item">
-                        <h:panelGrid columns="2">
-                            <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                            <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
-                            <h:outputText value="#{item.category.title}"></h:outputText>
-                            <h:panelGroup/>
-                            <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                        </h:panelGrid>
-                    </ui:repeat>
-                </h:panelGrid>
-            </h:form>
-        </div>
+
+        <ui:composition template = "templates/common.xhtml">	
+            <ui:define name = "content">
+
+                <p:staticMessage severity="error" summary="ERROR" detail="#{auctionCreateBean.error}" rendered="#{auctionCreateBean.error != null}" />
+
+                <p:panel id="panel" header="Private Area" style=" margin-bottom:10px;">
+
+                    <h3>
+                        <h:outputLink style="align-self: center" value="auctionCreate.xhtml">New Auction</h:outputLink>
+                    </h3>
+
+                    <div align="center">
+                        <h:form onsubmit="#{auctionListBean.updateActiveAuctions()}">
+                            <label class="">Categories:</label> 
+                            <h:selectOneMenu value="#{auctionListBean.categoryId}" onchange="submit()" >
+                                <f:selectItems value="#{auctionListBean.getCategories()}" var="categroy"
+                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
+                            </h:selectOneMenu>
+                            <label>Sort by:</label>
+                            <h:selectOneMenu value="#{auctionListBean.sortOption}" onchange="submit()">
+                                <f:selectItems value="#{auctionListBean.sortOptions}" var="option"
+                                               itemValue="#{option}" itemLabel="#{option.label}" />
+                            </h:selectOneMenu>
+                        </h:form>
+                    </div>
+                    <br/>
+                    <div align="center">
+                        <h:form>
+                            <h:panelGrid columns="2" border="1" style="width: 90%">
+                                <h:outputText value="My Items" style="font-size:110%; text-align:center"/>
+                                <h:outputText value="My Bids" style="font-size:110%; text-align:center"/>
+                                <h:outputText value="Active"/>
+                                <h:outputText value="Active"/>
+                                <ui:repeat value="#{itemListBean.itemsActiveList}" var="item">
+                                    <h:panelGrid columns="2">
+                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
+                                        <h:outputText value="#{item.category.title}"></h:outputText>
+                                        <h:panelGroup/>
+                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
+                                    </h:panelGrid>
+                                </ui:repeat>
+                                <ui:repeat value="#{itemListBean.bidsActiveList}" var="item">
+                                    <h:panelGrid columns="2">
+                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="bid again"/>
+                                        <h:outputText value="#{item.category.title}"></h:outputText>
+                                        <h:panelGroup/>
+                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
+                                    </h:panelGrid>
+                                </ui:repeat>
+                                <h:outputText value="Closed"/>
+                                <h:outputText value="Closed"/>
+                                <ui:repeat value="#{itemListBean.itemsClosedList}" var="item">
+                                    <h:panelGrid columns="2">
+                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
+                                        <h:outputText value="#{item.category.title}"></h:outputText>
+                                        <h:panelGroup/>
+                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
+                                    </h:panelGrid>
+                                </ui:repeat>
+                                <ui:repeat value="#{itemListBean.bidsClosedList}" var="item">
+                                    <h:panelGrid columns="2">
+                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
+                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
+                                        <h:outputText value="#{item.category.title}"></h:outputText>
+                                        <h:panelGroup/>
+                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
+                                    </h:panelGrid>
+                                </ui:repeat>
+                            </h:panelGrid>
+                        </h:form>
+                    </div>
+                </p:panel>
+
+        </ui:define>
+        </ui:composition>
     </h:body>
 </html>

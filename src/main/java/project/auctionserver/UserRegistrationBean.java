@@ -142,7 +142,7 @@ public class UserRegistrationBean implements Serializable {
             
                  this.loggedUserBean.setUser(this.mapper.mapUserToDto(user));
                  
-                 FacesContext.getCurrentInstance().getExternalContext().redirect("mainMenu.xhtml");
+                 FacesContext.getCurrentInstance().getExternalContext().redirect("home.xhtml");
             }
             else {
                 this.error = "The username is already taken. Try another.";

@@ -2,10 +2,7 @@ package project.auctionserver;
 
 import project.service.CategoryDto;
 import java.util.List;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -16,12 +13,10 @@ import project.service.AuctionListItemDto;
 import project.service.Mapper;
 import project.service.SortOption;
 import project.service.AuctionDetailsDto;
-import project.service.BidDto;
-import project.service.UserDto;
 
 @Named
 @ViewScoped
-public class AuctionListBean implements Serializable {
+public class PrivateAreaBean implements Serializable {
     
     @Inject
     private LoggedUserBean loggedUserBean;
@@ -37,7 +32,7 @@ public class AuctionListBean implements Serializable {
     private AuctionListItemDto[] bidsClosedList;
     private AuctionDetailsDto chosenAuction;
     
-    public AuctionListBean() {
+    public PrivateAreaBean() {
     }
     
     @PostConstruct
@@ -102,10 +97,10 @@ public class AuctionListBean implements Serializable {
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
 
             if (this.getCategoryId() != null) {
-                List<Auction> auctions = unitOfWork.getActiveAuctions(this.getCategoryId(), this.sortOption, userId);
+                List<Auction> auctions = unitOfWork.getActiveAuctions(this.getCategoryId(), this.sortOption);
                 this.activeAuctions = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
                 
-                auctions = unitOfWork.getActiveItems(this.getCategoryId(), this.sortOption, userId);
+                auctions = unitOfWork.getUserActiveAuctions(this.getCategoryId(), this.sortOption, userId);
                 this.itemsActiveList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
                 
                 auctions = unitOfWork.getActiveBids(this.getCategoryId(), this.sortOption, userId);

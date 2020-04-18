@@ -153,6 +153,18 @@
                                 <h:outputText value="#{auctionDetailsBean.auction.winningBidAmount}$"  styleClass="output-field" />
                             </p:column>
                         </p:row>
+                        
+                        
+                        <p:row rendered="#{auctionDetailsBean.auction.hasUserBid}">
+                            <p:column>
+                                <p:outputLabel value="Your Bid:" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{auctionDetailsBean.auction.userBidAmount}$ at #{auctionDetailsBean.auction.userBidTimestampText}" styleClass="output-field" />
+                            </p:column>
+                        </p:row>
+                        
+                        
 
                         <p:row>
                             <p:column>

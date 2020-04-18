@@ -10,7 +10,9 @@
     <body>
         <ui:composition> 
 
-            <h:outputText value="DailyAuctions" style="font-size: 200%;" ></h:outputText>
+            <h:outputLink value="home.xhtml"
+                                  style="text-decoration: none; color:black;
+                                  font-size:200%">DailyAuctions</h:outputLink>
 
             <h:form rendered="#{loggedUserBean.user != null}"  style="float:right;">
                 <h:outputText value="Hi #{loggedUserBean.user.username}!" />

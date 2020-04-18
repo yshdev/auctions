@@ -2,10 +2,7 @@ package project.auctionserver;
 
 import project.service.CategoryDto;
 import java.util.List;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -15,9 +12,6 @@ import project.domain.*;
 import project.service.AuctionListItemDto;
 import project.service.Mapper;
 import project.service.SortOption;
-import project.service.AuctionDetailsDto;
-import project.service.BidDto;
-import project.service.UserDto;
 
 @Named
 @ViewScoped
@@ -31,11 +25,6 @@ public class AuctionListBean implements Serializable {
     private SortOption sortOption= SortOption.Current_Price__Ascending;
     private AuctionListItemDto[] activeAuctions;
     private CategoryDto[] categories;
-    private AuctionListItemDto[] itemsActiveList;
-    private AuctionListItemDto[] bidsActiveList;
-    private AuctionListItemDto[] itemsClosedList;
-    private AuctionListItemDto[] bidsClosedList;
-    private AuctionDetailsDto chosenAuction;
     
     public AuctionListBean() {
     }
@@ -79,22 +68,6 @@ public class AuctionListBean implements Serializable {
         return this.activeAuctions;
     }
     
-    public AuctionListItemDto[] getItemsActiveList() {
-        return itemsActiveList;
-    }
-    
-    public AuctionListItemDto[] getBidsActiveList() {
-        return bidsActiveList;
-    }
-    
-    public AuctionListItemDto[] getItemsClosedList() {
-        return itemsClosedList;
-    }
-    
-    public AuctionListItemDto[] getBidsClosedList() {
-        return bidsClosedList;
-    }
-    
     public void updateActiveAuctions() {
         
         Integer userId = this.loggedUserBean == null ? null : this.loggedUserBean.getUserId();
@@ -102,29 +75,13 @@ public class AuctionListBean implements Serializable {
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
 
             if (this.getCategoryId() != null) {
-                List<Auction> auctions = unitOfWork.getActiveAuctions(this.getCategoryId(), this.sortOption, userId);
+                List<Auction> auctions = unitOfWork.getActiveAuctions(this.getCategoryId(), this.sortOption);
                 this.activeAuctions = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
-                
-                auctions = unitOfWork.getActiveItems(this.getCategoryId(), this.sortOption, userId);
-                this.itemsActiveList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
-                
-                auctions = unitOfWork.getActiveBids(this.getCategoryId(), this.sortOption, userId);
-                this.bidsActiveList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
-                
-                auctions = unitOfWork.getClosedItems(this.getCategoryId(), this.sortOption, userId);
-                this.itemsClosedList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
-                
-                auctions = unitOfWork.getClosedBids(this.getCategoryId(), this.sortOption, userId);
-                this.bidsClosedList = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
             }
             else {
                 this.activeAuctions = new AuctionListItemDto[0];
             }
         }
-    }
-    
-    public AuctionDetailsDto getChosenAuction() {
-        return chosenAuction;
     }
     
     public CategoryDto[] getCategories() {
@@ -136,13 +93,5 @@ public class AuctionListBean implements Serializable {
            this.categories = unitOfWork.getAllCategories();
         }
     }
-    
-    public String displayItem(Integer auctionId) {
-        
-        // find auction by auctionId and map to AuctionDetailsDto chosenAuction
-        
-        
-        return "itemDisplay.xhtml";
-    }
-        
+  
 }
