@@ -82,8 +82,6 @@ public class LoggedUserBean implements Serializable {
                 
     }
 
-    /* when user logged out, change system status by changing
-       isLogin to false. nullify error messages.*/
     public String logout() {
         this.user = null;
         this.error = null;

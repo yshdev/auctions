@@ -134,10 +134,14 @@ public class PrivateAreaBean implements Serializable {
     
     public String displayItem(Integer auctionId) {
         
-        // find auction by auctionId and map to AuctionDetailsDto chosenAuction
+        Auction auction;
+        try (UnitOfWork unitOfWork = UnitOfWork.create()) {
+            auction = unitOfWork.findAuction(auctionId);
+        }
         
+        this.chosenAuction = mapper.mapAuctionToDetailsDto(auction, loggedUserBean.getUserId(), null);
         
-        return "itemDisplay.xhtml";
+        return "auctionDetails.xhtml";
     }
         
 }
