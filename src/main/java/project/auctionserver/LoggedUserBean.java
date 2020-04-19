@@ -88,7 +88,7 @@ public class LoggedUserBean implements Serializable {
         this.user = null;
         this.error = null;
 
-        return "";
+        return "home.xhtml";
     }
 
     /* when user wants to login, compare input name and password
