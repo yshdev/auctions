@@ -5,7 +5,10 @@
  */
 package project.service;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 
 /**
@@ -23,17 +26,9 @@ public class AuctionListItemDto {
     private boolean canBid;
     private boolean isClosed;
     private BigDecimal startingAmount;
+    private StreamedContent image;
 
     public AuctionListItemDto() {
-    }
-
-    public AuctionListItemDto(int id, String title, CategoryDto category, BigDecimal startingAmmount, BigDecimal latestBidAmount) {
-        this.id  = id;
-        this.title = title;
-        this.category = category;
-        this.latestBidAmount = latestBidAmount;
-        this.startingAmount = startingAmmount;
-        
     }
 
     public int getId() {
@@ -107,6 +102,19 @@ public class AuctionListItemDto {
     public void setCanBid(boolean canBid) {
         this.canBid = canBid;
     }
+
+    public StreamedContent getImage() {
+        return image;
+    }
+
+    public void setImage(StreamedContent image) {
+        this.image = image;
+    }
     
+    public void setImageBytes(byte[] bytes) {
+        this.image = DefaultStreamedContent.builder().contentType("image/jpeg")
+                .stream(() -> new ByteArrayInputStream(bytes))
+                .build();
+    }
     
 }

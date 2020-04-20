@@ -357,8 +357,9 @@ public class UnitOfWork implements AutoCloseable {
                 emanager.close();
                 emf.close();
 
-                _isInitialized = true;
+                
             }
+            _isInitialized = true;
         }
     }
     

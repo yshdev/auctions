@@ -10,12 +10,12 @@ package project.service;
  * @author Shalom
  */
 public enum SortOption {
-    Current_Price__Ascending("current price - ascending order"),
-    Current_Price__Descending("current price - descending order"),
-    Ending_Time__Asecnding("ending time - ascending order"),
-    Ending_Time__Descending("ending time - descending order");
+    Current_Price__Ascending("Current Price - Ascending"),
+    Current_Price__Descending("Current Price - Descending"),
+    Ending_Time__Asecnding("Ending Time - Ascending"),
+    Ending_Time__Descending("Ending Time - Descending");
     
-    private String label;
+    private final String label;
     
     private SortOption(String label) {
         this.label = label;

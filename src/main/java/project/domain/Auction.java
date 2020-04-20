@@ -7,6 +7,7 @@ package project.domain;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import project.dal.ImageUtils;
 import project.service.AuctionDetailsDto;
 
@@ -162,11 +165,8 @@ public class Auction implements Serializable {
         return this.getStatus().compareTo(AuctionStatus.CLOSING) >= 0;
     }
 
-    public Image getPicture() throws IOException {
-        if (this.picture == null) {
-            return null;
-        }
-        return ImageUtils.convertBytesToImage(this.picture);
+    public byte[] getImageBytes() {
+        return this.picture;
     }
 
     public boolean canCancel(Integer userId) {
@@ -240,6 +240,10 @@ public class Auction implements Serializable {
             this.picture = null;
         }
         this.picture = ImageUtils.convertImageToBytes(picture, imageType);
+    }
+    
+    public void setPicture(byte[] buffer) {
+        this.picture = buffer;
     }
 
     public void setTimes(LocalDate startingDate, int hour, int numOfDays) {

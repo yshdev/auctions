@@ -5,6 +5,7 @@
  */
 package project.auctionserver;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -19,6 +22,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
+import project.dal.ImageUtils;
 import project.dal.UnitOfWork;
 import project.domain.Auction;
 import project.domain.Category;
@@ -52,6 +58,7 @@ public class AuctionCreateBean implements Serializable {
     private LocalDate minOpeningDate;
     private int numOfDays = 1;
     private CategoryDto[] categories;
+    private UploadedFile imageFile;
 
     public AuctionCreateBean() {
     }
@@ -59,15 +66,14 @@ public class AuctionCreateBean implements Serializable {
     @PostConstruct
     public void init() {
         this.updateCategories();
-        
+
         LocalDateTime now = LocalDateTime.now();
         if (now.getHour() > Settings.OPENING_HOUR - 1) {
             this.minOpeningDate = now.plusDays(1).toLocalDate();
-        }
-        else {
+        } else {
             this.minOpeningDate = now.toLocalDate();
         }
-        
+
         this.openingTime = this.minOpeningDate.atTime(Settings.OPENING_HOUR, 0);
         this.closingTime = this.openingTime.plusDays(this.numOfDays);
     }
@@ -153,6 +159,7 @@ public class AuctionCreateBean implements Serializable {
     public BigDecimal getMinWinningAmount() {
         return this.reservedPrice != null ? this.reservedPrice : this.startingAmount;
     }
+
     public int getNumOfDays() {
         return this.numOfDays;
     }
@@ -170,7 +177,7 @@ public class AuctionCreateBean implements Serializable {
         this.openingTime = openingDate.atTime(Settings.OPENING_HOUR, 0);
         this.closingTime = this.openingTime.plusDays(this.numOfDays);
     }
-    
+
     public String getOpeningTime() {
         return this.openingTime.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
     }
@@ -179,7 +186,6 @@ public class AuctionCreateBean implements Serializable {
         return this.closingTime.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
     }
 
-   
     public CategoryDto[] getCategories() {
         return categories;
     }
@@ -195,9 +201,21 @@ public class AuctionCreateBean implements Serializable {
     public LocalDate getMinOpeningDate() {
         return this.minOpeningDate;
     }
-    
-    
-     public void saveAuction() {
+
+    public UploadedFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(UploadedFile imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    public void handleImageUpload(FileUploadEvent event) {
+        UploadedFile file = event.getFile();
+
+    }
+
+    public void saveAuction() {
 
         if (this.loggedUserBean.getUserId() == null) {
             this.showError("Only logged in users can create auctions. Log in or register and then try again.");
@@ -210,13 +228,27 @@ public class AuctionCreateBean implements Serializable {
 
                 Auction auction = new Auction(user, category, this.getTitle(), this.openingTime.toLocalDate(), Settings.OPENING_HOUR, this.numOfDays, this.getStartingAmount(),
                         this.getWinningAmount(), this.getReservedPrice());
-                
-                unitOfWork.persist(auction);
-                unitOfWork.saveChanges();
+
+                if (this.imageFile == null) {
+                    this.error = "No picture!";
+                } else {
+
+                    auction.setPicture(this.imageFile.getContent());
+                    unitOfWork.persist(auction);
+                    unitOfWork.saveChanges();
+                }
+            }
+
+            if (this.error == null) {
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("private.xhtml");
+                } catch (IOException ex) {
+                    Logger.getLogger(AuctionCreateBean.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
-    
+
     private void updateAmounts() {
         if (this.reservedPrice != null && this.reservedPrice.compareTo(this.startingAmount) < 0) {
             this.reservedPrice = this.startingAmount;
@@ -244,9 +276,9 @@ public class AuctionCreateBean implements Serializable {
     private void showError(String error) {
         this.error = error;
     }
-    
+
     private void clearError() {
         this.error = null;
     }
-   
+
 }

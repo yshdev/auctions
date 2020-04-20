@@ -42,7 +42,11 @@
 
                             <table>
                                 <tr>
-                                    <td rowspan="4"><img width="80" height="80"></img></td>
+                                    <td rowspan="4">
+                                        <p:graphicImage value="#{item.image}" stream="true" />
+                                        <img width="80" height="80">
+                                            
+                                        </img></td>
                                     <td width="600px" ><h:outputText value="#{item.title}" class="header-1"></h:outputText></td> 
                                     <td>
                                         <h:outputLink rendered="#{(loggedUserBean.user != null) and item.canBid()}" value="auctionDetails.xhtml" >

@@ -5,7 +5,10 @@
  */
 package project.service;
 
+import java.io.IOException;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import project.domain.Auction;
 import project.domain.Bid;
 import project.domain.Category;
@@ -64,6 +67,8 @@ public class Mapper {
         dto.setTitle(auction.getTitle());
         dto.setIsClosed(auction.isClosed());
         dto.setStartingAmount(auction.getStartingAmount());
+        dto.setImageBytes(auction.getImageBytes());
+        
         if (auction.getHighestBid() != null) {
             dto.setLatestBidAmount(auction.getHighestBid().getAmount());
         }
