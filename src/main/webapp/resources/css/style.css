@@ -43,3 +43,23 @@ th {
 .output-field {
     font-weight: 600;
 }
+
+
+.ui-panelgrid>*>tr,
+.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+}
+ 
+
+.grid.ui-panelgrid>*>tr,
+.grid.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+}
+
+.fifty-percent {
+     width: 50%;
+}
+
+.top-alignment {
+     vertical-align: top;
+}

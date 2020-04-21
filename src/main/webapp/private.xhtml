@@ -16,78 +16,147 @@
 
                 <p:staticMessage severity="error" summary="ERROR" detail="#{auctionCreateBean.error}" rendered="#{auctionCreateBean.error != null}" />
 
-                <p:panel id="panel" header="Private Area" style=" margin-bottom:10px;">
+                <h3>
+                    <h:outputLink style="align-self: center" value="auctionCreate.xhtml">New Auction</h:outputLink>
+                </h3>
 
-                    <h3>
-                        <h:outputLink style="align-self: center" value="auctionCreate.xhtml">New Auction</h:outputLink>
-                    </h3>
+                <div align="center">
+                    <h:form onsubmit="#{privateAreaBean.updateAuctions()}">
+                        <label class="">Categories:</label> 
+                        <h:selectOneMenu value="#{privateAreaBean.categoryId}" onchange="submit()" >
+                            <f:selectItems value="#{privateAreaBean.getCategories()}" var="categroy"
+                                           itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
+                        </h:selectOneMenu>
+                        <label>Sort by:</label>
+                        <h:selectOneMenu value="#{privateAreaBean.sortOption}" onchange="submit()">
+                            <f:selectItems value="#{privateAreaBean.sortOptions}" var="option"
+                                           itemValue="#{option}" itemLabel="#{option.label}" />
+                        </h:selectOneMenu>
+                    </h:form>
+                </div>
 
-                    <div align="center">
-                        <h:form onsubmit="#{auctionListBean.updateActiveAuctions()}">
-                            <label class="">Categories:</label> 
-                            <h:selectOneMenu value="#{auctionListBean.categoryId}" onchange="submit()" >
-                                <f:selectItems value="#{auctionListBean.getCategories()}" var="categroy"
-                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
-                            </h:selectOneMenu>
-                            <label>Sort by:</label>
-                            <h:selectOneMenu value="#{auctionListBean.sortOption}" onchange="submit()">
-                                <f:selectItems value="#{auctionListBean.sortOptions}" var="option"
-                                               itemValue="#{option}" itemLabel="#{option.label}" />
-                            </h:selectOneMenu>
-                        </h:form>
-                    </div>
-                    <br/>
-                    <div align="center">
-                        <h:form>
-                            <h:panelGrid columns="2" border="1" style="width: 90%">
-                                <h:outputText value="My Items" style="font-size:110%; text-align:center"/>
-                                <h:outputText value="My Bids" style="font-size:110%; text-align:center"/>
-                                <h:outputText value="Active"/>
-                                <h:outputText value="Active"/>
-                                <ui:repeat value="#{itemListBean.itemsActiveList}" var="item">
-                                    <h:panelGrid columns="2">
-                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
-                                        <h:outputText value="#{item.category.title}"></h:outputText>
-                                        <h:panelGroup/>
-                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                                    </h:panelGrid>
-                                </ui:repeat>
-                                <ui:repeat value="#{itemListBean.bidsActiveList}" var="item">
-                                    <h:panelGrid columns="2">
-                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="bid again"/>
-                                        <h:outputText value="#{item.category.title}"></h:outputText>
-                                        <h:panelGroup/>
-                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                                    </h:panelGrid>
-                                </ui:repeat>
-                                <h:outputText value="Closed"/>
-                                <h:outputText value="Closed"/>
-                                <ui:repeat value="#{itemListBean.itemsClosedList}" var="item">
-                                    <h:panelGrid columns="2">
-                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
-                                        <h:outputText value="#{item.category.title}"></h:outputText>
-                                        <h:panelGroup/>
-                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                                    </h:panelGrid>
-                                </ui:repeat>
-                                <ui:repeat value="#{itemListBean.bidsClosedList}" var="item">
-                                    <h:panelGrid columns="2">
-                                        <h:outputText value="#{item.title}" style="font-size:110%"></h:outputText>
-                                        <h:commandLink action="#{auctionListBean.displayItem(item.id)}" value="details"/>
-                                        <h:outputText value="#{item.category.title}"></h:outputText>
-                                        <h:panelGroup/>
-                                        <h:outputText value="latest bid: #{item.latestBidAmount.ammount}"></h:outputText>
-                                    </h:panelGrid>
-                                </ui:repeat>
-                            </h:panelGrid>
-                        </h:form>
-                    </div>
-                </p:panel>
+                <p:panelGrid columns="2" styleClass="grid" columnClasses="fifty-percent top-alignment, fifty-percent top-alignment">
+                    
+                    <p:panelGrid columns="1" styleClass="grid" columnClasses="top-alignment">
 
-        </ui:define>
+                    <p:panel header="Active Auctions" style=" margin-bottom:10px;">
+
+                        <ui:repeat value="#{privateAreaBean.activeAuctions}" var="item">
+
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column rowspan="4">
+                                        <p:graphicImage value="#{item.image}" stream="true" />
+                                        <img width="80" height="80">
+
+                                        </img></p:column>
+                                    <p:column width="600px" ><h:outputText value="#{item.title}" class="header-1"></h:outputText></p:column> 
+                                    <p:column>
+                                        <h:outputLink rendered="#{(loggedUserBean.user != null) and item.canBid()}" value="auctionDetails.xhtml" >
+                                            <h:outputText value="Bid now!" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                        <h:outputLink  rendered="#{(loggedUserBean.user == null) or !item.canBid()}" value="auctionDetails.xhtml" >
+                                            <h:outputText value="View Details" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{item.category.title}" class="header-2"></h:outputText>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="Starting amount: #{item.startingAmount}$"></h:outputText>
+                                    </p:column>
+                                    <p:column>&nbsp;</p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText rendered="#{item.latestBidAmount != null}" value="Latest bid: #{item.latestBidAmount}$"></h:outputText>
+                                        <h:outputText rendered="#{item.latestBidAmount == null}" value="No bids yet"></h:outputText>
+                                    </p:column>
+                                    <p:column>&nbsp;</p:column>
+                                </p:row>
+
+                            </p:panelGrid>
+
+                        </ui:repeat>
+
+                    </p:panel>
+                    
+                    <p:panel  header="Closed Auctions" style="margin-bottom:10px;">
+
+                        <ui:repeat value="#{privateAreaBean.closedAuctions}" var="item">
+
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column rowspan="4">
+                                        <p:graphicImage value="#{item.image}" stream="true" />
+                                        <img width="80" height="80">
+
+                                        </img></p:column>
+                                    <p:column width="600px" ><h:outputText value="#{item.title}" class="header-1"></h:outputText></p:column> 
+                                    <p:column>
+                                        <h:outputLink rendered="#{(loggedUserBean.user != null) and item.canBid()}" value="auctionDetails.xhtml" >
+                                            <h:outputText value="Bid now!" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                        <h:outputLink  rendered="#{(loggedUserBean.user == null) or !item.canBid()}" value="auctionDetails.xhtml" >
+                                            <h:outputText value="View Details" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{item.category.title}" class="header-2"></h:outputText>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="Starting amount: #{item.startingAmount}$"></h:outputText>
+                                    </p:column>
+                                    <p:column>&nbsp;</p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText rendered="#{item.latestBidAmount != null}" value="Latest bid: #{item.latestBidAmount}$"></h:outputText>
+                                        <h:outputText rendered="#{item.latestBidAmount == null}" value="No bids yet"></h:outputText>
+                                    </p:column>
+                                    <p:column>&nbsp;</p:column>
+                                </p:row>
+
+                            </p:panelGrid>
+
+                        </ui:repeat>
+
+                    </p:panel>
+                    
+                    </p:panelGrid>
+                    
+                    <p:panelGrid columns="1" styleClass="grid" columnClasses="top-alignment">
+                        
+                        <p:panel header="Active Bids"  style="margin-bottom:10px;"></p:panel>
+                    
+                    
+                    <p:panel header="Closed Bids"  style="margin-bottom:10px;"></p:panel>
+                    
+                    </p:panelGrid>
+
+                </p:panelGrid>
+
+            </ui:define>
         </ui:composition>
     </h:body>
 </html>

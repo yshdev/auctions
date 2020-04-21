@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -104,7 +105,7 @@ public class UnitOfWork implements AutoCloseable {
         }
     }
 
-    public List<Auction> getActiveAuctions(int categoryId, SortOption sortOption) {
+    public List<Auction> getActiveAuctions(Integer categoryId, SortOption sortOption) {
 
         String s = "SELECT a FROM Auction a LEFT JOIN FETCH a.highestBid b WHERE  a.category.id = :categoryId AND a.actualClosingTime IS NULL AND a.startingTime < :now AND a.closingTime > :now";
         s = this.addSortToAuctionsQuery(s, sortOption);
@@ -118,24 +119,62 @@ public class UnitOfWork implements AutoCloseable {
         return auctions;
     }
     
-    public List<Auction> getUserActiveAuctions(int categoryId, SortOption sortOption, int userId) {
+    public List<Auction> getUserAuctions(Integer categoryId, SortOption sortOption, int userId, AuctionFilter filter) {
 
-        String s = "SELECT a FROM Auction a LEFT JOIN FETCH a.highestBid b WHERE a.category.id = :categoryId AND a.actualClosingTime IS NULL AND a.startingTime < :now AND a.closingTime > :now AND a.owner.id = :userId";
+        String s = "SELECT a FROM Auction a LEFT JOIN FETCH a.highestBid b"
+                + " WHERE (:categoryId IS NULL OR a.category.id = :categoryId)"
+                + " AND a.actualClosingTime IS NULL"
+                + " AND a.owner.id = :userId";
+        
+        switch (filter)
+        {
+            case NOT_OPENNED_YET:
+                s += " AND NOT a.isClosed AND a.startingTime > :now";
+                break;
+                
+            case OPENNED:
+                s += " AND NOT a.isClosed AND a.startingTime < :now AND a.closingTime > :now";
+                break;
+                
+            case ACTIVE:
+                s += " AND NOT a.isClosed";
+                
+            case CLOSED:
+                s += " AND a.isClosed";
+                break;
+        }
+          
         s = this.addSortToAuctionsQuery(s, sortOption);
         
         TypedQuery<Auction> query = this.em.createQuery(s, Auction.class)
                 .setParameter("categoryId", categoryId)
-                .setParameter("now", LocalDateTime.now())
                 .setParameter("userId", userId);
+        
+        switch (filter)
+        {
+            case NOT_OPENNED_YET:
+                query.setParameter("now", LocalDateTime.now());
+                break;
+                
+            case OPENNED:
+                query.setParameter("now", LocalDateTime.now());
+                break;
+             
+        }
 
         List<Auction> auctions = query.getResultList();
         
         return auctions;
     }
     
-    public List<Auction> getActiveBids(int categoryId, SortOption sortOption, Integer userId) {
+    public List<Auction> getUserActiveBids(Integer categoryId, SortOption sortOption, Integer userId) {
 
-        String s = "SELECT a FROM Auction a WHERE a.category.id = :categoryId AND a.actualClosingTime IS NULL AND a.startingTime < :now AND a.closingTime > :now AND userId =  ANY(a.bids)";
+        String s = "SELECT a FROM Auction a"
+                + " WHERE a.category.id = :categoryId"
+                + " AND a.actualClosingTime IS NULL"
+                + " AND a.startingTime < :now"
+                + " AND a.closingTime > :now";
+                //+ " AND userId =  ANY(a.bids)";
         
         switch (sortOption) {
             case Current_Price__Ascending:
@@ -167,45 +206,13 @@ public class UnitOfWork implements AutoCloseable {
         
         return auctions;
     }
-    
-    public List<Auction> getClosedItems(int categoryId, SortOption sortOption, Integer userId) {
+        
+    public List<Auction> getClosedBids(Integer categoryId, SortOption sortOption, Integer userId) {
 
-        String s = "SELECT a FROM Auction a WHERE a.category.id = :categoryId AND (a.actualClosingTime IS NOT NULL OR a.startingTime > :now OR a.closingTime < :now) AND a.owner.id = userId";
-        
-        switch (sortOption) {
-            case Current_Price__Ascending:
-                s += " ORDER BY a.highestBid";
-                break;
-                
-            case Current_Price__Descending:
-                s += " ORDER BY a.highestBid DESC";
-                break;
-                
-            case Ending_Time__Asecnding:
-                s += " ORDER BY a.endingTime";
-                break;
-
-            case Ending_Time__Descending:
-            default:
-                s += " ORDER BY a.endingTime DESC";
-                break;
-        }
-        
-        TypedQuery<Auction> query;
-        
-        query = this.em.createQuery(s, Auction.class);
-        
-        query = query.setParameter("categoryId", categoryId);
-        query = query.setParameter("now", LocalDateTime.now());
-
-        List<Auction> auctions = query.getResultList();
-        
-        return auctions;
-    }
-    
-    public List<Auction> getClosedBids(int categoryId, SortOption sortOption, Integer userId) {
-
-        String s = "SELECT a FROM Auction a WHERE a.category.id = :categoryId AND (a.actualClosingTime IS NOT NULL OR a.startingTime > :now OR a.closingTime < :now) AND userId =  ANY(a.bids)";
+        String s = "SELECT a FROM Auction a"
+                + " WHERE a.category.id = :categoryId"
+                + " AND (a.actualClosingTime IS NOT NULL OR a.startingTime > :now OR a.closingTime < :now)";
+                //+ " AND userId =  ANY(a.bids)";
         
         switch (sortOption) {
             case Current_Price__Ascending:
