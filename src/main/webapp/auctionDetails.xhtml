@@ -175,7 +175,7 @@
                             </p:column>
                         </p:row>
 
-                        <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsOwner}">
+                        <p:row rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}">
                             <p:column>
                                 <p:outputLabel value="Winner:" />
                             </p:column>
@@ -201,10 +201,9 @@
 
                     <p:commandLink rendered="#{auctionDetailsBean.auction.canCancel}"
                                    value="Cancel Auction" action="#{auctionDetailsBean.cancelAuction()}"/>
-
-                    <p:link rendered="#{auctionDetailsBean.auction.canEdit}" value="auctionEdit.xhtml" >
-                        <h:outputText value="Edit" />
-                        <f:param name="auctionId" value="#{auctionDetailsBean.auctionId}"></f:param>
+                    <h:outputText value="&#160;" />
+                    <p:link rendered="#{auctionDetailsBean.auction.canEdit}" value="Edit" outcome="auctionCreate.xhtml" >
+                        <f:param name="detailsAuctionId" value="#{auctionDetailsBean.auctionId}"></f:param>
                     </p:link>
 
                 </p:panel>

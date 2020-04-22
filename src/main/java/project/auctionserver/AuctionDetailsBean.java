@@ -77,7 +77,7 @@ public class AuctionDetailsBean implements Serializable {
     
     
 
-    public void cancelAuction() {
+    public String cancelAuction() {
         try ( UnitOfWork unitOfWork = UnitOfWork.create()) {
             Auction auction = unitOfWork.findAuction(this.auctionId);
             if (auction == null) {
@@ -97,7 +97,7 @@ public class AuctionDetailsBean implements Serializable {
         if (this.error == null) {
             this.refresh();
         }
-        
+        return "private.xhtml";
     }
 
     /**

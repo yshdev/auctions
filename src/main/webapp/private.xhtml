@@ -18,7 +18,9 @@
                 <p:staticMessage severity="error" summary="ERROR" detail="#{auctionCreateBean.error}" rendered="#{auctionCreateBean.error != null}" />
 
                 <h3>
-                    <h:outputLink style="align-self: center" value="auctionCreate.xhtml">New Auction</h:outputLink>
+                    <p:link style="align-self: center" value="New Auction" outcome="auctionCreate.xhtml" >
+                        <f:param name="detailsAuctionId" value="newAuction"></f:param>
+                    </p:link>
                 </h3>
 
                 <div align="center">

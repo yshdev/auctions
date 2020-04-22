@@ -52,7 +52,6 @@ public class AuctionCreateBean implements Serializable {
     private BigDecimal startingAmount = new BigDecimal(100);
     private BigDecimal winningAmount;
     private BigDecimal reservedPrice;
-    private String startingDateText;
     private LocalDateTime openingTime;
     private LocalDateTime closingTime;
     private LocalDate minOpeningDate;
@@ -76,6 +75,15 @@ public class AuctionCreateBean implements Serializable {
 
         this.openingTime = this.minOpeningDate.atTime(Settings.OPENING_HOUR, 0);
         this.closingTime = this.openingTime.plusDays(this.numOfDays);
+        
+        String str = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("detailsAuctionId");
+        if ((str==null) || (str.equals("newAuction"))) {
+            this.auctionId = null;
+        }
+        else {
+            this.auctionId = Integer.parseInt(str);
+            loadAuction();
+        }
     }
 
     public LoggedUserBean getLoggedUserBean() {
@@ -214,6 +222,10 @@ public class AuctionCreateBean implements Serializable {
         UploadedFile file = event.getFile();
 
     }
+    
+    public String getHeader() {
+        return this.auctionId == null ? "New Auction" : "Edit";
+    }
 
     public void saveAuction() {
 
@@ -278,6 +290,26 @@ public class AuctionCreateBean implements Serializable {
 
     private void clearError() {
         this.error = null;
+    }
+    
+    private void loadAuction() {
+        try (UnitOfWork unitOfWork = UnitOfWork.create()) {
+            Auction auction = unitOfWork.findAuction(this.auctionId);
+            if (auction == null) {
+                this.error = "Auction not found!";
+            }
+            else {
+                this.categoryId = auction.getCategory().getId();
+                this.title = auction.getTitle();
+                this.description = auction.getDescription();
+                this.startingAmount = auction.getStartingAmount();
+                this.winningAmount = auction.getWinningAmount();
+                this.reservedPrice = auction.getReservedPrice();
+                this.openingTime = auction.getStartingTime();
+                this.closingTime = auction.getClosingTime();
+                this.numOfDays = 1;
+            }
+        }
     }
 
 }
