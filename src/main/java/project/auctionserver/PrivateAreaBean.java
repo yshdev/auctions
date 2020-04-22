@@ -3,12 +3,14 @@ package project.auctionserver;
 import project.service.CategoryDto;
 import java.util.List;
 import java.io.Serializable;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import project.dal.UnitOfWork;
 import project.domain.*;
+import project.service.AuctionBidsTuple;
 import project.service.AuctionListItemDto;
 import project.service.Mapper;
 import project.service.SortOption;
@@ -26,11 +28,11 @@ public class PrivateAreaBean implements Serializable {
     private Integer categoryId;
     private SortOption sortOption = SortOption.Current_Price__Ascending;
     private CategoryDto[] categories;
-    private AuctionListItemDto[] activeAuctions;
-    private AuctionListItemDto[] activeBids;
-    private AuctionListItemDto[] closedAuctions;
-    private AuctionListItemDto[] closedBids;
-    private AuctionDetailsDto chosenAuction;
+    private List<AuctionListItemDto> activeAuctions;
+    private List<AuctionListItemDto> activeBids;
+    private List<AuctionListItemDto> closedAuctions;
+    private List<AuctionListItemDto> closedBids;
+    
     private String error;
 
     public PrivateAreaBean() {
@@ -75,19 +77,19 @@ public class PrivateAreaBean implements Serializable {
         return SortOption.values();
     }
 
-    public AuctionListItemDto[] getActiveAuctions() {
+    public List<AuctionListItemDto>getActiveAuctions() {
         return this.activeAuctions;
     }
      
-    public AuctionListItemDto[] getActiveBids() {
+    public List<AuctionListItemDto> getActiveBids() {
         return activeBids;
     }
 
-    public AuctionListItemDto[] getClosedAuctions() {
+    public List<AuctionListItemDto> getClosedAuctions() {
         return closedAuctions;
     }
 
-    public AuctionListItemDto[] getClosedBids() {
+    public List<AuctionListItemDto>getClosedBids() {
         return closedBids;
     }
     
@@ -107,23 +109,30 @@ public class PrivateAreaBean implements Serializable {
 
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
 
-            List<Auction> auctions = unitOfWork.getUserAuctions(this.getCategoryId(), this.sortOption, userId, AuctionFilter.ALL);
+            List<AuctionBidsTuple> auctions = unitOfWork.getUserAuctions(this.getCategoryId(), this.sortOption, userId);
             
             this.activeAuctions = auctions.stream()
-                    .filter(a -> !a.isClosed())
-                    .map(a -> this.mapper.mapAuctionToListItemDto(a, userId))
-                    .toArray(AuctionListItemDto[]::new);
+                    .filter(a -> !a.getAuction().isClosed())
+                    .map(a -> this.mapper.mapAuctionToListItemDto(a.getAuction(), userId, a.getUserBid()))
+                    .collect(Collectors.toList());
             
             this.closedAuctions = auctions.stream()
-                    .filter(a -> a.isClosed())
-                    .map(a -> this.mapper.mapAuctionToListItemDto(a, userId))
-                    .toArray(AuctionListItemDto[]::new);
+                    .filter(a -> a.getAuction().isClosed())
+                    .map(a -> this.mapper.mapAuctionToListItemDto(a.getAuction(), userId, a.getUserBid()))
+                    .collect(Collectors.toList());
+                    
 
-            auctions = unitOfWork.getUserActiveBids(this.getCategoryId(), this.sortOption, userId);
-            this.activeBids = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
-
-            auctions = unitOfWork.getClosedBids(this.getCategoryId(), this.sortOption, userId);
-            this.closedBids = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
+            //auctions = unitOfWork.getUserBids(this.getCategoryId(), this.sortOption, userId, AuctionFilter.ACTIVE);
+            List<AuctionBidsTuple> bids = unitOfWork.getUserBids(this.getCategoryId(), this.sortOption, userId);
+            this.activeBids = bids.stream()
+                    .filter(a -> !a.getAuction().isClosed())
+                    .map(b -> this.mapper.mapAuctionToListItemDto(b.getAuction(), userId, b.getUserBid()))
+                    .collect(Collectors.toList());
+            
+            this.closedBids = bids.stream()
+                    .filter(a -> a.getAuction().isClosed())
+                    .map(b -> this.mapper.mapAuctionToListItemDto(b.getAuction(), userId, b.getUserBid()))
+                    .collect(Collectors.toList());
         }
     }
  

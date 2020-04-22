@@ -15,6 +15,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -35,6 +36,7 @@ public class UnitOfWork implements AutoCloseable {
     private final EntityManager em;
     private final EntityTransaction transaction;
     private static boolean _isInitialized = false;
+    private final Mapper mapper = new Mapper();
 
     private UnitOfWork(EntityManagerFactory emf, EntityManager em, EntityTransaction transaction) {
         this.emf = emf;
@@ -105,44 +107,52 @@ public class UnitOfWork implements AutoCloseable {
         }
     }
 
-    public List<Auction> getActiveAuctions(Integer categoryId, SortOption sortOption) {
+    public List<AuctionBidsTuple> getActiveAuctions(Integer categoryId, Integer userId, SortOption sortOption) {
 
-        String s = "SELECT a FROM Auction a LEFT JOIN FETCH a.highestBid b WHERE  a.category.id = :categoryId AND a.actualClosingTime IS NULL AND a.startingTime < :now AND a.closingTime > :now";
+        String s = "SELECT a, hb, ub FROM Auction a LEFT JOIN a.highestBid hb LEFT JOIN Bid ub"
+                + " ON ub.auction = a  AND ub.bidder.id = :userId AND ub.isUserHighest = 1"
+                + " WHERE a.category.id = :categoryId AND a.actualClosingTime IS NULL AND a.startingTime < :now AND a.closingTime > :now";
         s = this.addSortToAuctionsQuery(s, sortOption);
         
-        TypedQuery<Auction> query = this.em.createQuery(s, Auction.class)
+        TypedQuery<Object[]> query = this.em.createQuery(s, Object[].class)
                 .setParameter("categoryId", categoryId)
+                .setParameter("userId", userId)
                 .setParameter("now", LocalDateTime.now());
+                
 
-        List<Auction> auctions = query.getResultList();
+        List<Object[]> values = query.getResultList();
+        List<AuctionBidsTuple> result = values.stream()
+                .map(v -> new AuctionBidsTuple((Auction)v[0], (Bid)v[1], (Bid)v[2]))
+                .collect(Collectors.toList());
         
-        return auctions;
+        return result;
     }
     
-    public List<Auction> getUserAuctions(Integer categoryId, SortOption sortOption, int userId, AuctionFilter filter) {
+    
+    public List<AuctionBidsTuple> getUserAuctions(Integer categoryId, SortOption sortOption, int userId) {
 
-        String s = "SELECT a FROM Auction a LEFT JOIN FETCH a.highestBid b"
-                + " WHERE (:categoryId IS NULL OR a.category.id = :categoryId)"
+        String s = "SELECT a FROM Auction a LEFT JOIN FETCH a.highestBid hb"
+                + " WHERE a.category.id = :categoryId"
                 + " AND a.actualClosingTime IS NULL"
                 + " AND a.owner.id = :userId";
         
-        switch (filter)
-        {
-            case NOT_OPENNED_YET:
-                s += " AND NOT a.isClosed AND a.startingTime > :now";
-                break;
-                
-            case OPENNED:
-                s += " AND NOT a.isClosed AND a.startingTime < :now AND a.closingTime > :now";
-                break;
-                
-            case ACTIVE:
-                s += " AND NOT a.isClosed";
-                
-            case CLOSED:
-                s += " AND a.isClosed";
-                break;
-        }
+//        switch (filter)
+//        {
+//            case NOT_OPENNED_YET:
+//                s += " AND NOT a.isClosed AND a.startingTime > :now";
+//                break;
+//                
+//            case OPENNED:
+//                s += " AND NOT a.isClosed AND a.startingTime < :now AND a.closingTime > :now";
+//                break;
+//                
+//            case ACTIVE:
+//                s += " AND NOT a.isClosed";
+//                
+//            case CLOSED:
+//                s += " AND a.isClosed";
+//                break;
+//        }
           
         s = this.addSortToAuctionsQuery(s, sortOption);
         
@@ -150,101 +160,47 @@ public class UnitOfWork implements AutoCloseable {
                 .setParameter("categoryId", categoryId)
                 .setParameter("userId", userId);
         
-        switch (filter)
-        {
-            case NOT_OPENNED_YET:
-                query.setParameter("now", LocalDateTime.now());
-                break;
-                
-            case OPENNED:
-                query.setParameter("now", LocalDateTime.now());
-                break;
-             
-        }
+//        switch (filter)
+//        {
+//            case NOT_OPENNED_YET:
+//                query.setParameter("now", LocalDateTime.now());
+//                break;
+//                
+//            case OPENNED:
+//                query.setParameter("now", LocalDateTime.now());
+//                break;
+//             
+//        }
 
         List<Auction> auctions = query.getResultList();
+        List<AuctionBidsTuple> result = auctions.stream()
+                .map(a -> new AuctionBidsTuple(a, a.getHighestBid(), null))
+                .collect(Collectors.toList());
         
-        return auctions;
+        return result;
     }
     
-    public List<Auction> getUserActiveBids(Integer categoryId, SortOption sortOption, Integer userId) {
+    public List<AuctionBidsTuple> getUserBids(Integer categoryId, SortOption sortOption, int userId) {
 
-        String s = "SELECT a FROM Auction a"
-                + " WHERE a.category.id = :categoryId"
-                + " AND a.actualClosingTime IS NULL"
-                + " AND a.startingTime < :now"
-                + " AND a.closingTime > :now";
-                //+ " AND userId =  ANY(a.bids)";
-        
-        switch (sortOption) {
-            case Current_Price__Ascending:
-                s += " ORDER BY a.highestBid";
-                break;
-                
-            case Current_Price__Descending:
-                s += " ORDER BY a.highestBid DESC";
-                break;
-                
-            case Ending_Time__Asecnding:
-                s += " ORDER BY a.endingTime";
-                break;
+        String s = "SELECT a, hb, ub FROM Bid ub INNER JOIN FETCH ub.auction a LEFT JOIN FETCH a.highestBid hb"
+                + " WHERE ub.isUserHighest = 1"
+                + " AND a.category.id = :categoryId"
+                + " AND ub.bidder.id = :userId";
+                        
+        s = this.addSortToAuctionsQuery(s, sortOption);
+            
+        TypedQuery<Object[]> query = this.em.createQuery(s, Object[].class)
+                .setParameter("categoryId", categoryId)
+                .setParameter("userId", userId);
 
-            case Ending_Time__Descending:
-            default:
-                s += " ORDER BY a.endingTime DESC";
-                break;
-        }
-        
-        TypedQuery<Auction> query;
-        
-        query = this.em.createQuery(s, Auction.class);
-        
-        query = query.setParameter("categoryId", categoryId);
-        query = query.setParameter("now", LocalDateTime.now());
+        List<Object[]> values = query.getResultList();
+        List<AuctionBidsTuple> result = values.stream()
+                .map(v -> new AuctionBidsTuple((Auction)v[0], (Bid)v[1], (Bid)v[2]))
+                .collect(Collectors.toList());
 
-        List<Auction> auctions = query.getResultList();
-        
-        return auctions;
+        return result;
     }
-        
-    public List<Auction> getClosedBids(Integer categoryId, SortOption sortOption, Integer userId) {
-
-        String s = "SELECT a FROM Auction a"
-                + " WHERE a.category.id = :categoryId"
-                + " AND (a.actualClosingTime IS NOT NULL OR a.startingTime > :now OR a.closingTime < :now)";
-                //+ " AND userId =  ANY(a.bids)";
-        
-        switch (sortOption) {
-            case Current_Price__Ascending:
-                s += " ORDER BY a.highestBid";
-                break;
-                
-            case Current_Price__Descending:
-                s += " ORDER BY a.highestBid DESC";
-                break;
-                
-            case Ending_Time__Asecnding:
-                s += " ORDER BY a.endingTime";
-                break;
-
-            case Ending_Time__Descending:
-            default:
-                s += " ORDER BY a.endingTime DESC";
-                break;
-        }
-        
-        TypedQuery<Auction> query;
-        
-        query = this.em.createQuery(s, Auction.class);
-        
-        query = query.setParameter("categoryId", categoryId);
-        query = query.setParameter("now", LocalDateTime.now());
-
-        List<Auction> auctions = query.getResultList();
-        
-        return auctions;
-    }
-    
+         
     
     public Auction findAuction(int auctionId) {
         
@@ -371,19 +327,22 @@ public class UnitOfWork implements AutoCloseable {
     }
     
      private String addSortToAuctionsQuery(String query, SortOption sortOption) {
-        switch (sortOption) {
-            case Current_Price__Ascending:
-                return query + " ORDER BY COALESCE(b.amount, a.startingAmount) ASC";
-                
-            case Current_Price__Descending:
-                return query + " ORDER BY COALESCE(b.amount, a.startingAmount) DESC";
-                
-            case Ending_Time__Asecnding:
-                return query + " ORDER BY a.closingTime ASC";
-
-            case Ending_Time__Descending:
-            default:
-                return query + " ORDER BY a.closingTime DESC";
-        }
+         
+         
+//        switch (sortOption) {
+//            case Current_Price__Ascending:
+//                return query + " ORDER BY COALESCE(hb.amount, a.startingAmount) ASC";
+//                
+//            case Current_Price__Descending:
+//                return query + " ORDER BY COALESCE(hb.amount, a.startingAmount) DESC";
+//                
+//            case Ending_Time__Asecnding:
+//                return query + " ORDER BY a.closingTime ASC";
+//
+//            case Ending_Time__Descending:
+//            default:
+//                return query + " ORDER BY a.closingTime DESC";
+//        }
+        return query;
     }
 }

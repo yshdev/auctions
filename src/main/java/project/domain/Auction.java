@@ -290,7 +290,7 @@ public class Auction implements Serializable {
             throw new IllegalArgumentException("Bid amount must not be lower than minimal amount.");
         }
 
-        Bid bid = new Bid(this, bidder, amount, LocalDateTime.now());
+        Bid bid = new Bid(this, bidder, amount, LocalDateTime.now(), true);
 
         if (this.highestBid != null) {
             if (bid.getAmount().compareTo(this.highestBid.getAmount()) < 0) {

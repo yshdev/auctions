@@ -110,7 +110,12 @@ public class AuctionDetailsBean implements Serializable {
 
                 UserProfile user = unitOfWork.findUserById(this.loggedUserBean.getUserId());
                 Auction auction = unitOfWork.findAuction(this.auctionId);
+                
+                Bid lastBid = unitOfWork.findLastUserBid(auction.getId(), user.getId());
                 auction.addBid(user, this.bidAmount);
+                if (lastBid != null) {
+                    lastBid.setIsUserHighest(false);
+                }
                 unitOfWork.saveChanges();
             }
         } catch (IllegalArgumentException ax) {

@@ -7,6 +7,7 @@ package project.service;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -27,6 +28,8 @@ public class AuctionListItemDto {
     private boolean isClosed;
     private BigDecimal startingAmount;
     private StreamedContent image;
+    private BigDecimal userBidAmount;
+    private LocalDateTime userBidTimestamp;
 
     public AuctionListItemDto() {
     }
@@ -116,5 +119,22 @@ public class AuctionListItemDto {
                 .stream(() -> new ByteArrayInputStream(bytes))
                 .build();
     }
+
+    public BigDecimal getUserBidAmount() {
+        return userBidAmount;
+    }
+
+    public void setUserBidAmount(BigDecimal userBidAmount) {
+        this.userBidAmount = userBidAmount;
+    }
+
+    public LocalDateTime getUserBidTimestamp() {
+        return userBidTimestamp;
+    }
+
+    public void setUserBidTimestamp(LocalDateTime userBidTimestamp) {
+        this.userBidTimestamp = userBidTimestamp;
+    }
+    
     
 }

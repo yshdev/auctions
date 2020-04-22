@@ -3,19 +3,22 @@ package project.auctionserver;
 import project.service.CategoryDto;
 import java.util.List;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import project.dal.UnitOfWork;
 import project.domain.*;
+import project.service.AuctionBidsTuple;
 import project.service.AuctionListItemDto;
 import project.service.Mapper;
 import project.service.SortOption;
 
 @Named
 @ViewScoped
-public class AuctionListBean implements Serializable {
+public class homeBean implements Serializable {
     
     @Inject
     private LoggedUserBean loggedUserBean;
@@ -23,10 +26,10 @@ public class AuctionListBean implements Serializable {
     
     private Integer categoryId;
     private SortOption sortOption= SortOption.Current_Price__Ascending;
-    private AuctionListItemDto[] activeAuctions;
+    private List<AuctionListItemDto> activeAuctions;
     private CategoryDto[] categories;
     
-    public AuctionListBean() {
+    public homeBean() {
     }
     
     @PostConstruct
@@ -64,7 +67,7 @@ public class AuctionListBean implements Serializable {
         return SortOption.values();
     }
     
-    public AuctionListItemDto[] getActiveAuctions() {
+    public List<AuctionListItemDto> getActiveAuctions() {
         return this.activeAuctions;
     }
     
@@ -75,11 +78,13 @@ public class AuctionListBean implements Serializable {
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
 
             if (this.getCategoryId() != null) {
-                List<Auction> auctions = unitOfWork.getActiveAuctions(this.getCategoryId(), this.sortOption);
-                this.activeAuctions = auctions.stream().map(a -> this.mapper.mapAuctionToListItemDto(a, userId)).toArray(AuctionListItemDto[]::new);
+                List<AuctionBidsTuple> auctions = unitOfWork.getActiveAuctions(this.getCategoryId(), userId, this.sortOption);
+                this.activeAuctions = auctions.stream()
+                        .map(a -> this.mapper.mapAuctionToListItemDto(a.getAuction(), userId, a.getUserBid()))
+                        .collect(Collectors.toList());
             }
             else {
-                this.activeAuctions = new AuctionListItemDto[0];
+                this.activeAuctions = new ArrayList<AuctionListItemDto>();
             }
         }
     }

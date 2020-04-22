@@ -39,12 +39,16 @@ public class Bid implements Serializable {
     private LocalDateTime timestamp;
     
     private BigDecimal amount;
+    
+    private boolean isUserHighest;
+    
+    
 
     // For JPA only
     public Bid(){
     }
     
-    public Bid(Auction auction, UserProfile user, BigDecimal amount, LocalDateTime timestamp){
+    public Bid(Auction auction, UserProfile user, BigDecimal amount, LocalDateTime timestamp, boolean isUserHighest){
         
         if (auction == null) {
             throw new IllegalArgumentException("Bid auction cannot be null.");
@@ -62,6 +66,7 @@ public class Bid implements Serializable {
         this.bidder = user;
         this.amount = amount;
         this.timestamp = timestamp;
+        this.isUserHighest = isUserHighest;
     }
     
     public int getId() {
@@ -86,6 +91,14 @@ public class Bid implements Serializable {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isIsUserHighest() {
+        return isUserHighest;
+    }
+
+    public void setIsUserHighest(boolean isUserHighest) {
+        this.isUserHighest = isUserHighest;
     }
     
     @Override

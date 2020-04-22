@@ -60,7 +60,7 @@ public class Mapper {
         return details;
     }
 
-    public AuctionListItemDto mapAuctionToListItemDto(Auction auction, Integer userId) {
+    public AuctionListItemDto mapAuctionToListItemDto(Auction auction, Integer userId, Bid userBid) {
         AuctionListItemDto dto = new AuctionListItemDto();
         dto.setId(auction.getId());
         dto.setCategory(this.mapCategoryToDto(auction.getCategory()));
@@ -80,6 +80,10 @@ public class Mapper {
             dto.setCanCancel(auction.canCancel(userId));
             dto.setCanEdit(auction.canEdit(userId));
             dto.setCanBid(auction.canBid(userId));
+        }
+        if (userBid != null) {
+            dto.setUserBidAmount(userBid.getAmount());
+            dto.setUserBidTimestamp(userBid.getTimestamp());
         }
         return dto;
     }

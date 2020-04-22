@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Welcome to DailyAuctions</title>
+    </h:head>
+
+    <h:body>
+
+        <composite:interface>
+            <composite:attribute name="header" required="false" type="java.lang.String" />
+            <composite:attribute name="auctions" required="true" type="java.util.List" />
+            <composite:attribute name="userId" required="false" type="Integer" />
+        </composite:interface>        
+
+
+        <composite:implementation>
+
+            <p:panel id="panel" header="#{cc.attrs.header}" style="margin-bottom:10px;">
+
+                <h:form style="margin:auto; width: 80%">
+
+                    <ui:repeat value="#{cc.attrs.auctions}" var="item">
+
+                        <table>
+                            <tr>
+                                <td rowspan="4">
+                                    <p:graphicImage value="#{item.image}" stream="true" />
+                                    <img width="80" height="80">
+
+                                    </img></td>
+                                <td width="600px" ><h:outputText value="#{item.title}" class="header-1"></h:outputText></td> 
+                                <td>
+                                    <h:outputLink rendered="#{(cc.attrs.userId != null) and item.canBid()}" value="auctionDetails.xhtml" >
+                                        <h:outputText value="Bid now!" />
+                                        <f:param name="auctionId" value="#{item.id}"></f:param>
+                                    </h:outputLink>
+
+                                    <h:outputLink  rendered="#{(cc.attrs.userId == null) or !item.canBid()}" value="auctionDetails.xhtml" >
+                                        <h:outputText value="View Details" />
+                                        <f:param name="auctionId" value="#{item.id}"></f:param>
+                                    </h:outputLink>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <h:outputText value="#{item.category.title}" class="header-2"></h:outputText>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <h:outputText value="Starting amount: #{item.startingAmount}$"></h:outputText>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <h:outputText rendered="#{item.latestBidAmount != null}" value="Latest bid: #{item.latestBidAmount}$"></h:outputText>
+                                    <h:outputText rendered="#{item.latestBidAmount == null}" value="No bids yet"></h:outputText>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+                        </table>
+
+                    </ui:repeat>
+                </h:form>
+
+            </p:panel>
+
+        </composite:implementation>
+
+    </h:body>
+</html>
+
