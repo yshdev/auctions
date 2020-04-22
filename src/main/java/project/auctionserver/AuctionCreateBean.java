@@ -229,14 +229,12 @@ public class AuctionCreateBean implements Serializable {
                 Auction auction = new Auction(user, category, this.getTitle(), this.openingTime.toLocalDate(), Settings.OPENING_HOUR, this.numOfDays, this.getStartingAmount(),
                         this.getWinningAmount(), this.getReservedPrice());
 
-                if (this.imageFile == null) {
-                    this.error = "No picture!";
-                } else {
-
+                if (this.imageFile != null)
                     auction.setPicture(this.imageFile.getContent());
-                    unitOfWork.persist(auction);
-                    unitOfWork.saveChanges();
-                }
+                
+                unitOfWork.persist(auction);
+                unitOfWork.saveChanges();
+                
             }
 
             if (this.error == null) {
