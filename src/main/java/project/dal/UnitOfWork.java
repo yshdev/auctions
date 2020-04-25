@@ -328,21 +328,21 @@ public class UnitOfWork implements AutoCloseable {
     
      private String addSortToAuctionsQuery(String query, SortOption sortOption) {
          
-        String finalQuery;
-        switch (sortOption) {
-            case Current_Price__Ascending:
-                finalQuery = query + " ORDER BY COALESCE(hb.amount, a.startingAmount) ASC";
-                break;
-            case Current_Price__Descending:
-                finalQuery = query + " ORDER BY COALESCE(hb.amount, a.startingAmount) DESC";
-                break;
-            case Ending_Time__Asecnding:
-                finalQuery = query + " ORDER BY a.closingTime ASC";
-                break;
-            case Ending_Time__Descending:
-            default:
-                finalQuery = query + " ORDER BY a.closingTime DESC";
-        }
-        return finalQuery;
+         
+//        switch (sortOption) {
+//            case Current_Price__Ascending:
+//                return query + " ORDER BY COALESCE(hb.amount, a.startingAmount) ASC";
+//                
+//            case Current_Price__Descending:
+//                return query + " ORDER BY COALESCE(hb.amount, a.startingAmount) DESC";
+//                
+//            case Ending_Time__Asecnding:
+//                return query + " ORDER BY a.closingTime ASC";
+//
+//            case Ending_Time__Descending:
+//            default:
+//                return query + " ORDER BY a.closingTime DESC";
+//        }
+        return query;
     }
 }
