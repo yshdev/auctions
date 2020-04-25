@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>DailyAuctions - Sell Item</title>
+    </h:head>
+    <h:body>
+        <h:form style="float:right; font-size:120%">
+            hi #{loggedUserBean.user.username}!
+            <h:commandLink value="logout" action="#{loggedUserBean.logout()}"/>
+        </h:form>
+        <h:outputLink value="home.xhtml"
+                      style="text-decoration: none; color:black;
+                      font-size:200%">DailyAuctions</h:outputLink>
+        <hr/>
+        <h2>Sell Item</h2>
+        
+        <h:panelGrid columns="4">
+            <h:outputText value="Category:"/>
+            <h:selectOneMenu value="#{newItem.category}">
+                <f:selectItems value="#{itemListBean.getCategories()}" var="categroy"
+                               itemLabel="#{categroy.title}" itemValue="#{categroy}"/>
+            </h:selectOneMenu>
+            <h:outputText value="Category:"/>
+            <h:outputText value="Sub Category:"/>
+            <h:inputText id="subInput" required="true" requiredMessage="reqired"
+                         value="#{newItem.subCategory}"></h:inputText>
+            <h:panelGroup/><h:panelGroup/><h:panelGroup/>
+            <h:message for="subInput" style="color:red"/>
+        </h:panelGrid>
+        <br/>
+        <h:panelGrid columns="2">
+            <h:outputText value="Title:"/>
+            <h:inputText id="titleInput" required="true" requiredMessage="reqired"
+                         value="#{newItem.title}"></h:inputText>
+            <h:panelGroup/><h:message for="titleInput" style="color:red"/>
+            <h:outputText value="Description:"/>
+            <h:inputText id="descriptionInput" required="true" requiredMessage="reqired"
+                         value="#{newItem.title}"></h:inputText>
+            <h:panelGroup/><h:message for="descriptionInput" style="color:red"/>
+        </h:panelGrid>
+        <br/>
+        <h:panelGrid columns="4">
+            <h:outputText value="Starting Bid:"/>
+            <h:inputText id="SBidInput" required="true" requiredMessage="reqired"
+                         validatorMessage="positive number"
+                         value="#{newItem.startingBid}">
+                <f:validateLongRange minimum = "0" />
+            </h:inputText>
+            <h:outputText value="$"/><h:panelGroup/>
+            <h:panelGroup/><h:message for="SBidInput" style="color:red"/>
+            <h:panelGroup/><h:panelGroup/>
+            <h:outputText value="Start Time:"/>
+            <h:inputText id="STime" required="true" requiredMessage="reqired"
+                         validatorMessage="format 31/12/2019"
+                         value="#{newItem.startTime}">
+                <f:validateRegex pattern=
+                                     "\d{2}/\d{2}/\d{4}" />
+            </h:inputText>
+            <h:outputText value="Days:"/>
+            <h:inputText id="daysInput" required="true" requiredMessage="reqired"
+                         validatorMessage="minimum one day"
+                         value="#{newItem.days}">
+                <f:validateLongRange minimum = "1" />
+            </h:inputText>
+            <h:panelGroup/>
+            <h:message for="STime" style="color:red"/>
+            <h:panelGroup/>
+            <h:message for="daysInput" style="color:red"/>
+            <h:outputText value="Winning Bid (optional):"/>
+            <h:inputText id="WBidInput" value="#{newItem.winningBid}"></h:inputText>
+            <h:outputText value="$"/>
+        </h:panelGrid>
+        
+        <h:commandButton value="Register"
+                         action="#{newItem.addItem(loggedUserBean.user)}">
+        </h:commandButton>
+    </h:body>
+</html>
