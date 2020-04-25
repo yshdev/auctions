@@ -276,7 +276,7 @@ public class UnitOfWork implements AutoCloseable {
 
             if (categoriesCount == 0) {
 
-                //try {
+                try {
                     emanager.getTransaction().begin();
 
                     HashAndSaltPair hashAndSalt = Security.hash("shalom");
@@ -286,59 +286,7 @@ public class UnitOfWork implements AutoCloseable {
                     hashAndSalt = Security.hash("gross");
                     UserProfile aharon = new UserProfile("aharon", "Aharon", "Gross", "aharon@gmail.com", "054-56534434", hashAndSalt.getHash(), hashAndSalt.getSalt());
                     emanager.persist(aharon);
-                    
-                    Category electricityAndElectronics = new Category("Electricity and Electronics");
-                    emanager.persist(electricityAndElectronics);
-                    Category computersAndPrograms = new Category("Computers and Programs");
-                    emanager.persist(computersAndPrograms);
-                    Category forHomeAndGarden = new Category("for Home and Garden");
-                    emanager.persist(forHomeAndGarden);
-                    Category recreationAndSports = new Category("Recreation and Sports");
-                    emanager.persist(recreationAndSports);
-                    Category variousGifts = new Category("various Gifts");
-                    emanager.persist(variousGifts);
-                    Category children = new Category("Children");
-                    emanager.persist(children);
-                    Category beautyAndHealthCare = new Category("Beauty and Health care");
-                    emanager.persist(beautyAndHealthCare);
-                    Category carAccessories = new Category("Car & Accessories");
-                    emanager.persist(carAccessories);
-                    Category fashion = new Category("Fashion");
-                    emanager.persist(fashion);
-                    
-                    Auction y1 = new Auction(yaniv, carAccessories, "Alfa Romeo", LocalDate.now(), 3, 12, new BigDecimal(15000.0), new BigDecimal(30000.0), new BigDecimal(25000.0));
-                    y1.setDescription("2020 Alfa Romeo 4C Spider");
-                    emanager.persist(y1);
-                    emanager.flush();
-                    Auction y2 = new Auction(yaniv, carAccessories, "Mitsubishi Lancer", LocalDate.now(), 3, 30, new BigDecimal(180.0), new BigDecimal(1000.0), new BigDecimal(800.0));
-                    y2.setDescription("2009 Mitsubishi Lancer GTS");
-                    emanager.persist(y2);
-                    emanager.flush();
-                    Auction y3 = new Auction(yaniv, computersAndPrograms, "Dell computer", LocalDate.now(), 4, 7, new BigDecimal(35.0), new BigDecimal(90.0), new BigDecimal(80.0));
-                    y3.setDescription("Dell Inspiron 15 3593 N3593-5066");
-                    emanager.persist(y3);
-                    emanager.flush();
-                    Auction y4 = new Auction(yaniv, computersAndPrograms, "HP computer", LocalDate.now(), 4, 10, new BigDecimal(20.0), new BigDecimal(80.0), new BigDecimal(55.0));
-                    y4.setDescription("HP 255 G7 7DB74EA");
-                    emanager.persist(y4);
-                    emanager.flush();
-                    Auction a1 = new Auction(aharon, carAccessories, "Land Rover", LocalDate.now(), 3, 25, new BigDecimal(20000.0), new BigDecimal(40000.0), new BigDecimal(30000.0));
-                    a1.setDescription("1985 Land Rover Defender (LR90)");
-                    emanager.persist(a1);
-                    emanager.flush();
-                    Auction a2 = new Auction(aharon, carAccessories, "Cadillac", LocalDate.now(), 3, 3, new BigDecimal(26000.0), new BigDecimal(60000.0), new BigDecimal(50000.0));
-                    a2.setDescription("1976 Cadillac Eldorado Convertible");
-                    emanager.persist(a2);
-                    emanager.flush();
-                    Auction a3 = new Auction(aharon, forHomeAndGarden, "garden hoe", LocalDate.now(), 4, 7, new BigDecimal(9.0), new BigDecimal(17.0), new BigDecimal(14.0));
-                    a3.setDescription("Field Hoe with Fiberglass Handle");
-                    emanager.persist(a3);
-                    emanager.flush();
-                    Auction a4 = new Auction(aharon, forHomeAndGarden, "Electric Kettle", LocalDate.now(), 4, 10, new BigDecimal(5.0), new BigDecimal(12.0), new BigDecimal(9.0));
-                    a4.setDescription("Brentwood KT-1610 Cordless Electric Kettle BPA Free, 1 Liter, White");
-                    emanager.persist(a4);
-                    emanager.flush();
-                    /*
+
                     Category israeliCoins = new Category("Israeli Coins");
                     emanager.persist(israeliCoins);
 
@@ -362,12 +310,12 @@ public class UnitOfWork implements AutoCloseable {
                     a3.setPicture(ImageUtils.loadImage("SheepHead-MenasheKadishman.jpg"), "jpg");
                     emanager.persist(a3);
                     emanager.flush();
-                    */
+
                     emanager.getTransaction().commit();
 
-                /*} catch (IOException | URISyntaxException ex) {
+                } catch (IOException | URISyntaxException ex) {
                     Logger.getLogger(UnitOfWork.class.getName()).log(Level.SEVERE, null, ex);
-                }*/
+                }
 
                 emanager.close();
                 emf.close();
