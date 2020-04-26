@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -147,6 +148,10 @@ public class Auction implements Serializable {
 
     public LocalDateTime getClosingTime() {
         return closingTime;
+    }
+    
+    public int getNumOfDays() {
+        return (int)this.startingTime.until(closingTime, ChronoUnit.DAYS);
     }
 
     public LocalDateTime getActualClosingTime() {

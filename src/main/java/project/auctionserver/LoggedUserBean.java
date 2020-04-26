@@ -5,10 +5,12 @@
  *********************************************************** */
 package project.auctionserver;
 
-import java.io.IOException;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.io.IOException;
+import javax.inject.Named;
+import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import project.dal.UnitOfWork;
 import project.domain.HashAndSaltPair;
@@ -34,7 +36,7 @@ public class LoggedUserBean implements Serializable {
     public UserDto getUser() {
         return user;
     }
-    
+
     public void setUser(UserDto user) {
         this.user = user;
     }
@@ -74,19 +76,23 @@ public class LoggedUserBean implements Serializable {
     public void setReferrer(String referrer) {
         this.referrer = referrer;
     }
-    
+
     public void redirectToLogin(String referrer) throws IOException {
         this.referrer = referrer;
-        
+
         FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
-                
+
     }
 
-    public String logout() {
+    public void logout() {
         this.user = null;
         this.error = null;
 
-        return "home.xhtml";
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("home.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(LoggedUserBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /* when user wants to login, compare input name and password
@@ -96,24 +102,23 @@ public class LoggedUserBean implements Serializable {
 
         try ( UnitOfWork unitOfWork = UnitOfWork.create()) {
 
-            UserProfile newUser = unitOfWork.findUserByUsername(this.inputUsername);
-            boolean isAuthenticated = Security.authenticate(this.inputPassword, new HashAndSaltPair(newUser.getPasswordHash(), newUser.getPasswordSalt()));
+            UserProfile user = unitOfWork.findUserByUsername(this.inputUsername);
+            boolean isAuthenticated = user != null && Security.authenticate(this.inputPassword, new HashAndSaltPair(user.getPasswordHash(), user.getPasswordSalt()));
             String url = null;
             if (isAuthenticated) {
-                this.user = this.mapper.mapUserToDto(newUser);
+                this.user = this.mapper.mapUserToDto(user);
                 this.error = null;
-                if (this.referrer != null) { 
+                if (this.referrer != null) {
                     url = this.referrer;
-                }
-                else {
+                } else {
                     url = "home.xhtml";
                 }
             } else {
                 this.inputPassword = null;
-                this.error = "Name or Password not correct";
+                this.error = "Invalid username or password. Try again.";
                 url = "login.xhtml";
             }
-            
+
             FacesContext.getCurrentInstance().getExternalContext().redirect(url);
         }
     }

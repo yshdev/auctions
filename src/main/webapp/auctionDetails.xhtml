@@ -22,192 +22,242 @@
                 <p:staticMessage severity="error" summary="Error" detail="#{auctionDetailsBean.error}" rendered="#{auctionDetailsBean.error != null}" />
                 <p:panel id="detailsPanel" header="Auction Details" style="margin-bottom:10px;" rendered="#{auctionDetailsBean.auctionId != null}" >
 
-                    <h:panelGrid  >
-                        
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Title:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.title}" styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-                        
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Category:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.category.title}"  styleClass="output-field"/>
-                            </p:column>
-                        </p:row>
+                    <h:panelGrid columns="2">
 
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Description:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.description}"  styleClass="output-field"/>
-                            </p:column>
-                        </p:row>
-                        
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Owner:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.owner.name}"  styleClass="output-field"/>
-                            </p:column>
-                        </p:row>
-                        
-                        
+                         <p:graphicImage value="#{auctionDetailsBean.auction.image}" stream="false" width="300" height="300 " />
 
-                        <p:row rendered="#{auctionDetailsBean.auction.isNotOpennedYet}">
-                            <p:column>
-                                <p:outputLabel value="Auction will be openned at:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.startingTimeText}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
+                        <h:panelGrid  >
 
-                        <p:row  rendered="#{auctionDetailsBean.auction.isOpen}">
-                            <p:column>
-                                <p:outputLabel value="Auction was openned at:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.startingTimeText}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Title:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.title}" styleClass="output-field" />
+                                </p:column>
+                            </p:row>
 
-                        <p:row rendered="#{auctionDetailsBean.auction.isOpen}">
-                            <p:column>
-                                <p:outputLabel value="Auction will be closed at:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.closingTimeText}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Category:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.category.title}"  styleClass="output-field"/>
+                                </p:column>
+                            </p:row>
 
-                        <p:row rendered="#{auctionDetailsBean.auction.isClosed}">
-                            <p:column>
-                                <p:outputLabel value="Auction was openned at:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.startingTimeText}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Description:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.description}"  styleClass="output-field"/>
+                                </p:column>
+                            </p:row>
 
-                        <p:row rendered="#{auctionDetailsBean.auction.isClosed}">
-                            <p:column>
-                                <p:outputLabel value="Auction was closed at:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.closingTimeText}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.actualClosingTime != null}"> 
-                            <p:column>
-                                <h:outputLabel value="Actual closing time:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.actualClosingTimeText}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row rendered="#{!auctionDetailsBean.auction.isNotOpennedYet}">
-                            <p:column>
-                                <p:outputLabel value="Number of Bids:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.numberOfBids}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Starting Amount:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.startingAmount}$"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row rendered="#{auctionDetailsBean.auction.isOpen}">
-                            <p:column>
-                                <p:outputLabel value="Highest Bid:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="None" rendered="#{auctionDetailsBean.auction.highestBid == null}"  styleClass="output-field" />
-                                <h:outputText value="#{auctionDetailsBean.auction.highestBid.amount}$" rendered="#{auctionDetailsBean.auction.highestBid != null}"
-                                               styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.winningBidAmount != null}">
-                            <p:column>
-                                <p:outputLabel value="Winning Bid:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.winningBidAmount}$"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-                        
-                        
-                        <p:row rendered="#{auctionDetailsBean.auction.hasUserBid}">
-                            <p:column>
-                                <p:outputLabel value="Your Bid:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.userBidAmount}$ at #{auctionDetailsBean.auction.userBidTimestampText}" styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-                        
-                        
-
-                        <p:row>
-                            <p:column>
-                                <p:outputLabel value="Status:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.status.toString()}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsOwner}">
-                            <p:column>
-                                <p:outputLabel value="Winner:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.highestBid.bidder.name}, Email: #{auctionDetailsBean.auction.highestBid.bidder.email}" 
-                                               styleClass="output-field"/>
-                            </p:column>
-                        </p:row>
-
-                        <p:row rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}">
-                            <p:column>
-                                <p:outputLabel value="Winning Bid:" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{auctionDetailsBean.auction.highestBid.amount}"  styleClass="output-field" />
-                            </p:column>
-                        </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Owner:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.owner.name}"  styleClass="output-field"/>
+                                </p:column>
+                            </p:row>
 
 
 
+                            <p:row rendered="#{auctionDetailsBean.auction.isNotOpennedYet}">
+                                <p:column>
+                                    <p:outputLabel value="Auction will be openned at:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.startingTimeText}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row  rendered="#{auctionDetailsBean.auction.isOpen}">
+                                <p:column>
+                                    <p:outputLabel value="Auction was openned at:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.startingTimeText}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isOpen}">
+                                <p:column>
+                                    <p:outputLabel value="Auction will be closed at:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.closingTimeText}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed}">
+                                <p:column>
+                                    <p:outputLabel value="Auction was openned at:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.startingTimeText}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed}">
+                                <p:column>
+                                    <p:outputLabel value="Auction was closed at:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.closingTimeText}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.actualClosingTime != null}"> 
+                                <p:column>
+                                    <h:outputLabel value="Actual closing time:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.actualClosingTimeText}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{!auctionDetailsBean.auction.isNotOpennedYet}">
+                                <p:column>
+                                    <p:outputLabel value="Number of Bids:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.numberOfBids}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Starting Amount:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.startingAmount}$"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.userIsOwner}">
+                                <p:column>
+                                    <p:outputLabel value="Winning Amount:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.winningAmount}$"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.userIsOwner}">
+                                <p:column>
+                                    <p:outputLabel value="Reserved Price:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.reservedPrice}$"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Status:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.status.toString()}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isOpen}">
+                                <p:column>
+                                    <p:outputLabel value="Highest Bid:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="None" rendered="#{auctionDetailsBean.auction.highestBid == null}"  styleClass="output-field" />
+                                    <h:outputText value="#{auctionDetailsBean.auction.highestBid.amount}$" rendered="#{auctionDetailsBean.auction.highestBid != null}"
+                                                  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.winningBidAmount != null}">
+                                <p:column>
+                                    <p:outputLabel value="Winning Bid:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.winningBidAmount}$"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+
+                            <p:row rendered="#{auctionDetailsBean.auction.hasUserBid}">
+                                <p:column>
+                                    <p:outputLabel value="Your Bid:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.userBidAmount}$ at #{auctionDetailsBean.auction.userBidTimestampText}" styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsWinner}">
+                                <p:column colspan="2">
+                                    <p:outputLabel value="You Won!! Congrutiulations" style="font-weight: 800; color: green" />
+                                </p:column>
+                                
+                            </p:row>
+                            
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsNotWinner}">
+                                <p:column colspan="2">
+                                    <p:outputLabel value="ou didn't win. Try another auction." style="font-weight: 800; color: purple" />
+                                </p:column>
+                                
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}">
+                                <p:column>
+                                    <p:outputLabel value="Winner:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.highestBid.bidder.name}, Email: #{auctionDetailsBean.auction.highestBid.bidder.email}" 
+                                                  styleClass="output-field"/>
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}">
+                                <p:column>
+                                    <p:outputLabel value="Winning Bid:" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{auctionDetailsBean.auction.highestBid.amount}"  styleClass="output-field" />
+                                </p:column>
+                            </p:row>
+
+
+
+
+                        </h:panelGrid>
 
                     </h:panelGrid>
 
-                    <p:commandLink rendered="#{auctionDetailsBean.auction.canCancel}"
-                                   value="Cancel Auction" action="#{auctionDetailsBean.cancelAuction()}"/>
-
-                    <p:link rendered="#{auctionDetailsBean.auction.canEdit}" value="auctionEdit.xhtml" >
-                        <h:outputText value="Edit" />
-                        <f:param name="auctionId" value="#{auctionDetailsBean.auctionId}"></f:param>
-                    </p:link>
 
                 </p:panel>
+
+                <p:panel id="actionsPanel" header="Actions" style="margin-bottom:10px;" rendered="#{auctionDetailsBean.auction.canCancel or auctionDetailsBean.auction.canEdit}" >
+                    <h:panelGrid columns="2" >
+                        <p:commandLink rendered="#{auctionDetailsBean.auction.canCancel}"
+                                       value="Cancel" action="#{auctionDetailsBean.cancelAuction()}"/>
+
+                        <p:link rendered="#{auctionDetailsBean.auction.canEdit}" href="auctionEdit.xhtml" value="Edit" >
+                            <h:outputText value="Edit" />
+                            <f:param name="auctionId" value="#{auctionDetailsBean.auctionId}"></f:param>
+                        </p:link>
+                    </h:panelGrid>
+                </p:panel>
+
+
+
+
+
+
 
                 <p:panel id="panel" header="Bid" style="margin-bottom:10px;" rendered="#{auctionDetailsBean.auction.canBid}" >
                     <h:form>
@@ -217,7 +267,7 @@
                             <p:outputLabel value="Minimal Bid: #{auctionDetailsBean.auction.minimalBidAmount}$"/>
                             <h:outputText value=""/>
                             <h:outputText value=""/>
-                            
+
 
                             <p:outputLabel for="@next" value="Bid amount:"/>
                             <p:spinner min="#{auctionDetailsBean.auction.minimalBidAmount}" suffix="$" value="#{auctionDetailsBean.bidAmount}"

@@ -8,8 +8,10 @@ package project.service;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import project.domain.AuctionStatus;
 
 
 /**
@@ -19,17 +21,20 @@ import org.primefaces.model.StreamedContent;
 public class AuctionListItemDto {
  
     private int id;
+    private BigDecimal latestBidAmount;
     private String title;
     private CategoryDto category;
-    private BigDecimal latestBidAmount;
     private boolean canCancel;
     private boolean canEdit;
     private boolean canBid;
     private boolean isClosed;
     private BigDecimal startingAmount;
-    private StreamedContent image;
+    private byte[] imageBytes;
     private BigDecimal userBidAmount;
     private LocalDateTime userBidTimestamp;
+    private boolean userIsWinner;
+    private boolean userIsNotWinner;
+    private AuctionStatus status;
 
     public AuctionListItemDto() {
     }
@@ -82,7 +87,7 @@ public class AuctionListItemDto {
         this.canEdit = canEdit;
     }
 
-    public boolean isClosed() {
+    public boolean getIsClosed() {
         return isClosed;
     }
 
@@ -107,17 +112,18 @@ public class AuctionListItemDto {
     }
 
     public StreamedContent getImage() {
-        return image;
-    }
-
-    public void setImage(StreamedContent image) {
-        this.image = image;
+        
+        if (this.imageBytes == null) {
+            return null;
+        }
+        
+         return DefaultStreamedContent.builder().contentType("image/jpeg")
+                .stream(() -> new ByteArrayInputStream(this.imageBytes))
+                .build();
     }
     
     public void setImageBytes(byte[] bytes) {
-        this.image = DefaultStreamedContent.builder().contentType("image/jpeg")
-                .stream(() -> new ByteArrayInputStream(bytes))
-                .build();
+        this.imageBytes =  bytes;
     }
 
     public BigDecimal getUserBidAmount() {
@@ -134,6 +140,39 @@ public class AuctionListItemDto {
 
     public void setUserBidTimestamp(LocalDateTime userBidTimestamp) {
         this.userBidTimestamp = userBidTimestamp;
+    }
+    
+    public boolean getHasUserBid() {
+        return this.userBidAmount != null;
+    }
+    
+    public String getUserBidTimestampText() {
+
+        return this.userBidTimestamp == null? null : this.userBidTimestamp.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
+    }
+    
+    public boolean getUserIsWinner() {
+        return userIsWinner;
+    }
+
+    public void setUserIsWinner(boolean userIsWinner) {
+        this.userIsWinner = userIsWinner;
+    }
+
+    public boolean isUserIsNotWinner() {
+        return userIsNotWinner;
+    }
+
+    public void setUserIsNotWinner(boolean userIsNotWinner) {
+        this.userIsNotWinner = userIsNotWinner;
+    }
+
+    public AuctionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AuctionStatus status) {
+        this.status = status;
     }
     
     

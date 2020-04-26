@@ -48,9 +48,14 @@ public class Mapper {
         details.setStartingTime(auction.getStartingTime());
         details.setTitle(auction.getTitle());
         details.setUserIsOwner(userId != null && auction.getOwner().getId() == userId);
+        details.setUserIsWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() == userId);
+        details.setUserIsNotWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() != userId);
         details.setActualClosingTime(auction.getActualClosingTime());
         details.setMinimalBidAmount(auction.getMinimalBidAmount());
         details.setStatus(auction.getStatus());
+        details.setWinningAmount(auction.getWinningAmount());
+        details.setReservedPrice(auction.getReservedPrice());
+        details.setImageBytes(auction.getImageBytes());
 
         if (userBid != null) {
             details.setUserBidAmount(userBid.getAmount());
@@ -65,9 +70,12 @@ public class Mapper {
         dto.setId(auction.getId());
         dto.setCategory(this.mapCategoryToDto(auction.getCategory()));
         dto.setTitle(auction.getTitle());
+        dto.setStatus(auction.getStatus());
         dto.setIsClosed(auction.isClosed());
         dto.setStartingAmount(auction.getStartingAmount());
         dto.setImageBytes(auction.getImageBytes());
+        dto.setUserIsWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() == userId);
+        dto.setUserIsNotWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() != userId);
         
         if (auction.getHighestBid() != null) {
             dto.setLatestBidAmount(auction.getHighestBid().getAmount());

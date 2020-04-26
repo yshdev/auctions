@@ -42,22 +42,34 @@ th {
 
 .output-field {
     font-weight: 600;
+    padding-left: 10px;
 }
 
-
-.ui-panelgrid>*>tr,
-.ui-panelgrid .ui-panelgrid-cell {
+.ui-panelgrid tr,
+.ui-panelgrid-cell, ui-panelgrid td
+{
     border: none;
+    border-style: none !important;
+    border-collapse: inherit;
 }
  
 
 .grid.ui-panelgrid>*>tr,
 .grid.ui-panelgrid .ui-panelgrid-cell {
     border: none;
+    border-style: none !important;
 }
 
 .fifty-percent {
      width: 50%;
+}
+
+.thirty-percent {
+     width: 30%;
+}
+
+.twenty-percent {
+     width: 20%;
 }
 
 .top-alignment {

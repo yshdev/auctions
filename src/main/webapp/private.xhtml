@@ -20,21 +20,24 @@
                 <h3>
                     <h:outputLink style="align-self: center" value="auctionCreate.xhtml">New Auction</h:outputLink>
                 </h3>
+                
+                <h:form onsubmit="#{privateAreaBean.updateAuctions()}" style="margin:auto;width:50%">
+                        <h:panelGrid  columns="4" cellpadding="5"  >
 
-                <div align="center">
-                    <h:form onsubmit="#{privateAreaBean.updateAuctions()}">
-                        <label class="">Categories:</label> 
-                        <h:selectOneMenu value="#{privateAreaBean.categoryId}" onchange="submit()" >
-                            <f:selectItems value="#{privateAreaBean.getCategories()}" var="categroy"
-                                           itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
-                        </h:selectOneMenu>
-                        <label>Sort by:</label>
-                        <h:selectOneMenu value="#{privateAreaBean.sortOption}" onchange="submit()">
-                            <f:selectItems value="#{privateAreaBean.sortOptions}" var="option"
-                                           itemValue="#{option}" itemLabel="#{option.label}" />
-                        </h:selectOneMenu>
+                            <p:outputLabel for="@next" value="Categories:" />
+                            <p:selectOneMenu value="#{privateAreaBean.categoryId}" onchange="submit()" >
+                                <f:selectItems value="#{privateAreaBean.getCategories()}" var="categroy"
+                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="@next" value="Sort by:" />
+                            <p:selectOneMenu value="#{privateAreaBean.sortOption}" 
+                                             onchange="submit()">
+                                <f:selectItems value="#{privateAreaBean.sortOptions}" var="sortOption" itemLabel="#{sortOption.label}"  />
+                            </p:selectOneMenu>
+                        </h:panelGrid>
                     </h:form>
-                </div>
+
 
                 <p:panelGrid columns="2" styleClass="grid" columnClasses="fifty-percent top-alignment, fifty-percent top-alignment">
 

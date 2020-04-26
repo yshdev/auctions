@@ -5,9 +5,13 @@
  */
 package project.auctionserver;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -94,9 +98,10 @@ public class AuctionDetailsBean implements Serializable {
             }
         }
         
+
         if (this.error == null) {
-            this.refresh();
-        }
+            this.redirectToPrivateArea();
+            }
         
     }
 
@@ -123,7 +128,7 @@ public class AuctionDetailsBean implements Serializable {
         }
         
         if (this.error == null) {
-            this.refresh();
+            this.redirectToPrivateArea();
         }
     }
 
@@ -148,5 +153,13 @@ public class AuctionDetailsBean implements Serializable {
             }
 
         }
+    }
+
+    private void redirectToPrivateArea() {
+        try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("private.xhtml");
+                } catch (IOException ex) {
+                    Logger.getLogger(AuctionDetailsBean.class.getName()).log(Level.SEVERE, null, ex);
+                }
     }
 }

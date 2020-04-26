@@ -5,9 +5,12 @@
  */
 package project.service;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import project.domain.AuctionStatus;
 
 /**
@@ -19,6 +22,8 @@ public class AuctionDetailsDto {
     private String title;
     private String description;
     private BigDecimal startingAmount;
+    private BigDecimal winningAmount;
+    private BigDecimal reservedPrice;
     private LocalDateTime startingTime;
     private LocalDateTime closingTime;
     private LocalDateTime actualClosingTime;
@@ -33,10 +38,13 @@ public class AuctionDetailsDto {
     private boolean canCancel;
     private boolean canBid;
     private boolean userIsOwner;
+    private boolean userIsWinner;
     private AuctionStatus status;
     
     private BigDecimal userBidAmount;
     private LocalDateTime userBidTimestamp;
+    private byte[] imageBytes;
+    private boolean userIsNotWinner;
     
 
     public int getId() {
@@ -238,5 +246,51 @@ public class AuctionDetailsDto {
     public String getUserBidTimestampText() {
         return this.userBidTimestamp.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
     }
+
+    public BigDecimal getWinningAmount() {
+        return winningAmount;
+    }
+
+    public void setWinningAmount(BigDecimal winningAmount) {
+        this.winningAmount = winningAmount;
+    }
+
+    public BigDecimal getReservedPrice() {
+        return reservedPrice;
+    }
+
+    public void setReservedPrice(BigDecimal reservedPrice) {
+        this.reservedPrice = reservedPrice;
+    }
+
+    public boolean isUserIsWinner() {
+        return userIsWinner;
+    }
+
+    public void setUserIsWinner(boolean userIsWinner) {
+        this.userIsWinner = userIsWinner;
+    }
+ 
+    public StreamedContent getImage() {
+        
+        if (this.imageBytes == null) {
+            return null;
+        }
+        
+         return DefaultStreamedContent.builder().contentType("image/jpeg")
+                .stream(() -> new ByteArrayInputStream(this.imageBytes))
+                .build();
+    }
     
+    public void setImageBytes(byte[] bytes) {
+        this.imageBytes =  bytes;
+    }
+    
+    public boolean isUserIsNotWinner() {
+        return userIsNotWinner;
+    }
+
+    public void setUserIsNotWinner(boolean userIsNotWinner) {
+        this.userIsNotWinner = userIsNotWinner;
+    }
 }

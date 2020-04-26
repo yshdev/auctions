@@ -27,7 +27,7 @@ public class PrivateAreaBean implements Serializable {
 
     private Integer categoryId;
     private SortOption sortOption = SortOption.Current_Price__Ascending;
-    private CategoryDto[] categories;
+    private List<CategoryDto> categories;
     private List<AuctionListItemDto> activeAuctions;
     private List<AuctionListItemDto> activeBids;
     private List<AuctionListItemDto> closedAuctions;
@@ -41,7 +41,7 @@ public class PrivateAreaBean implements Serializable {
     @PostConstruct
     public void init() {
         this.updateCategories();
-        this.setCategoryId(this.getCategories()[0].getId());
+        this.setCategoryId(this.getCategories().get(0).getId());
         this.updateAuctions();
     }
 
@@ -53,7 +53,7 @@ public class PrivateAreaBean implements Serializable {
         this.loggedUserBean = loggedUserBean;
     }
     
-    public CategoryDto[] getCategories() {
+    public List<CategoryDto> getCategories() {
         return this.categories;
     }
 
@@ -108,8 +108,13 @@ public class PrivateAreaBean implements Serializable {
         Integer userId = this.loggedUserBean.getUserId();
 
         try (UnitOfWork unitOfWork = UnitOfWork.create()) {
+            
+            Integer cid = this.categoryId;
+            if (cid == -1) {
+                cid = null;
+            }
 
-            List<AuctionBidsTuple> auctions = unitOfWork.getUserAuctions(this.getCategoryId(), this.sortOption, userId);
+            List<AuctionBidsTuple> auctions = unitOfWork.getUserAuctions(cid, this.sortOption, userId);
             
             this.activeAuctions = auctions.stream()
                     .filter(a -> !a.getAuction().isClosed())
@@ -123,7 +128,7 @@ public class PrivateAreaBean implements Serializable {
                     
 
             //auctions = unitOfWork.getUserBids(this.getCategoryId(), this.sortOption, userId, AuctionFilter.ACTIVE);
-            List<AuctionBidsTuple> bids = unitOfWork.getUserBids(this.getCategoryId(), this.sortOption, userId);
+            List<AuctionBidsTuple> bids = unitOfWork.getUserBids(cid, this.sortOption, userId);
             this.activeBids = bids.stream()
                     .filter(a -> !a.getAuction().isClosed())
                     .map(b -> this.mapper.mapAuctionToListItemDto(b.getAuction(), userId, b.getUserBid()))
@@ -140,8 +145,10 @@ public class PrivateAreaBean implements Serializable {
     
 
     public void updateCategories() {
-        try (UnitOfWork unitOfWork = UnitOfWork.create()) {
+        try ( UnitOfWork unitOfWork = UnitOfWork.create()) {
+
             this.categories = unitOfWork.getAllCategories();
+            this.categories.add(0, new CategoryDto(-1, "All"));
         }
     }
 

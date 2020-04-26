@@ -4,7 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="auctionId" value="#{auctionEditBean.auctionId}"></f:viewParam>
     </f:metadata>
@@ -14,57 +15,126 @@
     </h:head>
     <h:outputStylesheet library="css" name="style.css"></h:outputStylesheet>
     <h:body>
-
         <ui:composition template = "templates/common.xhtml">	
-
             <ui:define name = "content">
+                <h:form id="mainForm" enctype="multipart/form-data"> 
+                    <p:staticMessage severity="error" summary="ERROR" detail="#{auctionEditBean.error}" rendered="#{auctionEditBean.error != null}" />
+
+                    
+                    <p:panel id="panel" style="margin-bottom:10px;">
+                        <f:attribute name="header" rendered="#{auctionEditBean.auctionId == null}" value="New Auction" />
+                        <f:attribute name="header" rendered="#{auctionEditBean.auctionId != null}" value="Edit Auction" />
+                        
+                        <h:panelGrid  columns="3" cellpadding="5">
+
+                            <f:facet name="header" >
+                                <span style="text-align: left">Details</span>
+                            </f:facet>
+
+                            <p:outputLabel for="@next" value="Category:" />
+                            <p:selectOneMenu id="category" label="Category" required="true" value="#{auctionEditBean.categoryId}" style="min-width: 500px">
+                                <f:selectItems value="#{auctionEditBean.categories}" var="categroy" 
+                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"  />
+                            </p:selectOneMenu>
+                            <p:message for="category" display="text" />
+
+                            <p:outputLabel for="@next" >Title:</p:outputLabel>
+                            <p:inputText value="#{auctionEditBean.title}" required="true" id="title" label="Title" validator="project.auctionserver.BlankFieldValidator" 
+                                         style="min-width: 500px">
+                                <f:validateLength minimum="5" />
+                            </p:inputText>
+                            <p:message for="title" display="text" />
+
+                            <p:outputLabel for="@next">Description:</p:outputLabel>
+                            <p:inputTextarea value="#{auctionEditBean.description}" required="true" id="description" label="Description" 
+                                             validator="project.auctionserver.BlankFieldValidator" style="min-width: 500px" >
+                                <f:validateLength minimum="5" />
+                            </p:inputTextarea>
+                            <p:message for="description" display="text" />
+
+                            <p:outputLabel for="@next">Image:</p:outputLabel>
+
+                            <p:fileUpload  required="false" id="newImage" label="Select..." mode="advanced" accept="jpg" sizeLimit="500000"
+                                           multiple="false"  listener="#{auctionEditBean.handleImageUpload}" fileLimit="1" update="image"
+                                           />
+
+                            <p:graphicImage id="image" value="#{auctionEditBean.image}" stream="false" width="80" height="80 " />
 
 
-                <h:outputText class="header-1" rendered="#{auctionEditBean.auction != null}" value="#{auctionEditBean.auction.title}" />
+                        </h:panelGrid>
 
-                <h:form>
+                        <hr />
+
+                        <h:panelGrid  columns="3" cellpadding="5">
+                            <f:facet name="header" >
+                                <span style="text-align: left">Time and Duration</span>
+                            </f:facet>
+
+                            <p:outputLabel for="@next">Opening Date:</p:outputLabel>
+                            <p:calendar value="#{auctionEditBean.openingDate}" required="true" id="openingDate" label="Opening Date" 
+                                        mindate="#{auctionEditBean.minOpeningDate}" pattern="dd/MM/uuuu"  showOn="button"  >
+                                <p:ajax event="dateSelect" update="@this openingTimeOut closingTimeOut" />
+                            </p:calendar>
+                            <p:message for="openingDate" display="text" />
+
+                            <p:outputLabel for="@next">Number of Days:</p:outputLabel>
+                            <p:spinner value="#{auctionEditBean.numOfDays}" min="1" max="60" required="true" id="numOfDays" label="Number of Days" >
+                                <p:ajax update="@this closingTimeOut" />
+                            </p:spinner>
+
+                            <p:message for="numOfDays" display="text" />
 
 
-                    <h:panelGrid  columns="4" rendered="#{auctionEditBean.auction != null}" >
+                            <f:facet name="footer" >
+                                <h:outputText value="Auction will be openned at" ></h:outputText>
+                                <h:outputText id="openingTimeOut" value=" #{auctionEditBean.openingTime}" style="font-weight: 800" />
+                                <h:outputText value=" and closed at" ></h:outputText>
+                                <h:outputText id="closingTimeOut" value=" #{auctionEditBean.closingTime}" style="font-weight: 800" />
+                            </f:facet>
 
-                        <h:outputLabel for="categories">Categories:</h:outputLabel>
+                        </h:panelGrid>
 
-                        <h:selectManyListbox id="categories"  label="Category" required="true" hideNoSelectionOption="true"   >
-                            <f:selectItems value="#{auctionEditBean.categories}" var="categroy" 
-                                           itemLabel="#{categroy.title}" itemValue="#{categroy.id}" />
-                        </h:selectManyListbox>
+                        <hr />
 
-                        <h:outputLabel for="title">Title:</h:outputLabel>
-                        <h:inputText id="title" value="#{auctionEditBean.title}"></h:inputText>
+                        <h:panelGrid  columns="3" cellpadding="5">    
 
-                        <h:outputLabel for="description">Description:</h:outputLabel>
-                        <h:inputTextarea id="description" value="#{auctionEditBean.description}" />
+                            <f:facet name="header">
+                                <span style="text-align: left">Amounts</span>
+                            </f:facet>
 
-                        <h:outputLabel for="startDate">Start Date:</h:outputLabel>
-                        <h:inputText id="startDate" value="#{auctionEditBean.startDate}" />
+                            <p:outputLabel for="@next">Starting Amount:</p:outputLabel>
+                            <p:spinner value="#{auctionEditBean.startingAmount}" required="true" id="startingAmount" label="Starting Amount"  min="0" suffix="$" 
+                                       stepFactor="100">
+                                <p:ajax update="@this reservedPrice winningAmount" />
+                            </p:spinner>
+                            <p:message for="startingAmount" display="text" />
 
-                        <h:outputLabel for="startHour">Start Hour:</h:outputLabel>
-                        <h:selectManyListbox id="startHour"  hideNoSelectionOption="true">
-                            <f:selectItems value="#{auctionEditBean.hours}" var="hour" />
-                        </h:selectManyListbox>
+                            <p:outputLabel for="@next">Winning Amount:</p:outputLabel>
+                            <p:spinner value="#{auctionEditBean.winningAmount}"  id="winningAmount" label="Winning Amount"
+                                       min="#{auctionEditBean.minWinningAmount}" stepFactor="100" suffix="$">
+                                <p:ajax />
+                            </p:spinner>
+                            <p:message for="winningAmount" display="text" />
 
-                        <h:outputLabel for="numOfDays">Number of Days:</h:outputLabel>
-                        <h:inputText id="numOfDays" value="#{auctionEditBean.numOfDays}" />
+                            <p:outputLabel for="@next">Reserved Price:</p:outputLabel>
+                            <p:spinner value="#{auctionEditBean.reservedPrice}"  id="reservedPrice" label="Reserved Price"
+                                       min="#{auctionEditBean.minReservedPrice}" stepFactor="100"  suffix="$"> 
+                                <p:ajax update="@this winningAmount" />
+                            </p:spinner>
+                            <p:message for="reservedPrice" display="text" />
 
-                        <h:outputLabel for="startingAmount">Starting Amount:</h:outputLabel>
-                        <h:inputText id="startingAmount" value="#{auctionEditBean.startingAmount}" />
+                        </h:panelGrid>
+                    </p:panel>
 
-                        <h:outputLabel for="winningAmount">Winning Amount:</h:outputLabel>
-                        <h:inputText id="winningAmount" value="#{auctionEditBean.winningAmount}" />
+                    <h:outputText value="#{auctionEditBean.error}" />
 
-                        <h:outputLabel for="reservedPrice">Reserved Price:</h:outputLabel>
-                        <h:inputText id="reservedPrice" value="#{auctionEditBean.reservedPrice}" />
+                    <p:linkButton value="Cancel" outcome="private.xhtml"  />
+                    <ui:remove><h:commandButton value="Save" action="#{auctionEditBean.saveAuction()}"      /></ui:remove>
+                    <p:commandButton value="Save" action="#{auctionEditBean.saveAuction()}"      />
 
-                    </h:panelGrid>
 
-                    <h:commandButton value="Save" action="#{auctionEditBean.save()}" />
-                    <h:commandButton value="Save" action="#{auctionEditBean.cancel()}" />
                 </h:form>
+
 
             </ui:define>
         </ui:composition>
