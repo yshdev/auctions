@@ -42,7 +42,7 @@ th {
 
 .output-field {
     font-weight: 600;
-    padding-left: 10px;
+    /*padding-left: 10px;*/
 }
 
 .ui-panelgrid tr,
@@ -54,14 +54,13 @@ th {
 }
  
 
-.grid.ui-panelgrid>*>tr,
-.grid.ui-panelgrid .ui-panelgrid-cell {
-    border: none;
-    border-style: none !important;
-}
 
 .fifty-percent {
      width: 50%;
+}
+
+.eighty-percent {
+     width: 80%;
 }
 
 .thirty-percent {
@@ -74,4 +73,10 @@ th {
 
 .top-alignment {
      vertical-align: top;
+}
+
+.top-right-alignment {
+    
+     vertical-align: top;
+     align-content: center;
 }

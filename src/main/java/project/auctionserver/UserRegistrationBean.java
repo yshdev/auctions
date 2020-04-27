@@ -111,12 +111,12 @@ public class UserRegistrationBean implements Serializable {
         this.phone = phone;
     }
 
-    public String getErrRegisterMessage() {
+    public String getError() {
         return error;
     }
 
-    public void setErrRegisterMessage(String errRegisterMessage) {
-        this.error = errRegisterMessage;
+    public void setError(String error) {
+        this.error = error;
     }
     
     
@@ -146,7 +146,6 @@ public class UserRegistrationBean implements Serializable {
             }
             else {
                 this.error = "The username is already taken. Try another.";
-                FacesContext.getCurrentInstance().getExternalContext().redirect("register.xhtml");
             }
         }
     }

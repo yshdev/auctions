@@ -27,104 +27,110 @@
 
                 <h:form style="margin:auto; width: 100%">
 
-                    <p:panelGrid style="width: 100%" >
-                    <ui:repeat value="#{cc.attrs.auctions}" var="item">
+                    <p:panelGrid style="width: 100%">
+
+                        <ui:repeat value="#{cc.attrs.auctions}" var="item" varStatus="status" >
 
                             <p:row>
-                                <p:column rowspan="4" style="width: 120px">
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{item.title}" class="header-1 output-field"></h:outputText>
+                                    </p:column> 
+                                </p:row>
+
+                            </p:row>
+
+                            <p:row>
+
+                                <p:column style="width: 120px">
                                     <p:graphicImage value="#{item.image}" stream="false" width="100" height="100 " />
                                 </p:column>
+
                                 <p:column>
-                                    <h:outputText value="#{item.title}" class="header-1 output-field"></h:outputText>
-                                </p:column> 
-                                <p:column>
-                                    <h:outputLink rendered="#{item.canBid()}" value="auctionDetails.xhtml"  style="padding-left: 10px">
-                                        <h:outputText value="Bid now!" />
-                                        <f:param name="auctionId" value="#{item.id}"></f:param>
-                                    </h:outputLink>
+                                    <p:panelGrid columns="1">
 
-                                    <h:outputLink  rendered="#{!item.canBid()}" value="auctionDetails.xhtml"  style="padding-left: 10px">
-                                        <h:outputText value="Details" />
-                                        <f:param name="auctionId" value="#{item.id}"></f:param>
-                                    </h:outputLink>
+                                        <h:panelGroup layout="block">
+                                            <h:outputText value="#{item.category.title}" class="header-2 output-field"></h:outputText>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup layout="block">
+                                            <p:outputLabel value="Starting amount:" />
+                                            <h:outputText value="#{item.startingAmount}$" class="output-field"  />
+                                        </h:panelGroup>
+
+                                        <h:panelGroup layout="block">
+                                            <p:outputLabel value="Status:" />
+                                            <h:outputText value="#{item.status.name}" class="output-field" />
+                                        </h:panelGroup>
+
+                                        <h:panelGroup layout="block">
+                                            <p:outputLabel value="Latest bid:" />
+                                            <h:outputText rendered="#{item.latestBidAmount != null}" value="#{item.latestBidAmount}$" class="output-field" />
+                                            <h:outputText rendered="#{item.latestBidAmount == null}" value="No bids yet" class="output-field" />
+                                        </h:panelGroup>
+
+
+                                        <h:panelGroup layout="block" rendered="#{item.hasUserBid}">
+                                            <p:outputLabel  value="Your Bid:" />
+                                            <h:outputText value="#{item.userBidAmount}$ at #{item.userBidTimestampText}" class="output-field" />
+                                        </h:panelGroup>
+
+                                        <h:panelGroup layout="block"  rendered="#{item.isClosed and item.userIsWinner}">
+                                            <p:outputLabel  value="You Won!! Congrutiulations" class="output-field" style="color: green" />
+                                        </h:panelGroup>
+
+
+                                        <h:panelGroup layout="block"  rendered="#{item.isClosed and item.userIsNotWinner}">
+                                            <p:outputLabel value="You didn't win. Try another auction." class="output-field" style="color: purple" />
+                                        </h:panelGroup>
+
+                                    </p:panelGrid>
+
+                                </p:column>
+
+                                <p:column class="top-right-alignment">
                                     
-                                    <h:outputLink  rendered="#{item.canEdit()}" value="auctionEdit.xhtml" style="padding-left: 10px" >
-                                        <h:outputText value="Edit" />
-                                        <f:param name="auctionId" value="#{item.id}"></f:param>
-                                    </h:outputLink>
-                                    
-                                    <h:outputLink  rendered="#{item.canCancel()}" value="auctionCancel.xhtml"  style="padding-left: 10px">
-                                        <h:outputText value="Cancel" />
-                                        <f:param name="auctionId" value="#{item.id}"></f:param>
-                                    </h:outputLink>
+                                     
+
+                                    <p:panelGrid columns="1">
+
+                                        <h:outputLink rendered="#{item.canBid()}" value="auctionDetails.xhtml"  style="padding-left: 10px">
+                                            <h:outputText value="Bid now!" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                        <h:outputLink  rendered="#{!item.canBid()}" value="auctionDetails.xhtml"  style="padding-left: 10px">
+                                            <h:outputText value="Details" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                        <h:outputLink  rendered="#{item.canEdit()}" value="auctionEdit.xhtml" style="padding-left: 10px" >
+                                            <h:outputText value="Edit" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                        <h:outputLink  rendered="#{item.canCancel()}" value="auctionCancel.xhtml"  style="padding-left: 10px">
+                                            <h:outputText value="Cancel" />
+                                            <f:param name="auctionId" value="#{item.id}"></f:param>
+                                        </h:outputLink>
+
+                                    </p:panelGrid>
+                                         
+
 
                                 </p:column>
-                            </p:row>
-                            <p:row>
-                                <p:column colspan="2">
-                                    <h:outputText value="#{item.category.title}" class="header-2 output-field"></h:outputText>
-                                </p:column>
+
+
                             </p:row>
 
-                            <p:row>
-                                <p:column colspan="2">
-                                    <p:outputLabel value="Starting amount:" />
-                                    <h:outputText value="#{item.startingAmount}$" class="output-field"  />
-                                </p:column>
-                                 
-                            </p:row>
-                            
-                            <p:row>
-                                <p:column colspan="2">
-                                    <p:outputLabel value="Status:" />
-                                    <h:outputText value="#{item.status}" class="output-field" />
-                                </p:column>
-                                
-                                 
-                                
-                            </p:row>
-
-                            <p:row>
-                                <p:column>&nbsp;</p:column>
-                                <p:column colspan="2">
-                                    <p:outputLabel value="Latest bid:" />
-                                    <h:outputText rendered="#{item.latestBidAmount != null}" value="#{item.latestBidAmount}$" class="output-field" />
-                                    <h:outputText rendered="#{item.latestBidAmount == null}" value="No bids yet" class="output-field" />
-                                    
-                                </p:column>
-                                
-                            </p:row>
-                            
-                           <p:row rendered="#{item.hasUserBid}">
-                               <p:column>&nbsp;</p:column>
-                               <p:column colspan="2">
-                                    <p:outputLabel  value="Your Bid:" />
-                                    <h:outputText value="#{item.userBidAmount}$ at #{item.userBidTimestampText}" class="output-field" />
-                                </p:column>
-                            </p:row>
-
-                            <p:row rendered="#{item.isClosed and item.userIsWinner}">
-                                <p:column>&nbsp;</p:column>
-                                <p:column colspan="2">
-                                    <p:outputLabel  value="You Won!! Congrutiulations" class="output-field" style="color: green" />
-                                </p:column>
-                            </p:row>
-                            
-                            <p:row rendered="#{item.isClosed and item.userIsNotWinner}">
-                                <p:column>&nbsp;</p:column>
-                                <p:column colspan="2">
-                                    <p:outputLabel value="You didn't win. Try another auction." class="output-field" style="color: purple" />
-                                </p:column>
-                            </p:row>
-                        
-                            <p:row>
+                            <p:row rendered="#{not status.last}">
                                 <p:column colspan="3"><hr /></p:column>
                             </p:row>
 
-                         </ui:repeat>
-                        </p:panelGrid>
+                        </ui:repeat>
+                    </p:panelGrid>
 
-                   
+
                 </h:form>
 
             </p:panel>

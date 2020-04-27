@@ -17,26 +17,29 @@
         <ui:composition template = "templates/common.xhtml">	
 
             <ui:define name = "content">
-                
+
                 <h:form onsubmit="#{homeBean.updateActiveAuctions()}" style="margin:auto;width:50%">
-                        <h:panelGrid  columns="4" cellpadding="5"  >
+                    <h:panelGrid  columns="4" cellpadding="5"  >
 
-                            <p:outputLabel for="@next" value="Categories:" />
-                            <p:selectOneMenu value="#{homeBean.categoryId}" onchange="submit()" >
-                                <f:selectItems value="#{homeBean.getCategories()}" var="categroy"
-                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
-                            </p:selectOneMenu>
+                        <p:outputLabel for="@next" value="Categories:" />
+                        <p:selectOneMenu value="#{homeBean.categoryId}" onchange="submit()" >
+                            <f:selectItems value="#{homeBean.getCategories()}" var="categroy"
+                                           itemLabel="#{categroy.title}" itemValue="#{categroy.id}"/>
+                        </p:selectOneMenu>
 
-                            <p:outputLabel for="@next" value="Sort by:" />
-                            <p:selectOneMenu value="#{homeBean.sortOption}" 
-                                             onchange="submit()">
-                                <f:selectItems value="#{homeBean.sortOptions}" var="sortOption" itemLabel="#{sortOption.label}"  />
-                            </p:selectOneMenu>
-                        </h:panelGrid>
-                    </h:form>
+                        <p:outputLabel for="@next" value="Sort by:" />
+                        <p:selectOneMenu value="#{homeBean.sortOption}" 
+                                         onchange="submit()">
+                            <f:selectItems value="#{homeBean.sortOptions}" var="sortOption" itemLabel="#{sortOption.label}"  />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:panelGroup layout="block" style="width:80%;margin: auto">
+                    <cm:auctionListView header="Active Auctions" auctions="#{homeBean.activeAuctions}" userId="#{loggedUserBean.userId}" />
+                </h:panelGroup>
                 
-                <cm:auctionListView header="Active Auctions" auctions="#{homeBean.activeAuctions}" userId="#{loggedUserBean.userId}" ></cm:auctionListView>
-                
+
             </ui:define>
         </ui:composition>
 

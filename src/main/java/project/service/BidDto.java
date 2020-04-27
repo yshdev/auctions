@@ -7,6 +7,7 @@ package project.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -49,6 +50,10 @@ public class BidDto {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+    
+    public String getTimestampText() {
+        return this.timestamp.format(DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm"));
     }
 
     public void setTimestamp(LocalDateTime timestamp) {

@@ -15,8 +15,15 @@
 
             <ui:define name = "content">
 
+                <h:panelGroup id="messages">
+                
                 <p:staticMessage severity="info" summary="Note" detail="You are already logged in. Logout if you want to register as another user"
                                  rendered="#{loggedUserBean.userId != null}" />
+                
+                <p:staticMessage severity="Error" summary="Error" detail="#{userRegistrationBean.error}" 
+                                 rendered="#{userRegistrationBean.error != null}"/>
+                
+                </h:panelGroup>
 
                 <p:panel id="panel" header="Registration" style="margin-bottom:10px;">
 
@@ -69,7 +76,7 @@
                             <p:message for="regPhone"  display="text" />
                         </h:panelGrid>
 
-                        <p:commandButton value="Register" action="#{userRegistrationBean.register()}" type="submit" update="form" />
+                        <p:commandButton value="Register" action="#{userRegistrationBean.register()}" type="submit" update="form messages" />
                         <hr />
                         <p:outputPanel>
                             Already Registered?

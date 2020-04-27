@@ -24,7 +24,7 @@
 
                     <h:panelGrid columns="2">
 
-                         <p:graphicImage value="#{auctionDetailsBean.auction.image}" stream="false" width="300" height="300 " />
+                        <p:graphicImage value="#{auctionDetailsBean.auction.image}" stream="false" width="300" height="300 " />
 
                         <h:panelGrid  >
 
@@ -174,7 +174,8 @@
                                 </p:column>
                                 <p:column>
                                     <h:outputText value="None" rendered="#{auctionDetailsBean.auction.highestBid == null}"  styleClass="output-field" />
-                                    <h:outputText value="#{auctionDetailsBean.auction.highestBid.amount}$" rendered="#{auctionDetailsBean.auction.highestBid != null}"
+                                    <h:outputText rendered="#{auctionDetailsBean.auction.highestBid != null}"
+                                                  value="#{auctionDetailsBean.auction.highestBid.amount}$ at #{auctionDetailsBean.auction.highestBid.timestampText}" 
                                                   styleClass="output-field" />
                                 </p:column>
                             </p:row>
@@ -202,14 +203,14 @@
                                 <p:column colspan="2">
                                     <p:outputLabel value="You Won!! Congrutiulations" style="font-weight: 800; color: green" />
                                 </p:column>
-                                
+
                             </p:row>
-                            
+
                             <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsNotWinner}">
                                 <p:column colspan="2">
                                     <p:outputLabel value="ou didn't win. Try another auction." style="font-weight: 800; color: purple" />
                                 </p:column>
-                                
+
                             </p:row>
 
                             <p:row rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}">

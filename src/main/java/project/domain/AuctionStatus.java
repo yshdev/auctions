@@ -16,14 +16,18 @@ public enum AuctionStatus {
     CLOSED("Closed"),
     CANCELED("Canceled");
     
-    private final String statusName;
-    private AuctionStatus(String statusName) {
-        this.statusName = statusName;
+    private final String name;
+    private AuctionStatus(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return this.name;
     }
     
     @Override
     public String toString(){
-        return this.statusName;
+        return this.name;
     }
 }
  
