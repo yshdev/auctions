@@ -17,9 +17,8 @@
 
                 <p:staticMessage severity="error" summary="ERROR" detail="#{auctionCreateBean.error}" rendered="#{auctionCreateBean.error != null}" />
 
-                <h3>
-                    <h:outputLink style="align-self: center" value="auctionEdit.xhtml">New Auction</h:outputLink>
-                </h3>
+                <p:link href="auctionEdit.xhtml" value="New Auction" style="align-self: center" />
+               
                 
                 <h:form onsubmit="#{privateAreaBean.updateAuctions()}" style="margin:auto;width:50%">
                         <h:panelGrid  columns="4" cellpadding="5"  >
@@ -39,9 +38,9 @@
                     </h:form>
 
 
-                <p:panelGrid columns="2" styleClass="grid" columnClasses="fifty-percent top-alignment, fifty-percent top-alignment">
+                <p:panelGrid columns="2" style="width:100%" columnClasses="fifty-percent top-alignment, fifty-percent top-alignment">
 
-                    <p:panelGrid columns="1" styleClass="grid" columnClasses="top-alignment">
+                    <p:panelGrid columns="1" style="width:100%" columnClasses="top-alignment;width=100%;">
 
                         <cm:auctionListView header="Active Auctions" auctions="#{privateAreaBean.activeAuctions}" userId="#{loggedUserBean.userId}" ></cm:auctionListView>
 
@@ -51,7 +50,7 @@
 
                     </p:panelGrid>
 
-                    <p:panelGrid columns="1" styleClass="grid" columnClasses="top-alignment">
+                    <p:panelGrid columns="1" style="width:100%" columnClasses="top-alignment">
 
                         <cm:auctionListView header="Active Bids" auctions="#{privateAreaBean.activeBids}" userId="#{loggedUserBean.userId}" ></cm:auctionListView>
 

@@ -29,6 +29,39 @@ label {
     font-family: "Arial";
 }
 
+.header-container {
+    text-align: justify; 
+    text-decoration: none; 
+    
+    
+    
+}
+
+.header-container:after{
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 0;
+    font-size:0;
+    line-height:0;
+}
+
+
+.logo {
+    display: inline-block;
+    color:black;
+    margin-top: 0.321em; 
+    text-decoration: inherit;
+    font-size:200%;
+}
+
+.nav {
+    display: inline-block;
+    vertical-align: baseline; 
+}
+
+
+
 td {
     padding-left: 10px;
     text-align: left;

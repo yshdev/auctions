@@ -10,21 +10,22 @@
     <body>
         <ui:composition> 
 
-            <h:outputLink value="home.xhtml"
-                                  style="text-decoration: none; color:black;
-                                  font-size:200%">DailyAuctions</h:outputLink>
+            <h:panelGroup layout="block" class="header-container">
+                <h:outputLink value="home.xhtml"
+                              class="logo">DailyAuctions</h:outputLink>
 
-            <h:form rendered="#{loggedUserBean.user != null}"  style="float:right;">
-                <h:outputText value="Hi #{loggedUserBean.user.username}!" />
-                <p:link href="private.xhtml" value="Private Area" style="padding-left: 10px" />
-                <p:commandLink value="Logout" action="#{loggedUserBean.logout()}"  style="padding-left: 10px" />
-            </h:form>
+                <h:form rendered="#{loggedUserBean.user != null}"  class="nav">
+                    <p:outputLabel value="Hi #{loggedUserBean.user.username}!" />
+                    <p:link href="private.xhtml" value="Private Area" style="padding-left: 10px" />
+                    <p:commandLink value="Logout" action="#{loggedUserBean.logout()}"  style="padding-left: 10px" />
+                </h:form>
 
-            <h:form rendered="#{loggedUserBean.user == null}" style="float:right;">
-                <h:outputText value="Hello Guest!" />
-                <p:commandLink  action="#{loggedUserBean.redirectToLogin('home.xhtml')}" value="Login" style="padding-left: 10px" />
-                <p:link href="register.xhtml" value="Register" style="padding-left: 10px" />
-            </h:form>
+                <h:form rendered="#{loggedUserBean.user == null}" class="nav">
+                    <p:outputLabel value="Hello Guest!" />
+                    <p:commandLink  action="#{loggedUserBean.redirectToLogin('home.xhtml')}" value="Login" style="padding-left: 10px" />
+                    <p:link href="register.xhtml" value="Register" style="padding-left: 10px" />
+                </h:form>
+            </h:panelGroup>
 
             <hr />	
 
