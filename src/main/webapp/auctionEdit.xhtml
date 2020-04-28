@@ -140,8 +140,7 @@
                     <h:outputText value="#{auctionEditBean.error}" />
 
                     <p:linkButton value="Cancel" outcome="private.xhtml"  />
-                    <ui:remove><h:commandButton value="Save" action="#{auctionEditBean.saveAuction()}"      /></ui:remove>
-                    <p:commandButton value="Save" action="#{auctionEditBean.saveAuction()}"      />
+                    <p:commandButton value="Save" action="#{auctionEditBean.saveAuction()}"  update="mainForm"    />
 
 
                 </h:form>
