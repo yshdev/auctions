@@ -106,6 +106,19 @@ public class UnitOfWork implements AutoCloseable {
             return null;
         }
     }
+    
+    public List<Auction> getClosableAuctions(LocalDateTime closingTime) {
+
+            String s = "SELECT a FROM Auction a WHERE a.actualClosingTime IS NULL AND a.closingTime <= :time";
+
+            TypedQuery<Auction> query = this.em.createQuery(s, Auction.class)
+                    .setParameter("time", closingTime);
+
+            List<Auction> result = query.getResultList();
+
+            return result;
+    }
+    
 
     public List<AuctionBidsTuple> getActiveAuctions(Integer categoryId, Integer userId, SortOption sortOption) {
 
@@ -407,4 +420,6 @@ public class UnitOfWork implements AutoCloseable {
         }
 
     }
+
+    
 }
