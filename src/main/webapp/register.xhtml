@@ -44,7 +44,7 @@
                             <p:message for="regPassword"  display="text" />
 
                             <p:outputLabel for="@next" value="Confirm:" />
-                            <p:password id="regConfirm" required="#{not empty passwordComponent.value}"
+                            <p:password id="regConfirm" required="true"
                                         validatorMessage="Confirm password does not match password"
                                         value="#{userRegistrationBean.confirmPassword}">
                                 <f:validator validatorId="confirmValidator" />

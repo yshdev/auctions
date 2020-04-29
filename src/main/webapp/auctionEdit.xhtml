@@ -45,7 +45,7 @@
                             <p:outputLabel for="@next" value="Category:" />
                             <p:selectOneMenu id="category" label="Category" required="true" value="#{auctionEditBean.categoryId}" style="min-width: 500px">
                                 <f:selectItems value="#{auctionEditBean.categories}" var="categroy" 
-                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"  />
+                                               itemLabel="#{categroy.title}" itemValue="#{categroy.id}"   />
                             </p:selectOneMenu>
                             <p:message for="category" display="text" />
 

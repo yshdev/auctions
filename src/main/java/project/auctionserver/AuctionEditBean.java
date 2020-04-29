@@ -93,9 +93,9 @@ public class AuctionEditBean implements Serializable {
         if (auctionId != null && !auctionId.equals(this.auctionId)) {
             this.auctionId = auctionId;
 
-            
-            this.loadAuction();
             this.setCategoryId(this.categories.get(0).getId());
+            this.loadAuction();
+            
         }
     }
 

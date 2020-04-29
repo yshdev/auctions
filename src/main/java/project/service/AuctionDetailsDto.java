@@ -29,6 +29,7 @@ public class AuctionDetailsDto extends AuctionListItemDto {
     private BidDto winningBid;
     private UserDto owner;
     private BigDecimal minimalBidAmount;
+    private boolean wasCanceledBeforeOpening;
 
     public String getDescription() {
         return description;
@@ -141,4 +142,10 @@ public class AuctionDetailsDto extends AuctionListItemDto {
     public void setReservedPrice(BigDecimal reservedPrice) {
         this.reservedPrice = reservedPrice;
     }
+    
+    public boolean getWasCanceledBeforeOpening() {
+        return this.getIsCanceled() && this.getActualClosingTime().compareTo(this.getStartingTime()) < 0;
+    } 
+       
+
 }
