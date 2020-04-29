@@ -5,24 +5,16 @@
  */
 package project.domain;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import project.dal.ImageUtils;
-import project.service.AuctionDetailsDto;
 
 /**
  *
@@ -77,7 +69,7 @@ public class Auction implements Serializable {
     public Auction() {
     }
 
-    public Auction(UserProfile owner, Category category, String title, LocalDate startingDate, int startingHour, int numOfDays, BigDecimal startingAmount,
+    public Auction(UserProfile owner, Category category, String title, LocalDateTime openningTime, int numOfDays, BigDecimal startingAmount,
             BigDecimal winningAmount, BigDecimal reservedPrice) {
 
         if (owner == null) {
@@ -89,13 +81,13 @@ public class Auction implements Serializable {
         }
 
         this.validateTitle(title);
-        this.validateTimes(startingDate, startingHour, numOfDays);
+        this.validateTimes(openningTime, numOfDays);
         this.validateAmounts(startingAmount, winningAmount, reservedPrice);
 
         this.owner = owner;
         this.category = category;
         this.title = title;
-        this.startingTime = startingDate.atTime(startingHour, 0);
+        this.startingTime = openningTime;
         this.closingTime = this.startingTime.plusDays(numOfDays);
         this.startingAmount = startingAmount;
         this.winningAmount = winningAmount;
@@ -251,11 +243,11 @@ public class Auction implements Serializable {
         this.picture = buffer;
     }
 
-    public void setTimes(LocalDate startingDate, int hour, int numOfDays) {
+    public void setTimes(LocalDateTime startingTime, int numOfDays) {
         this.assertCanModify();
-        this.validateTimes(startingDate, hour, numOfDays);
+        this.validateTimes(startingTime, numOfDays);
 
-        this.startingTime = startingDate.atTime(hour, 0);
+        this.startingTime = startingTime;
         this.closingTime = this.startingTime.plusDays(numOfDays);
     }
 
@@ -363,20 +355,21 @@ public class Auction implements Serializable {
         this.actualClosingTime = LocalDateTime.now();
     }
 
-    private void validateTimes(LocalDate startingDate, int hour, int numOfDays) {
-        if (startingDate == null) {
-            throw new IllegalArgumentException("Auction starting date must be set.");
+    private void validateTimes(LocalDateTime openningTime, int numOfDays) {
+        
+        if (openningTime == null) {
+            throw new IllegalArgumentException("Auction openning time must be set.");
         }
-
-        LocalDateTime startingTimestamp = startingDate.atTime(hour, 0);
-
-        if (startingTimestamp.compareTo(LocalDateTime.now()) < 0) {
-            throw new IllegalArgumentException("Auction starting time must be greater than now.");
-        }
-
+        
         if (numOfDays <= 0) {
             throw new IllegalArgumentException("Auction number of days must be positive.");
         }
+        
+        LocalDateTime closingTime = openningTime.plusDays(numOfDays);
+        if (LocalDateTime.now().compareTo(closingTime) >= 0) {
+            throw new IllegalArgumentException("Cannot create a closed auction.");
+        }
+ 
     }
 
     private void validateTitle(String title) {

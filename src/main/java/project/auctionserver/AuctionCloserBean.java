@@ -30,7 +30,7 @@ import project.domain.Auction;
 @Singleton
 public class AuctionCloserBean {
 
-    private static final long HOUR = 60 * 60 * 1000L;
+    private static final long HOUR_IN_MILLIS = 60L * 60L * 1000L;
 
     @Resource
     private TimerService timerService;
@@ -44,12 +44,12 @@ public class AuctionCloserBean {
         TimerConfig config = new TimerConfig();
         config.setPersistent(false);
 
-        LocalDateTime nextHour = LocalDateTime.now().plusHours(1);
-        nextHour = LocalDateTime.of(nextHour.getYear(), nextHour.getMonth(), nextHour.getDayOfMonth(), nextHour.getHour(), 1);
+        LocalDateTime nextCheck = LocalDateTime.now().plusHours(1);
+        nextCheck = LocalDateTime.of(nextCheck.getYear(), nextCheck.getMonth(), nextCheck.getDayOfMonth(), nextCheck.getHour(), 1);
 
-        long initialInterval = LocalDateTime.now().until(nextHour, ChronoUnit.MILLIS);
+        long initialInterval = LocalDateTime.now().until(nextCheck, ChronoUnit.MILLIS);
 
-        this.timer = this.timerService.createIntervalTimer(initialInterval, HOUR, config);
+        this.timer = this.timerService.createIntervalTimer(initialInterval, HOUR_IN_MILLIS, config);
     }
 
     @Timeout

@@ -168,7 +168,7 @@
 
 
 
-                            <p:row rendered="#{auctionDetailsBean.auction.isOpen}">
+                            <p:row rendered="#{auctionDetailsBean.auction.winningBid == null}">
                                 <p:column>
                                     <p:outputLabel value="Highest Bid:" />
                                 </p:column>
@@ -180,12 +180,12 @@
                                 </p:column>
                             </p:row>
 
-                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.winningBidAmount != null}">
+                            <p:row rendered="#{auctionDetailsBean.auction.winningBid != null}">
                                 <p:column>
                                     <p:outputLabel value="Winning Bid:" />
                                 </p:column>
                                 <p:column>
-                                    <h:outputText value="#{auctionDetailsBean.auction.winningBidAmount}$"  styleClass="output-field" />
+                                    <h:outputText value="#{auctionDetailsBean.auction.winningBid.amount}$"  styleClass="output-field" />
                                 </p:column>
                             </p:row>
 
@@ -206,29 +206,29 @@
 
                             </p:row>
 
-                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsNotWinner}">
+                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and auctionDetailsBean.auction.userIsNotWinner and not auctionDetailsBean.auction.userIsOwner}">
                                 <p:column colspan="2">
-                                    <p:outputLabel value="ou didn't win. Try another auction." style="font-weight: 800; color: purple" />
+                                    <p:outputLabel value="You didn't win. Try another auction." style="font-weight: 800; color: purple" />
                                 </p:column>
 
                             </p:row>
 
-                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}">
+                            <p:row rendered="#{auctionDetailsBean.auction.winningBid != null and auctionDetailsBean.auction.userIsOwner}">
                                 <p:column>
                                     <p:outputLabel value="Winner:" />
                                 </p:column>
                                 <p:column>
-                                    <h:outputText value="#{auctionDetailsBean.auction.highestBid.bidder.name}, Email: #{auctionDetailsBean.auction.highestBid.bidder.email}" 
+                                    <h:outputText value="#{auctionDetailsBean.auction.winningBid.bidder.name}, Email: #{auctionDetailsBean.auction.winningBid.bidder.email}" 
                                                   styleClass="output-field"/>
                                 </p:column>
                             </p:row>
 
-                            <p:row rendered="#{auctionDetailsBean.auction.isClosed and !auctionDetailsBean.auction.isCanceled and auctionDetailsBean.auction.userIsOwner}">
+                            <p:row rendered="#{auctionDetailsBean.auction.winningBid != null and auctionDetailsBean.auction.userIsOwner}">
                                 <p:column>
                                     <p:outputLabel value="Winning Bid:" />
                                 </p:column>
                                 <p:column>
-                                    <h:outputText value="#{auctionDetailsBean.auction.highestBid.amount}"  styleClass="output-field" />
+                                    <h:outputText value="#{auctionDetailsBean.auction.winningBid.amount}$ at #{auctionDetailsBean.auction.winningBid.timestampText}"  styleClass="output-field" />
                                 </p:column>
                             </p:row>
 

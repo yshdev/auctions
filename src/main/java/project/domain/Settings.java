@@ -5,11 +5,13 @@
  */
 package project.domain;
 
+import java.time.LocalTime;
+
 /**
  *
  * @author Shalom
  */
 public class Settings {
     
-    public static final int OPENING_HOUR = 10;
+    public static final LocalTime OPENING_TIME = LocalTime.of(10, 0);
 }

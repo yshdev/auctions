@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -351,39 +349,40 @@ public class UnitOfWork implements AutoCloseable {
                     Category variousGifts = new Category("Everything Else");
                     emanager.persist(variousGifts);
 
-                    LocalDate tommorow = LocalDate.now().plusDays(1);
+                    LocalDateTime tommorow = LocalDate.now().plusDays(1).atTime(11, 30);
+                    LocalDateTime past = LocalDate.now().minusDays(2).atTime(11, 30);
                     
-                    Auction a1 = new Auction(yaniv, coins, "Israeli 100 Pruta coin", tommorow, 10, 12, new BigDecimal(150.0), new BigDecimal(300.0), new BigDecimal(250.0));
+                    Auction a1 = new Auction(yaniv, coins, "Israeli 100 Pruta coin", past, 3, new BigDecimal(150.0), new BigDecimal(300.0), new BigDecimal(250.0));
                     a1.setDescription("Israeli 100 Pruta from 1954 (Not magnetic)");
                     a1.setPicture(ImageUtils.loadImage("Israeli100Prutacoin.jpg"), "jpg");
                     emanager.persist(a1);
 
-                    Auction a2 = new Auction(aharon, coins, "Israeli Silver Coins", tommorow, 10, 10, new BigDecimal(1000.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
+                    Auction a2 = new Auction(aharon, coins, "Israeli Silver Coins", past, 3, new BigDecimal(1000.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
                     a2.setDescription("Israeli Govenment silver coins");
                     a2.setPicture(ImageUtils.loadImage("IsraeliSilverCoins.jpg"), "jpg");
                     emanager.persist(a2);
 
-                    Auction a3 = new Auction(yaniv, art, "Sheep Head - Menashe Kadishman", tommorow, 10, 20, new BigDecimal(800.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
+                    Auction a3 = new Auction(yaniv, art, "Sheep Head - Menashe Kadishman", tommorow, 20, new BigDecimal(800.0), new BigDecimal(2000.0), new BigDecimal(1500.0));
                     a3.setDescription("Sheep head 60x50 - Acrylic on canvas - h:60 w:50 cm - signed lower center and again on the reverse");
                     a3.setPicture(ImageUtils.loadImage("SheepHead-MenasheKadishman.jpg"), "jpg");
                     emanager.persist(a3);
                     
-                    Auction a4 = new Auction(yaniv, computersAndPrograms, "Dell Computer", tommorow, 10, 7, new BigDecimal(35.0), new BigDecimal(90.0), new BigDecimal(80.0));
+                    Auction a4 = new Auction(yaniv, computersAndPrograms, "Dell Computer", tommorow, 7, new BigDecimal(35.0), new BigDecimal(90.0), new BigDecimal(80.0));
                     a4.setDescription("Dell Inspiron 15 3593 N3593-5066");
                     a4.setPicture(ImageUtils.loadImage("dell.jpg"), "jpg");
                     emanager.persist(a4);
                     
-                    Auction a5 = new Auction(yaniv, computersAndPrograms, "HP Computer", tommorow, 10, 10, new BigDecimal(20.0), new BigDecimal(80.0), new BigDecimal(55.0));
+                    Auction a5 = new Auction(yaniv, computersAndPrograms, "HP Computer", past, 10, new BigDecimal(20.0), new BigDecimal(80.0), new BigDecimal(55.0));
                     a5.setDescription("HP 255 G7 7DB74EA");
                     a5.setPicture(ImageUtils.loadImage("hp.jpg"), "jpg");
                     emanager.persist(a5);
                     
-                    Auction a6 = new Auction(aharon, forHomeAndGarden, "Garden Hoe", tommorow, 10, 7, new BigDecimal(9.0), new BigDecimal(17.0), new BigDecimal(14.0));
+                    Auction a6 = new Auction(aharon, forHomeAndGarden, "Garden Hoe", past, 7, new BigDecimal(9.0), new BigDecimal(17.0), new BigDecimal(14.0));
                     a6.setDescription("Field Hoe with Fiberglass Handle");
                     a6.setPicture(ImageUtils.loadImage("hoe.jpg"), "jpg");
                     emanager.persist(a6);
                     
-                    Auction a7 = new Auction(aharon, forHomeAndGarden, "Electric Kettle", tommorow, 10, 10, new BigDecimal(5.0), new BigDecimal(12.0), new BigDecimal(9.0));
+                    Auction a7 = new Auction(aharon, forHomeAndGarden, "Electric Kettle", past, 10, new BigDecimal(5.0), new BigDecimal(12.0), new BigDecimal(9.0));
                     a7.setDescription("Brentwood KT-1610 Cordless Electric Kettle BPA Free, 1 Liter, White");
                     a7.setPicture(ImageUtils.loadImage("kettle.jpg"), "jpg");
                     emanager.persist(a7);

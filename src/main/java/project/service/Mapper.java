@@ -34,65 +34,30 @@ public class Mapper {
     public AuctionDetailsDto mapAuctionToDetailsDto(Auction auction, Integer userId, Bid userBid) {
 
         AuctionDetailsDto details = new AuctionDetailsDto();
-        details.setCanCancel(auction.canCancel(userId));
-        details.setCanBid(auction.canBid(userId));
-        details.setCanEdit(auction.canEdit(userId));
-        details.setCategory(this.mapCategoryToDto(auction.getCategory()));
+        
+        this.fillAuctionDto(auction, userId, userBid, details);
+        
         details.setClosingTime(auction.getClosingTime());
         details.setDescription(auction.getDescription());
         details.setHighestBid(this.mapBidToDto(auction.getHighestBid()));
-        details.setId(auction.getId());
+        if (auction.getWinningBid() != null) {
+            details.setWinningBid(this.mapBidToDto(auction.getWinningBid()));
+        }
         details.setNumberOfBids(auction.getBids().size());
         details.setOwner(this.mapUserToDto(auction.getOwner()));
-        details.setStartingAmount(auction.getStartingAmount());
         details.setStartingTime(auction.getStartingTime());
-        details.setTitle(auction.getTitle());
-        details.setUserIsOwner(userId != null && auction.getOwner().getId() == userId);
-        details.setUserIsWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() == userId);
-        details.setUserIsNotWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() != userId);
         details.setActualClosingTime(auction.getActualClosingTime());
         details.setMinimalBidAmount(auction.getMinimalBidAmount());
-        details.setStatus(auction.getStatus());
         details.setWinningAmount(auction.getWinningAmount());
         details.setReservedPrice(auction.getReservedPrice());
-        details.setImageBytes(auction.getImageBytes());
-
-        if (userBid != null) {
-            details.setUserBidAmount(userBid.getAmount());
-            details.setUserBidTimestamp(userBid.getTimestamp());
-        }
+        
 
         return details;
     }
 
     public AuctionListItemDto mapAuctionToListItemDto(Auction auction, Integer userId, Bid userBid) {
         AuctionListItemDto dto = new AuctionListItemDto();
-        dto.setId(auction.getId());
-        dto.setCategory(this.mapCategoryToDto(auction.getCategory()));
-        dto.setTitle(auction.getTitle());
-        dto.setStatus(auction.getStatus());
-        dto.setIsClosed(auction.isClosed());
-        dto.setStartingAmount(auction.getStartingAmount());
-        dto.setImageBytes(auction.getImageBytes());
-        dto.setUserIsWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() == userId);
-        dto.setUserIsNotWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() != userId);
-        
-        if (auction.getHighestBid() != null) {
-            dto.setLatestBidAmount(auction.getHighestBid().getAmount());
-        }
-        if (userId == null) {
-            dto.setCanCancel(false);
-            dto.setCanEdit(false);
-            dto.setCanBid(false);
-        } else {
-            dto.setCanCancel(auction.canCancel(userId));
-            dto.setCanEdit(auction.canEdit(userId));
-            dto.setCanBid(auction.canBid(userId));
-        }
-        if (userBid != null) {
-            dto.setUserBidAmount(userBid.getAmount());
-            dto.setUserBidTimestamp(userBid.getTimestamp());
-        }
+        this.fillAuctionDto(auction, userId, userBid, dto);
         return dto;
     }
 
@@ -114,5 +79,35 @@ public class Mapper {
         dto.setAmount(bid.getAmount());
 
         return dto;
+    }
+    
+    private void fillAuctionDto(Auction auction, Integer userId, Bid userBid, AuctionListItemDto dto) {
+        dto.setId(auction.getId());
+        dto.setCategory(this.mapCategoryToDto(auction.getCategory()));
+        dto.setTitle(auction.getTitle());
+        dto.setStatus(auction.getStatus());
+        dto.setStartingAmount(auction.getStartingAmount());
+        dto.setImageBytes(auction.getImageBytes());
+        dto.setUserIsWinner(auction.getWinningBid() != null && userId != null && auction.getWinningBid().getBidder().getId() == userId);
+        dto.setUserIsNotWinner(!auction.isClosed() || auction.isCanceled() || auction.getWinningBid() == null || 
+                auction.getWinningBid().getBidder().getId() != userId);
+        dto.setUserIsOwner(userId != null && auction.getOwner().getId() == userId);
+        
+        if (auction.getHighestBid() != null) {
+            dto.setLatestBidAmount(auction.getHighestBid().getAmount());
+        }
+        if (userId == null) {
+            dto.setCanCancel(false);
+            dto.setCanEdit(false);
+            dto.setCanBid(false);
+        } else {
+            dto.setCanCancel(auction.canCancel(userId));
+            dto.setCanEdit(auction.canEdit(userId));
+            dto.setCanBid(auction.canBid(userId));
+        }
+        if (userBid != null) {
+            dto.setUserBidAmount(userBid.getAmount());
+            dto.setUserBidTimestamp(userBid.getTimestamp());
+        }
     }
 }

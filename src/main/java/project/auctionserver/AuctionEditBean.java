@@ -44,7 +44,7 @@ public class AuctionEditBean implements Serializable {
     private Integer auctionId;
     private final Mapper mapper = new Mapper();
     private String error;
-    private Integer categoryId;
+    private int categoryId;
     private String title;
     private String description;
     private BigDecimal startingAmount;
@@ -65,13 +65,15 @@ public class AuctionEditBean implements Serializable {
         this.loadCategories();
         
         LocalDateTime now = LocalDateTime.now();
-        if (now.getHour() > Settings.OPENING_HOUR - 1) {
+        LocalDateTime todayOpenningTime = LocalDate.now().atTime(Settings.OPENING_TIME);
+        
+        if (now.compareTo(todayOpenningTime) >= 0) {
             this.minOpeningDate = now.plusDays(1).toLocalDate();
         } else {
             this.minOpeningDate = now.toLocalDate();
         }
 
-        this.openingTime = this.minOpeningDate.atTime(Settings.OPENING_HOUR, 0);
+        this.openingTime = this.minOpeningDate.atTime(Settings.OPENING_TIME);
         this.closingTime = this.openingTime.plusDays(this.numOfDays);
     }
 
@@ -109,11 +111,11 @@ public class AuctionEditBean implements Serializable {
         this.error = error;
     }
 
-    public Integer getCategoryId() {
+    public int getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -181,7 +183,7 @@ public class AuctionEditBean implements Serializable {
     }
 
     public void setOpeningDate(LocalDate openingDate) {
-        this.openingTime = openingDate.atTime(Settings.OPENING_HOUR, 0);
+        this.openingTime = openingDate.atTime(Settings.OPENING_TIME);
         this.closingTime = this.openingTime.plusDays(this.numOfDays);
     }
 
@@ -239,7 +241,8 @@ public class AuctionEditBean implements Serializable {
                     UserProfile user = unitOfWork.findUserById(this.loggedUserBean.getUserId());
                     Category category = unitOfWork.findCategroyById(this.getCategoryId());
 
-                    Auction auction = new Auction(user, category, this.getTitle(), this.openingTime.toLocalDate(), Settings.OPENING_HOUR, this.numOfDays, this.getStartingAmount(),
+                    Auction auction = new Auction(user, category, this.getTitle(), this.openingTime.toLocalDate().atTime(Settings.OPENING_TIME), 
+                            this.numOfDays, this.getStartingAmount(),
                             this.getWinningAmount(), this.getReservedPrice());
 
                     auction.setDescription(this.getDescription());
@@ -267,7 +270,7 @@ public class AuctionEditBean implements Serializable {
                     auction.setCategory(category);
                     auction.setDescription(this.description);
                     auction.setPicture(this.imageBytes);
-                    auction.setTimes(this.openingTime.toLocalDate(), Settings.OPENING_HOUR, this.numOfDays);
+                    auction.setTimes(this.openingTime, this.numOfDays);
                     auction.setTitle(this.title);
                     unitOfWork.saveChanges();
                 }
@@ -318,6 +321,7 @@ public class AuctionEditBean implements Serializable {
 
             } else {
                 this.error = null;
+                this.categoryId = auction.getCategory().getId();
                 this.title = auction.getTitle();
                 this.description = auction.getDescription();
                 this.reservedPrice = auction.getReservedPrice();

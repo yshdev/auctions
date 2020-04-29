@@ -27,11 +27,11 @@ public class AuctionListItemDto {
     private boolean canCancel;
     private boolean canEdit;
     private boolean canBid;
-    private boolean isClosed;
     private BigDecimal startingAmount;
     private byte[] imageBytes;
     private BigDecimal userBidAmount;
     private LocalDateTime userBidTimestamp;
+    private boolean userIsOwner;
     private boolean userIsWinner;
     private boolean userIsNotWinner;
     private AuctionStatus status;
@@ -54,6 +54,8 @@ public class AuctionListItemDto {
     public void setTitle(String title) {
         this.title = title;
     }
+    
+    
 
     public CategoryDto getCategory() {
         return category;
@@ -71,7 +73,7 @@ public class AuctionListItemDto {
         this.latestBidAmount = latestBidAmount;
     }
 
-    public boolean canCancel() {
+    public boolean getCanCancel() {
         return canCancel;
     }
 
@@ -79,7 +81,7 @@ public class AuctionListItemDto {
         this.canCancel = canCancel;
     }
 
-    public boolean canEdit() {
+    public boolean getCanEdit() {
         return canEdit;
     }
 
@@ -88,11 +90,7 @@ public class AuctionListItemDto {
     }
 
     public boolean getIsClosed() {
-        return isClosed;
-    }
-
-    public void setIsClosed(boolean isClosed) {
-        this.isClosed = isClosed;
+        return this.status.compareTo(AuctionStatus.CLOSING) >= 0;
     }
 
     public BigDecimal getStartingAmount() {
@@ -103,7 +101,7 @@ public class AuctionListItemDto {
         this.startingAmount = startingBid;
     }
 
-    public boolean canBid() {
+    public boolean getCanBid() {
         return canBid;
     }
 
@@ -159,7 +157,7 @@ public class AuctionListItemDto {
         this.userIsWinner = userIsWinner;
     }
 
-    public boolean isUserIsNotWinner() {
+    public boolean getUserIsNotWinner() {
         return userIsNotWinner;
     }
 
@@ -173,6 +171,14 @@ public class AuctionListItemDto {
 
     public void setStatus(AuctionStatus status) {
         this.status = status;
+    }
+
+    public boolean getUserIsOwner() {
+        return userIsOwner;
+    }
+
+    public void setUserIsOwner(boolean userIsOwner) {
+        this.userIsOwner = userIsOwner;
     }
     
     

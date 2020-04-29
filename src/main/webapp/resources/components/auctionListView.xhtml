@@ -80,7 +80,7 @@
                                         </h:panelGroup>
 
 
-                                        <h:panelGroup layout="block"  rendered="#{item.isClosed and item.userIsNotWinner}">
+                                        <h:panelGroup layout="block"  rendered="#{item.isClosed and item.userIsNotWinner and not item.userIsOwner}">
                                             <p:outputLabel value="You didn't win. Try another auction." class="output-field" style="color: purple" />
                                         </h:panelGroup>
 
@@ -94,22 +94,22 @@
 
                                     <p:panelGrid columns="1" style="float:right">
 
-                                        <h:outputLink rendered="#{item.canBid()}" value="auctionDetails.xhtml"  style="padding-left: 10px">
+                                        <h:outputLink rendered="#{item.canBid}" value="auctionDetails.xhtml"  style="padding-left: 10px">
                                             <h:outputText value="Bid now!" />
                                             <f:param name="auctionId" value="#{item.id}"></f:param>
                                         </h:outputLink>
 
-                                        <h:outputLink  rendered="#{!item.canBid()}" value="auctionDetails.xhtml"  style="padding-left: 10px">
+                                        <h:outputLink  rendered="#{!item.canBid}" value="auctionDetails.xhtml"  style="padding-left: 10px">
                                             <h:outputText value="Details" />
                                             <f:param name="auctionId" value="#{item.id}"></f:param>
                                         </h:outputLink>
 
-                                        <h:outputLink  rendered="#{item.canEdit()}" value="auctionEdit.xhtml" style="padding-left: 10px" >
+                                        <h:outputLink  rendered="#{item.canEdit}" value="auctionEdit.xhtml" style="padding-left: 10px" >
                                             <h:outputText value="Edit" />
                                             <f:param name="auctionId" value="#{item.id}"></f:param>
                                         </h:outputLink>
 
-                                        <h:outputLink  rendered="#{item.canCancel()}" value="auctionCancel.xhtml"  style="padding-left: 10px">
+                                        <h:outputLink  rendered="#{item.canCancel}" value="auctionCancel.xhtml"  style="padding-left: 10px">
                                             <h:outputText value="Cancel" />
                                             <f:param name="auctionId" value="#{item.id}"></f:param>
                                         </h:outputLink>
