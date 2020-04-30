@@ -206,7 +206,7 @@ public class Auction implements Serializable {
         }
         
         double sa = this.startingAmount.doubleValue();
-        int jump = Math.max(1, (int)Math.log10(sa) * 5);
+        int jump = Math.max(1, (int)Math.log10(sa)) * 5;
         
         BigDecimal minBid = this.getHighestBid().getAmount().add(new BigDecimal(jump));
                 
